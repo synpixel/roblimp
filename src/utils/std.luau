@@ -7,8 +7,6 @@ local function unknownImpl()
 	error("unknown runtime")
 end
 
-print(runtime)
-
 return table.freeze({
 	runtime = runtime,
 	unknownImpl = unknownImpl,
