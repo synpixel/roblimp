@@ -378,7 +378,7 @@ local function getGroups(with: { cookie: string }): GroupModelPages
 end
 
 --- Gets a list of universes for the given group.
-local function getUniversesOfGroup(with: {
+local function getUniversesByGroup(with: {
 	groupId: number,
 	isArchived: boolean?,
 	limit: number?,
@@ -495,7 +495,7 @@ return {
 	updatePlugin = updatePlugin,
 	deactivateUniverse = deactivateUniverse,
 	getGroups = getGroups,
-	getUniversesOfGroup = getUniversesOfGroup,
+	getUniversesByGroup = getUniversesByGroup,
 	getGameTemplates = getGameTemplates,
 	getUniversePermissions = getUniversePermissions,
 	getUniversePlaces = getUniversePlaces,

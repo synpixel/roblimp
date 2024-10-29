@@ -812,33 +812,6 @@ local function setStatus(with: PostGroupStatusRequest & { groupId: number, cooki
 	return serde.decode("json", response.body)
 end
 
---- Sets the authenticated user's primary group
-local function setPrimaryGroup(with: PrimaryGroupRequest & { cookie: string }): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
-		method = "POST",
-		url = `https://groups.roblox.com/v1/user/groups/primary`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
---- Removes the authenticated user's primary group
-local function removePrimaryGroup(with: { cookie: string }): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
-		method = "DELETE",
-		url = `https://groups.roblox.com/v1/user/groups/primary`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
 --- Updates the groups description
 local function setDescription(
 	with: UpdateGroupDescriptionRequest & { groupId: number, cookie: string }
@@ -929,11 +902,61 @@ local function getSearchMetadata(): GroupSearchMetadataResponse
 	return serde.decode("json", response.body)
 end
 
+--- Updates the group's name.
+local function setName(with: UpdateGroupNameRequest & { groupId: number, cookie: string }): UpdateGroupNameResponse
+	local response = requestWithCsrfToken({
+		method = "PATCH",
+		url = `https://groups.roblox.com/v1/groups/{with.groupId}/name`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
+		body = serde.encode("json", with),
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
 --- Deletes a group wall post.
 local function deleteGroupWallMessage(with: { groupId: number, postId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/wall/posts/{with.postId}`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
+--- Accepts a group relationship request.
+local function acceptRelationshipRequest(with: {
+	groupId: number,
+	groupRelationshipType: string,
+	relatedGroupId: number,
+	cookie: string,
+}): ApiEmptyResponseModel
+	local response = requestWithCsrfToken({
+		method = "POST",
+		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}/requests/{with.relatedGroupId}`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
+--- Declines a group relationship request.
+local function declineRelationshipRequest(with: {
+	groupId: number,
+	groupRelationshipType: string,
+	relatedGroupId: number,
+	cookie: string,
+}): ApiEmptyResponseModel
+	local response = requestWithCsrfToken({
+		method = "DELETE",
+		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}/requests/{with.relatedGroupId}`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
@@ -948,21 +971,6 @@ local function setIcon(with: { groupId: number, Files: buffer?, cookie: string }
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/icon?groupId={with.groupId}&Files={with.Files or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
---- Gets a list of all group roles for groups the specified user is in.
-local function getGroupsWith(
-	with: { userId: number, includeLocked: boolean, includeNotificationPreferences: boolean }
-): GroupMembershipDetailResponsePages
-	local response = requestWithCsrfToken({
-		method = "GET",
-		url = `https://groups.roblox.com/v1/users/{with.userId}/groups/roles?includeLocked={with.includeLocked}&includeNotificationPreferences={with.includeNotificationPreferences}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1028,22 +1036,6 @@ local function deleteRole(with: { groupId: number, rolesetId: number, cookie: st
 	return serde.decode("json", response.body)
 end
 
---- Updates the user's group notification preferences
-local function updateNotificationPreferences(
-	with: UpdateGroupNotificationPreferenceRequest & { groupId: number, cookie: string }
-): number
-	local response = requestWithCsrfToken({
-		method = "PATCH",
-		url = `https://groups.roblox.com/v1/groups/{with.groupId}/notification-preference`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
 --- Gets all permissions for each role
 local function getAllRolePermissions(with: { groupId: number, cookie: string }): GroupPermissionsResponsePages
 	local response = requestWithCsrfToken({
@@ -1057,11 +1049,13 @@ local function getAllRolePermissions(with: { groupId: number, cookie: string }):
 	return serde.decode("json", response.body)
 end
 
---- Updates the group's name.
-local function setName(with: UpdateGroupNameRequest & { groupId: number, cookie: string }): UpdateGroupNameResponse
+--- Updates the user's group notification preferences
+local function updateNotificationPreferences(
+	with: UpdateGroupNotificationPreferenceRequest & { groupId: number, cookie: string }
+): number
 	local response = requestWithCsrfToken({
 		method = "PATCH",
-		url = `https://groups.roblox.com/v1/groups/{with.groupId}/name`,
+		url = `https://groups.roblox.com/v1/groups/{with.groupId}/notification-preference`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
 		body = serde.encode("json", with),
 	})
@@ -1184,11 +1178,11 @@ local function getSettings(with: { groupId: number, cookie: string }): GroupSett
 	return serde.decode("json", response.body)
 end
 
---- Gets group policy info used for compliance.
-local function getPolicies(with: GroupPolicyRequest & { cookie: string }): GroupPoliciesResponse
+--- Sets the authenticated user's primary group
+local function setPrimaryGroup(with: PrimaryGroupRequest & { cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://groups.roblox.com/v1/groups/policies`,
+		url = `https://groups.roblox.com/v1/user/groups/primary`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
 		body = serde.encode("json", with),
 	})
@@ -1198,19 +1192,26 @@ local function getPolicies(with: GroupPolicyRequest & { cookie: string }): Group
 	return serde.decode("json", response.body)
 end
 
---- Creates a new group.
-local function createGroup(with: {
-	name: string?,
-	description: string?,
-	publicGroup: boolean?,
-	buildersClubMembersOnly: boolean?,
-	Files: buffer?,
-	cookie: string,
-}): GroupResponseV2
+--- Removes the authenticated user's primary group
+local function removePrimaryGroup(with: { cookie: string }): ApiEmptyResponseModel
+	local response = requestWithCsrfToken({
+		method = "DELETE",
+		url = `https://groups.roblox.com/v1/user/groups/primary`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
+--- Gets group policy info used for compliance.
+local function getPolicies(with: GroupPolicyRequest & { cookie: string }): GroupPoliciesResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://groups.roblox.com/v1/groups/create?name={with.name or ""}&description={with.description or ""}&publicGroup={with.publicGroup or ""}&buildersClubMembersOnly={with.buildersClubMembersOnly or ""}&Files={with.Files or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://groups.roblox.com/v1/groups/policies`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
+		body = serde.encode("json", with),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1283,6 +1284,26 @@ local function getJoinRequest(with: { groupId: number, userId: number, cookie: s
 	return serde.decode("json", response.body)
 end
 
+--- Creates a new group.
+local function createGroup(with: {
+	name: string?,
+	description: string?,
+	publicGroup: boolean?,
+	buildersClubMembersOnly: boolean?,
+	Files: buffer?,
+	cookie: string,
+}): GroupResponseV2
+	local response = requestWithCsrfToken({
+		method = "POST",
+		url = `https://groups.roblox.com/v1/groups/create?name={with.name or ""}&description={with.description or ""}&publicGroup={with.publicGroup or ""}&buildersClubMembersOnly={with.buildersClubMembersOnly or ""}&Files={with.Files or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
 --- Subscribes the authenticated user to notifications of group wall events.
 local function subscribeGroupWall(with: { groupId: number, cookie: string }): nil
 	local response = requestWithCsrfToken({
@@ -1294,42 +1315,6 @@ local function subscribeGroupWall(with: { groupId: number, cookie: string }): ni
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
 	return response.body
-end
-
---- Accepts a group relationship request.
-local function acceptRelationshipRequest(with: {
-	groupId: number,
-	groupRelationshipType: string,
-	relatedGroupId: number,
-	cookie: string,
-}): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
-		method = "POST",
-		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}/requests/{with.relatedGroupId}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
---- Declines a group relationship request.
-local function declineRelationshipRequest(with: {
-	groupId: number,
-	groupRelationshipType: string,
-	relatedGroupId: number,
-	cookie: string,
-}): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
-		method = "DELETE",
-		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}/requests/{with.relatedGroupId}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
 end
 
 --- Create a group relationship.
@@ -1623,27 +1608,26 @@ return {
 	joinGroup = joinGroup,
 	getUsers = getUsers,
 	setStatus = setStatus,
-	setPrimaryGroup = setPrimaryGroup,
-	removePrimaryGroup = removePrimaryGroup,
+	setDescription = setDescription,
 	sendGroupWallMessage = sendGroupWallMessage,
 	getGroupWallMessages = getGroupWallMessages,
 	getGroups = getGroups,
-	setDescription = setDescription,
 	getGroupsWithFriends = getGroupsWithFriends,
 	canUsePayout = canUsePayout,
 	getRelationships = getRelationships,
 	getNameHistory = getNameHistory,
 	getSearchMetadata = getSearchMetadata,
+	setName = setName,
 	deleteGroupWallMessage = deleteGroupWallMessage,
+	acceptRelationshipRequest = acceptRelationshipRequest,
+	declineRelationshipRequest = declineRelationshipRequest,
 	setIcon = setIcon,
-	getGroupsWith = getGroupsWith,
 	changeRole = changeRole,
 	exileUser = exileUser,
 	updateRole = updateRole,
 	deleteRole = deleteRole,
-	updateNotificationPreferences = updateNotificationPreferences,
 	getAllRolePermissions = getAllRolePermissions,
-	setName = setName,
+	updateNotificationPreferences = updateNotificationPreferences,
 	createRole = createRole,
 	getGuestPermissions = getGuestPermissions,
 	deleteUserGroupWallMessages = deleteUserGroupWallMessages,
@@ -1653,16 +1637,16 @@ return {
 	getRolesOf = getRolesOf,
 	updateSettings = updateSettings,
 	getSettings = getSettings,
+	setPrimaryGroup = setPrimaryGroup,
+	removePrimaryGroup = removePrimaryGroup,
 	getPolicies = getPolicies,
-	createGroup = createGroup,
 	lookupGroups = lookupGroups,
 	getGroup = getGroup,
 	acceptJoinRequest = acceptJoinRequest,
 	declineJoinRequest = declineJoinRequest,
 	getJoinRequest = getJoinRequest,
+	createGroup = createGroup,
 	subscribeGroupWall = subscribeGroupWall,
-	acceptRelationshipRequest = acceptRelationshipRequest,
-	declineRelationshipRequest = declineRelationshipRequest,
 	requestRelationship = requestRelationship,
 	deleteRelationship = deleteRelationship,
 	searchGroups = searchGroups,

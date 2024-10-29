@@ -724,7 +724,7 @@ local function isFavorited(with: { universeId: number, cookie: string }): GameFa
 end
 
 --- Gets games created by the specified user.
-local function getGamesOf(
+local function getGamesBy(
 	with: {
 		userId: number,
 		accessFilter: number?,
@@ -758,7 +758,7 @@ local function getMedia(with: { universeId: number }): GameMediaItemResponseV2Pa
 end
 
 --- Gets games created by the specified group. This will replace V1 after validation. Note that this can only used for public/all universes.
-local function getGamesOfGroup(with: {
+local function getGamesByGroup(with: {
 	groupId: number,
 	accessFilter: number?,
 	limit: number?,
@@ -787,7 +787,7 @@ return {
 	getPrivateServersFor = getPrivateServersFor,
 	arePrivateServersEnabled = arePrivateServersEnabled,
 	getVotes = getVotes,
-	getGamesOf = getGamesOf,
+	getGamesBy = getGamesBy,
 	getVote = getVote,
 	createPrivateServer = createPrivateServer,
 	getProductInfo = getProductInfo,
@@ -802,7 +802,7 @@ return {
 	updateSubscription = updateSubscription,
 	updateVoiceSettings = updateVoiceSettings,
 	getPlaceDetails = getPlaceDetails,
-	getGamesOfGroup = getGamesOfGroup,
+	getGamesByGroup = getGamesByGroup,
 	favorite = favorite,
 	isFavorited = isFavorited,
 }

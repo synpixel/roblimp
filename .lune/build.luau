@@ -103,7 +103,7 @@ local mappings: { [string]: EndpointMappings } = {
 	},
 	develop = {
 		["/v1/gametemplates"] = { get = "getGameTemplates" },
-		["/v1/groups/{groupId}/universes"] = { get = "getUniversesOfGroup" },
+		["/v1/groups/{groupId}/universes"] = { get = "getUniversesByGroup" },
 		-- /v1/places/{placeId}/teamcreate/active_session/members
 		["/v1/plugins"] = { get = "getPlugins" },
 		-- /v1/universes/{universeId}/configuration/vip-servers
@@ -186,8 +186,8 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/vip-servers/{id}/voicesettings"] = { patch = "updateVoiceSettings" },
 		["/v1/games/{universeId}/user-votes"] = { patch = "vote" },
 		["/v2/games/{universeId}/media"] = { get = "getMedia" },
-		["/v2/groups/{groupId}/gamesV2"] = { get = "getGamesOfGroup" },
-		["/v2/users/{userId}/games"] = { get = "getGamesOf" },
+		["/v2/groups/{groupId}/gamesV2"] = { get = "getGamesByGroup" },
+		["/v2/users/{userId}/games"] = { get = "getGamesBy" },
 	},
 	groups = {
 		["/v1/groups/metadata"] = { get = "getMetadata" },
@@ -232,7 +232,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/user/groups/pending"] = { get = "getPendingGroups" },
 		["/v1/users/{userId}/friends/groups/roles"] = { get = "getGroupsWithFriends" },
 		["/v1/users/{userId}/groups/primary/role"] = { get = "getPrimaryGroup" },
-		["/v1/users/{userId}/groups/roles"] = { get = "getGroupsWith" },
+		-- ["/v1/users/{userId}/groups/roles"] = { get = "getGroupsWith" },
 		["/v1/groups/{groupId}/change-owner"] = { post = "giveOwnership" },
 		["/v1/groups/{groupId}/claim-ownership"] = { post = "claimOwnership" },
 		["/v1/groups/{groupId}/payouts/recurring"] = { post = "updateRecurringPayouts" },
