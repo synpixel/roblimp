@@ -1,4 +1,4 @@
-local serde = require("@lune/serde")
+local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
 --- Empty response, will be in WebAPI base soon

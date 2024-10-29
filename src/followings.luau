@@ -1,4 +1,4 @@
-local serde = require("@lune/serde")
+local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
 --- Model for a user following a universe controller responses

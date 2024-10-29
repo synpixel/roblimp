@@ -1,4 +1,4 @@
-local serde = require("@lune/serde")
+local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
 --- A message details response.

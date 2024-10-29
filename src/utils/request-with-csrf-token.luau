@@ -1,4 +1,4 @@
-local net = require("@lune/net")
+local net = require("./net")
 
 local csrfTokenCache = {}
 
@@ -13,7 +13,6 @@ local function requestWithCsrfToken(parameters: net.FetchParams): net.FetchRespo
 	local response = net.request({
 		method = parameters.method,
 		url = parameters.url,
-		query = parameters.query,
 		headers = headers,
 		body = parameters.body,
 		options = parameters.options,
