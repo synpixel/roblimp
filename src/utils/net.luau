@@ -61,5 +61,5 @@ elseif std.runtime == "roblox" then
 end
 
 return {
-	request = std.unknownImplementation,
+	request = std.unknownImpl,
 } :: Net
