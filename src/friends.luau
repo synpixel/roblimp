@@ -448,7 +448,7 @@ local function getFriendsOf(with: { userId: number, userSort: number? }): UserRe
 end
 
 --- Get a paginated list of all friends for the specified user.
-local function getFriendIdsOf(
+local function getFriendshipsOf(
 	with: { userId: number, userSort: number?, cursor: string?, limit: number?, cookie: string }
 ): FriendResponsePages
 	local response = requestWithCsrfToken({
@@ -509,7 +509,7 @@ return {
 	getFriendRequests = getFriendRequests,
 	declineFriendRequest = declineFriendRequest,
 	getFriendsOf = getFriendsOf,
-	getFriendIdsOf = getFriendIdsOf,
+	getFriendshipsOf = getFriendshipsOf,
 	getTotalFriendRequests = getTotalFriendRequests,
 	getTotalFollowersOf = getTotalFollowersOf,
 }

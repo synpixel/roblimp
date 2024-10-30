@@ -144,7 +144,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/users/{targetUserId}/followings/count"] = { get = "getTotalFollowingsOf" },
 		["/v1/users/{userId}/friends"] = { get = "getFriendsOf" },
 		["/v1/users/{userId}/friends/count"] = { get = "getTotalFriendsOf" },
-		["/v1/users/{userId}/friends/find"] = { get = "getFriendIdsOf" },
+		["/v1/users/{userId}/friends/find"] = { get = "getFriendshipsOf" },
 		["/v1/users/{userId}/friends/inactive"] = { get = "getInactiveFriendsOf" },
 		["/v1/users/{userId}/friends/online"] = { get = "getOnlineFriendsOf" },
 		["/v1/users/{userId}/friends/search"] = { get = "searchFriendsOf" },
