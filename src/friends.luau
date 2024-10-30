@@ -351,6 +351,22 @@ local function unfriend(with: { targetUserId: number, cookie: string }): ApiEmpt
 	return serde.decode("json", response.body)
 end
 
+--- Send a friend request to target user
+local function sendFriendRequest(
+	with: FriendshipRequestModel & { targetUserId: number, cookie: string }
+): CaptchaStatusResponseModel
+	local response = requestWithCsrfToken({
+		method = "POST",
+		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/request-friendship`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
+		body = serde.encode("json", with),
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
 --- Get the number of following a user has
 local function getTotalFollowingsOf(with: { targetUserId: number }): FollowCountResponse
 	local response = requestWithCsrfToken({
@@ -364,15 +380,12 @@ local function getTotalFollowingsOf(with: { targetUserId: number }): FollowCount
 	return serde.decode("json", response.body)
 end
 
---- Send a friend request to target user
-local function sendFriendRequest(
-	with: FriendshipRequestModel & { targetUserId: number, cookie: string }
-): CaptchaStatusResponseModel
+--- Deletes the following between a user and user with targetUserId
+local function unfollow(with: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/request-friendship`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/unfollow`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -408,11 +421,11 @@ local function getFriendRequests(
 	return serde.decode("json", response.body)
 end
 
---- Deletes the following between a user and user with targetUserId
-local function unfollow(with: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
+--- Decline a friend request.
+local function declineFriendRequest(with: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/unfollow`,
+		url = `https://friends.roblox.com/v1/users/{with.requesterUserId}/decline-friend-request`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
@@ -434,11 +447,13 @@ local function getFriendsOf(with: { userId: number, userSort: number? }): UserRe
 	return serde.decode("json", response.body)
 end
 
---- Decline a friend request.
-local function declineFriendRequest(with: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
+--- Get a paginated list of all friends for the specified user.
+local function getFriendIdsOf(
+	with: { userId: number, userSort: number?, cursor: string?, limit: number?, cookie: string }
+): FriendResponsePages
 	local response = requestWithCsrfToken({
-		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.requesterUserId}/decline-friend-request`,
+		method = "GET",
+		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/find?userSort={with.userSort or ""}&cursor={with.cursor or ""}&limit={with.limit or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
@@ -487,13 +502,14 @@ return {
 	areFriends = areFriends,
 	getFollowersOf = getFollowersOf,
 	unfriend = unfriend,
-	getTotalFollowingsOf = getTotalFollowingsOf,
 	sendFriendRequest = sendFriendRequest,
+	getTotalFollowingsOf = getTotalFollowingsOf,
+	unfollow = unfollow,
 	getInactiveFriendsOf = getInactiveFriendsOf,
 	getFriendRequests = getFriendRequests,
-	unfollow = unfollow,
-	getFriendsOf = getFriendsOf,
 	declineFriendRequest = declineFriendRequest,
+	getFriendsOf = getFriendsOf,
+	getFriendIdsOf = getFriendIdsOf,
 	getTotalFriendRequests = getTotalFriendRequests,
 	getTotalFollowersOf = getTotalFollowersOf,
 }
