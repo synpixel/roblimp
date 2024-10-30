@@ -85,7 +85,7 @@ local function markAsRead(with: BatchMessagesRequest & { cookie: string }): Batc
 end
 
 --- Gets unread messages for the authenticated user.
-local function getTotalUnreadMessages(with: { cookie: string }): UnreadMessagesCountResponse
+local function getTotalUnread(with: { cookie: string }): UnreadMessagesCountResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/messages/unread/count`,
@@ -171,7 +171,7 @@ local function markAsUnread(with: BatchMessagesRequest & { cookie: string }): Ba
 end
 
 --- Unarchives a batch of messages.
-local function unarchiveMessages(with: BatchMessagesRequest & { cookie: string }): BatchMessagesResponse
+local function unarchive(with: BatchMessagesRequest & { cookie: string }): BatchMessagesResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/unarchive`,
@@ -212,7 +212,7 @@ local function getMessage(with: { messageId: number, cookie: string }): MessageD
 end
 
 --- Archives a batch of messages.
-local function archiveMessages(with: BatchMessagesRequest & { cookie: string }): BatchMessagesResponse
+local function archive(with: BatchMessagesRequest & { cookie: string }): BatchMessagesResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/archive`,
@@ -227,14 +227,14 @@ end
 
 return {
 	markAsRead = markAsRead,
-	getTotalUnreadMessages = getTotalUnreadMessages,
+	getTotalUnread = getTotalUnread,
 	getAnnouncementMetadata = getAnnouncementMetadata,
 	canMessage = canMessage,
 	getMessages = getMessages,
 	getAnnouncements = getAnnouncements,
 	markAsUnread = markAsUnread,
-	unarchiveMessages = unarchiveMessages,
+	unarchive = unarchive,
 	sendMessage = sendMessage,
 	getMessage = getMessage,
-	archiveMessages = archiveMessages,
+	archive = archive,
 }
