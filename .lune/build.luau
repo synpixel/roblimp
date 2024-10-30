@@ -162,7 +162,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/users/{targetUserId}/unfriend"] = { post = "unfriend" },
 	},
 	games = {
-		["/v1/games"] = { get = "getGames" },
+		["/v1/games"] = { get = "getUniverses" },
 		["/v1/games/{placeId}/private-servers"] = { get = "getPrivateServersFor" },
 		["/v1/games/{placeId}/servers/{serverType}"] = { get = "getServers" },
 		["/v1/games/{universeId}/favorites"] = { get = "isFavorited", post = "favorite" },
@@ -186,8 +186,8 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/vip-servers/{id}/voicesettings"] = { patch = "updateVoiceSettings" },
 		["/v1/games/{universeId}/user-votes"] = { patch = "vote" },
 		["/v2/games/{universeId}/media"] = { get = "getMedia" },
-		["/v2/groups/{groupId}/gamesV2"] = { get = "getGamesByGroup" },
-		["/v2/users/{userId}/games"] = { get = "getGamesBy" },
+		["/v2/groups/{groupId}/gamesV2"] = { get = "getUniversesByGroup" },
+		["/v2/users/{userId}/games"] = { get = "getUniversesBy" },
 	},
 	groups = {
 		["/v1/groups/metadata"] = { get = "getMetadata" },

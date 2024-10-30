@@ -555,7 +555,7 @@ local function getGamepasses(
 end
 
 --- Gets a list of games' detail
-local function getGames(with: { universeIds: { number } }): GameDetailResponsePages
+local function getUniverses(with: { universeIds: { number } }): GameDetailResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games?universeIds={table.concat(with.universeIds, "&universeIds=")}`,
@@ -724,15 +724,13 @@ local function isFavorited(with: { universeId: number, cookie: string }): GameFa
 end
 
 --- Gets games created by the specified user.
-local function getGamesBy(
-	with: {
-		userId: number,
-		accessFilter: number?,
-		limit: number?,
-		cursor: string?,
-		sortOrder: "Asc" | "Desc"?,
-	}
-): GameResponseV2Pages
+local function getUniversesBy(with: {
+	userId: number,
+	accessFilter: number?,
+	limit: number?,
+	cursor: string?,
+	sortOrder: "Asc" | "Desc"?,
+}): GameResponseV2Pages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/users/{with.userId}/games?accessFilter={with.accessFilter or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -758,7 +756,7 @@ local function getMedia(with: { universeId: number }): GameMediaItemResponseV2Pa
 end
 
 --- Gets games created by the specified group. This will replace V1 after validation. Note that this can only used for public/all universes.
-local function getGamesByGroup(with: {
+local function getUniversesByGroup(with: {
 	groupId: number,
 	accessFilter: number?,
 	limit: number?,
@@ -787,12 +785,12 @@ return {
 	getPrivateServersFor = getPrivateServersFor,
 	arePrivateServersEnabled = arePrivateServersEnabled,
 	getVotes = getVotes,
-	getGamesBy = getGamesBy,
+	getUniversesBy = getUniversesBy,
 	getVote = getVote,
 	createPrivateServer = createPrivateServer,
 	getProductInfo = getProductInfo,
 	getGamepasses = getGamepasses,
-	getGames = getGames,
+	getUniverses = getUniverses,
 	vote = vote,
 	getPrivateServers = getPrivateServers,
 	getOwnedPrivateServers = getOwnedPrivateServers,
@@ -802,7 +800,7 @@ return {
 	updateSubscription = updateSubscription,
 	updateVoiceSettings = updateVoiceSettings,
 	getPlaceDetails = getPlaceDetails,
-	getGamesByGroup = getGamesByGroup,
+	getUniversesByGroup = getUniversesByGroup,
 	favorite = favorite,
 	isFavorited = isFavorited,
 }
