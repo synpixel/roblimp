@@ -71,9 +71,4 @@ local function getFollowingsOf(with: { userId: number, cookie: string }): Follow
 	return serde.decode("json", response.body)
 end
 
-return {
-	getFollowingStatus = getFollowingStatus,
-	getFollowingsOf = getFollowingsOf,
-	follow = follow,
-	unfollow = unfollow,
-}
+return { getFollowingStatus = getFollowingStatus, getFollowingsOf = getFollowingsOf, follow = follow, unfollow = unfollow }

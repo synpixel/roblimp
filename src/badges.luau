@@ -173,7 +173,7 @@ local function getFreeBadgesQuota(with: { universeId: number }): number
 end
 
 --- Removes a badge from the user.
-local function removeBadgeFromUser(with: { userId: number, badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function removeBadgeFrom(with: { userId: number, badgeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://badges.roblox.com/v1/user/{with.userId}/badges/{with.badgeId}`,
@@ -272,7 +272,7 @@ return {
 	updateBadge = updateBadge,
 	getBadge = getBadge,
 	getFreeBadgesQuota = getFreeBadgesQuota,
-	removeBadgeFromUser = removeBadgeFromUser,
+	removeBadgeFrom = removeBadgeFrom,
 	getMetadata = getMetadata,
 	createBadge = createBadge,
 	getBadgesFor = getBadgesFor,

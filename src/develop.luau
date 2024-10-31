@@ -253,14 +253,8 @@ export type StringPages = { CursorRecipe: string, ExclusiveStartKeyInfo: StringP
 export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
 
 --- <no description>
-export type ScaleModel = {
-	bodyType: number,
-	head: number,
-	height: number,
-	depth: number,
-	proportion: number,
-	width: number,
-}
+export type ScaleModel =
+	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
 
 --- <no description>
 export type ApiEmptyResponseModel = {}

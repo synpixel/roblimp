@@ -135,12 +135,8 @@ export type PushNotificationRegistration = {
 }
 
 --- <no description>
-export type PushNotificationClientMetadata = {
-	fallbackDelivered: boolean,
-	type: string,
-	detail: nil,
-	notificationId: string,
-}
+export type PushNotificationClientMetadata =
+	{ fallbackDelivered: boolean, type: string, detail: nil, notificationId: string }
 
 --- <no description>
 export type GetMetadataResponseModel = { statusMessage: string, metadata: PushNotificationClientMetadata }

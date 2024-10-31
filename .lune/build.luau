@@ -77,7 +77,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/users/{userId}/badges"] = { get = "getBadgesOf" },
 		["/v1/users/{userId}/badges/awarded-dates"] = { get = "getBadgeAwardedTimestamps" },
 		["/v1/user/badges/{badgeId}"] = { delete = "removeBadge" },
-		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeBadgeFromUser" },
+		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeBadgeFrom" },
 	},
 	chat = {
 		["/v2/metadata"] = { get = "getMetadata" },
