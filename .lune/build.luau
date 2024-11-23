@@ -83,6 +83,8 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeFrom" },
 	},
 	catalog = {
+		["/v1/bundles/{bundleId}/details"] = { get = "bundle" },
+		["/v1/bundles/details"] = { get = "bundles" },
 		["/v1/users/{userId}/bundles"] = { get = "bundlesOf" },
 		["/v1/catalog/items/details"] = { post = "items" },
 		["/v2/search/items/details"] = { get = "search" },
@@ -90,7 +92,7 @@ local mappings: { [string]: EndpointMappings } = {
 	chat = {
 		["/v2/metadata"] = { get = "metadata" },
 		["/v2/chat-settings"] = { get = "settings" },
-		["/v2/get-conversations"] = { get = "multipleConversations" },
+		["/v2/get-conversations"] = { get = "conversations" },
 		["/v2/get-messages"] = { get = "messages" },
 		["/v2/get-rollout-settings"] = { get = "rolloutSettings" },
 		["/v2/get-unread-conversation-count"] = { get = "countUnreadConversations" },
@@ -374,6 +376,13 @@ local function resolveOpenApiDefinition(namespace: string, version: number): Ope
 
 	local body = serde.decode("json", response.body) :: { pageProps: { data: { content: OpenApiDefinition } } }
 	local openapi = body.pageProps.data.content
+
+	-- manually patch endpoints with bad documentation
+	for endpoint, routes in openapi.paths do
+		if namespace == "catalog" and endpoint == "/v1/users/{userId}/bundles" then
+			routes.get.responses["403"] = { description = "0: Token Validation Failed" }
+		end
+	end
 
 	return openapi
 end

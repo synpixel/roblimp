@@ -515,7 +515,7 @@ end
 
 --- Gets conversations for the conversationIds specified in the parameters
 --- @within chat
-local function multipleConversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
+local function conversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-conversations?conversationIds={table.concat(
@@ -693,7 +693,7 @@ return {
 	metadata = metadata,
 	latestMessages = latestMessages,
 	setTypingStatus = setTypingStatus,
-	multipleConversations = multipleConversations,
+	conversations = conversations,
 	messages = messages,
 	sendMessage = sendMessage,
 	createGroupConversation = createGroupConversation,

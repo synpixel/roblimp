@@ -329,6 +329,19 @@ export type ElasticsearchDebugInfo = {
 	isTerminatedEarly: boolean,
 }
 
+--- Returns details about the given bundleId.
+--- @within catalog
+local function bundle(with: { bundleId: number }): BundleDetailsModel
+	local response = requestWithCsrfToken({
+		method = "GET",
+		url = `https://catalog.roblox.com/v1/bundles/{with.bundleId}/details`,
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
 --- Returns list of item details.
 --- @within catalog
 local function items(with: MultigetItemDetailsRequestModel & { cookie: string }): { CatalogSearchDetailedResponseItem }
@@ -344,14 +357,28 @@ local function items(with: MultigetItemDetailsRequestModel & { cookie: string })
 	return serde.decode("json", response.body).data
 end
 
+--- Returns details about the given bundleIds.
+--- @within catalog
+local function bundles(with: { bundleIds: { number } }): { BundleDetailsModel }
+	local response = requestWithCsrfToken({
+		method = "GET",
+		url = `https://catalog.roblox.com/v1/bundles/details?bundleIds={table.concat(with.bundleIds, "&bundleIds=")}`,
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
 --- Lists the bundles owned by a given user.
 --- @within catalog
 local function bundlesOf(
-	with: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+	with: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): OwnedBundleModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/users/{with.userId}/bundles?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -395,4 +422,4 @@ local function search(with: {
 	return serde.decode("json", response.body)
 end
 
-return { items = items, bundlesOf = bundlesOf, search = search }
+return { bundle = bundle, items = items, search = search, bundles = bundles, bundlesOf = bundlesOf }
