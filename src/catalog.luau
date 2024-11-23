@@ -344,6 +344,21 @@ local function items(with: MultigetItemDetailsRequestModel & { cookie: string })
 	return serde.decode("json", response.body).data
 end
 
+--- Lists the bundles owned by a given user.
+--- @within catalog
+local function bundlesOf(
+	with: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+): OwnedBundleModelPages
+	local response = requestWithCsrfToken({
+		method = "GET",
+		url = `https://catalog.roblox.com/v1/users/{with.userId}/bundles?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
 --- Search for catalog items.
 --- @within catalog
 local function search(with: {
@@ -380,4 +395,4 @@ local function search(with: {
 	return serde.decode("json", response.body)
 end
 
-return { items = items, search = search }
+return { items = items, bundlesOf = bundlesOf, search = search }

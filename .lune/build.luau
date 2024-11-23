@@ -83,6 +83,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeFrom" },
 	},
 	catalog = {
+		["/v1/users/{userId}/bundles"] = { get = "bundlesOf" },
 		["/v1/catalog/items/details"] = { post = "items" },
 		["/v2/search/items/details"] = { get = "search" },
 	},
