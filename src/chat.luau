@@ -337,7 +337,7 @@ local function setTypingStatus(with: UpdateUserTypingStatusRequest & { cookie: s
 end
 
 --- Gets conversations for the conversationIds specified in the parameters
-local function conversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
+local function multipleConversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-conversations?conversationIds={table.concat(
@@ -398,7 +398,7 @@ local function createGroupConversation(
 end
 
 --- Gets all conversations associated with the logged-in User
-local function conversations(with: { pageNumber: number, pageSize: number, cookie: string }): { Conversation }
+local function allConversations(with: { pageNumber: number, pageSize: number, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-user-conversations?pageNumber={with.pageNumber}&pageSize={with.pageSize}`,
@@ -505,11 +505,11 @@ return {
 	metadata = metadata,
 	latestMessages = latestMessages,
 	setTypingStatus = setTypingStatus,
-	conversations = conversations,
+	multipleConversations = multipleConversations,
 	messages = messages,
 	sendMessage = sendMessage,
 	createGroupConversation = createGroupConversation,
-	conversations = conversations,
+	allConversations = allConversations,
 	markAsRead = markAsRead,
 	removeFromConversation = removeFromConversation,
 	renameConversation = renameConversation,
