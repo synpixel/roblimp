@@ -929,7 +929,6 @@ local function configurationMetadata(): GroupConfigurationDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/configuration/metadata`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -946,7 +945,6 @@ local function metadata(): GroupsDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/metadata`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1178,7 +1176,6 @@ local function users(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/users?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1252,7 +1249,6 @@ local function relationships(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}?startRowIndex={with.startRowIndex}&maxRows={with.maxRows}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1288,7 +1284,6 @@ local function searchMetadata(): GroupSearchMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/metadata`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1476,7 +1471,6 @@ local function guestPermissions(with: { groupId: number }): GroupPermissionsResp
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/roles/guest/permissions`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1506,7 +1500,6 @@ local function membership(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/membership?includeNotificationPreferences={with.includeNotificationPreferences}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1624,7 +1617,6 @@ local function lookup(with: { groupName: string }): { GroupBasicResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/lookup?groupName={with.groupName}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1638,7 +1630,6 @@ local function get(with: { groupId: number }): GroupDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1774,7 +1765,6 @@ local function search(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search?keyword={with.keyword}&prioritizeExactMatch={with.prioritizeExactMatch or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1902,7 +1892,6 @@ local function primary(with: { userId: number }): GroupMembershipDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/users/{with.userId}/groups/primary/role`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1916,7 +1905,6 @@ local function roles(with: { ids: { number } }): { GroupRoleDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/roles?ids={table.concat(with.ids, "&ids=")}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1990,7 +1978,6 @@ local function multiple(with: { groupIds: { number } }): { GroupResponseV2 }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/groups?groupIds={table.concat(with.groupIds, "&groupIds=")}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -2006,7 +1993,6 @@ local function rolesOf(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/users/{with.userId}/groups/roles?includeLocked={with.includeLocked}&includeNotificationPreferences={with.includeNotificationPreferences}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

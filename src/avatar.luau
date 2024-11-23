@@ -678,7 +678,6 @@ local function rules(): AvatarRulesModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar-rules`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -751,7 +750,6 @@ local function metadata(): AvatarMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar/metadata`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -765,7 +763,6 @@ local function assetsWorn(with: { userId: number }): { number }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/users/{with.userId}/currently-wearing`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -807,7 +804,6 @@ local function of(with: { userId: number }): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v2/avatar/users/{with.userId}/avatar`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -858,7 +854,6 @@ local function outfitsOf(with: {
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v2/avatar/users/{with.userId}/outfits?paginationToken={with.paginationToken or ""}&outfitType={with.outfitType or ""}&page={with.page or ""}&itemsPerPage={with.itemsPerPage or ""}&isEditable={with.isEditable or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

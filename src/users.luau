@@ -232,7 +232,6 @@ local function search(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/search?keyword={with.keyword}&sessionId={with.sessionId or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -246,7 +245,6 @@ local function get(with: { userId: number }): GetUserResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/{with.userId}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -320,7 +318,6 @@ local function usernameHistory(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/{with.userId}/username-history?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

@@ -232,7 +232,6 @@ local function favorites(with: { userId: number }): { AssetsExplorerCategoryMode
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{with.userId}/categories/favorites`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -246,7 +245,6 @@ local function canView(with: { userId: number }): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{with.userId}/can-view-inventory`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -297,7 +295,6 @@ local function categories(with: { userId: number }): { AssetsExplorerCategoryMod
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{with.userId}/categories`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -311,7 +308,6 @@ local function owns(with: { userId: number, itemType: number, itemTargetId: numb
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{with.userId}/items/{with.itemType}/{with.itemTargetId}/is-owned`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

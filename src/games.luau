@@ -656,7 +656,6 @@ local function servers(with: {
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.placeId}/servers/{with.serverType}?sortOrder={with.sortOrder or ""}&excludeFullGames={with.excludeFullGames or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -670,7 +669,6 @@ local function favorites(with: { universeId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.universeId}/favorites/count`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -716,7 +714,6 @@ local function playability(with: { universeIds: { number } }): { PlayabilityStat
 			with.universeIds,
 			"&universeIds="
 		)}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -749,7 +746,6 @@ local function privatesIn(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.placeId}/private-servers?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -763,7 +759,6 @@ local function arePrivatesEnabled(with: { universeId: number }): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/private-servers/enabled-in-universe/{with.universeId}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -777,7 +772,6 @@ local function votes(with: { universeIds: { number } }): { GameVoteResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/votes?universeIds={table.concat(with.universeIds, "&universeIds=")}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -823,7 +817,6 @@ local function products(with: { universeIds: { number } }): { GameProductRespons
 			with.universeIds,
 			"&universeIds="
 		)}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -839,7 +832,6 @@ local function gamepasses(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.universeId}/game-passes?limit={with.limit}&sortOrder={with.sortOrder or ""}&cursor={with.cursor or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -853,7 +845,6 @@ local function multiple(with: { universeIds: { number } }): { GameDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games?universeIds={table.concat(with.universeIds, "&universeIds=")}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -920,7 +911,6 @@ local function recommendations(with: {
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/recommendations/game/{with.universeId}?paginationKey={with.paginationKey}&maxRows={with.maxRows}&isTruncatedResultsEnabled={with.isTruncatedResultsEnabled}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1028,7 +1018,6 @@ local function of(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/users/{with.userId}/games?accessFilter={with.accessFilter or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1042,7 +1031,6 @@ local function media(with: { universeId: number }): { GameMediaItemResponseV2 }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/games/{with.universeId}/media`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -1064,7 +1052,6 @@ local function ofGroup(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/groups/{with.groupId}/gamesV2?accessFilter={with.accessFilter or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

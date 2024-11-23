@@ -661,17 +661,19 @@ for namespace, definitions in mappings do
 
 				file ..= `url = \`https://{openapi.host}{patchEndpoint}\`,\n`
 
-				file ..= "headers = {"
+				if consumesJson or needsCookie then
+					file ..= "headers = {"
 
-				if consumesJson then
-					file ..= '["Content-Type"] = "application/json",'
+					if consumesJson then
+						file ..= '["Content-Type"] = "application/json",'
+					end
+
+					if needsCookie then
+						file ..= "Cookie = `.ROBLOSECURITY={with.cookie}`,"
+					end
+
+					file ..= "},\n"
 				end
-
-				if needsCookie then
-					file ..= "Cookie = `.ROBLOSECURITY={with.cookie}`,"
-				end
-
-				file ..= "},\n"
 
 				if consumesJson then
 					file ..= 'body = serde.encode("json", with),\n'

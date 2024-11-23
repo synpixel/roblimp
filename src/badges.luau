@@ -230,7 +230,6 @@ local function awardedTimestamps(with: { userId: number, badgeIds: { number } })
 			with.badgeIds,
 			"&badgeIds="
 		)}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -259,7 +258,6 @@ local function get(with: { badgeId: number }): BadgeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/{with.badgeId}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -273,7 +271,6 @@ local function freeQuota(with: { universeId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/universes/{with.universeId}/free-badges-quota`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -301,7 +298,6 @@ local function metadata(): BadgeMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/metadata`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -344,7 +340,6 @@ local function universe(with: {
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/universes/{with.universeId}/badges?sortBy={with.sortBy or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -374,7 +369,6 @@ local function of(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/users/{with.userId}/badges?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

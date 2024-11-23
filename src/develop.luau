@@ -579,7 +579,6 @@ local function plugins(with: { pluginIds: { number } }): { PluginResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/plugins?pluginIds={table.concat(with.pluginIds, "&pluginIds=")}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -652,7 +651,6 @@ local function ofGroup(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/groups/{with.groupId}/universes?isArchived={with.isArchived or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -666,7 +664,6 @@ local function templates(): { GameTemplateModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/gametemplates`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -700,7 +697,6 @@ local function places(with: {
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/universes/{with.universeId}/places?isUniverseCreation={with.isUniverseCreation or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

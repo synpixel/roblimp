@@ -336,7 +336,6 @@ local function countFriendsOf(with: { userId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/count`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -349,7 +348,6 @@ local function metadata(with: { targetUserId: number? }): FriendsPageMetadataRes
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/metadata?targetUserId={with.targetUserId or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -521,7 +519,6 @@ local function countFollowingsOf(with: { targetUserId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followings/count`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -593,7 +590,6 @@ local function friendsOf(with: { userId: number, userSort: number? }): { UserRes
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends?userSort={with.userSort or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -609,7 +605,6 @@ local function friendshipsOf(
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/find?userSort={with.userSort or ""}&cursor={with.cursor or ""}&limit={with.limit or ""}`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -637,7 +632,6 @@ local function countFollowersOf(with: { targetUserId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followers/count`,
-		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
