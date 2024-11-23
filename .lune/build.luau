@@ -296,7 +296,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v2/push-notifications/chrome-manifest"] = { get = "chromeManifest" },
 		["/v2/push-notifications/get-current-device-destination"] = { get = "destination" },
 		["/v2/push-notifications/get-destinations"] = { get = "destinations" },
-		["/v2/push-notifications/notification-ids"] = { get = "notifications" },
+		["/v2/push-notifications/notification-ids"] = { get = "multiple" },
 		["/v2/stream-notifications/get-latest-game-updates"] = { get = "latestGameUpdates" },
 		["/v2/stream-notifications/get-recent"] = { get = "recent" },
 		["/v2/stream-notifications/unread-count"] = { get = "countUnread" },
@@ -376,13 +376,6 @@ local function resolveOpenApiDefinition(namespace: string, version: number): Ope
 
 	local body = serde.decode("json", response.body) :: { pageProps: { data: { content: OpenApiDefinition } } }
 	local openapi = body.pageProps.data.content
-
-	-- manually patch endpoints with bad documentation
-	for endpoint, routes in openapi.paths do
-		if namespace == "catalog" and endpoint == "/v1/users/{userId}/bundles" then
-			routes.get.responses["403"] = { description = "0: Token Validation Failed" }
-		end
-	end
 
 	return openapi
 end
@@ -597,10 +590,6 @@ for namespace, definitions in mappings do
 					end
 				end
 
-				if needsCookie then
-					table.insert(parameters, { name = "cookie", type = "string" })
-				end
-
 				if route.summary ~= nil then
 					local patchSummary = route.summary:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
 					file ..= `{patchSummary}\n`
@@ -636,17 +625,20 @@ for namespace, definitions in mappings do
 					end
 				end
 
+				local cookieParameter = if needsCookie then "cookie: string" else "cookie: string?"
+
 				if onlyParameter ~= nil then
 					local parameterName = onlyParameter.name:sub(1, 1):lower() .. onlyParameter.name:sub(2)
-					file ..= `local function {name}({parameterName}: {translateOpenApiType(onlyParameter)}): {patchModelName}\n`
+					file ..= `local function {name}({parameterName}: {translateOpenApiType(onlyParameter)}, {cookieParameter}): {patchModelName}\n`
 				elseif firstKey == nil and bodyParameter ~= nil then
 					file ..= `local function {name}(`
 
 					if consumesJson then
 						file ..= `request: {translateOpenApiType(bodyParameter.schema)}`
+						file ..= ", "
 					end
 
-					file ..= `): {patchModelName}\n`
+					file ..= `{cookieParameter}): {patchModelName}\n`
 				else
 					file ..= `local function {name}(request:`
 
@@ -660,7 +652,7 @@ for namespace, definitions in mappings do
 						file ..= `{parameter.name}: {parameter.type},`
 					end
 
-					file ..= `}): {patchModelName}\n`
+					file ..= `}, {cookieParameter}): {patchModelName}\n`
 				end
 
 				local function readRequest(field: string): string
@@ -699,19 +691,19 @@ for namespace, definitions in mappings do
 
 				file ..= `url = \`https://{openapi.host}{patchEndpoint}\`,\n`
 
-				if consumesJson or needsCookie then
-					file ..= "headers = {"
+				file ..= "headers = {"
 
-					if consumesJson then
-						file ..= '["Content-Type"] = "application/json",'
-					end
-
-					if needsCookie then
-						file ..= `Cookie = \`.ROBLOSECURITY=\{{readRequest("cookie")}\}\`,`
-					end
-
-					file ..= "},\n"
+				if consumesJson then
+					file ..= '["Content-Type"] = "application/json",'
 				end
+
+				if needsCookie then
+					file ..= "Cookie = `.ROBLOSECURITY={cookie}`,"
+				else
+					file ..= 'Cookie = `.ROBLOSECURITY={cookie or ""}`,'
+				end
+
+				file ..= "},\n"
 
 				if consumesJson then
 					if onlyParameter == nil then

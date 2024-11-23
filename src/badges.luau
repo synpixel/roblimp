@@ -223,13 +223,17 @@ export type BadgeAwardStatisticsResponse = { pastDayAwardedCount: number, winRat
 
 --- Gets timestamps for when badges were awarded to a user.
 --- @within badges
-local function awardedTimestamps(request: { userId: number, badgeIds: { number } }): { BadgeAwardResponse }
+local function awardedTimestamps(
+	request: { userId: number, badgeIds: { number } },
+	cookie: string?
+): { BadgeAwardResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/users/{request.userId}/badges/awarded-dates?badgeIds={table.concat(
 			request.badgeIds,
 			"&badgeIds="
 		)}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -239,11 +243,11 @@ end
 
 --- Updates badge configuration.
 --- @within badges
-local function update(request: UpdateBadgeRequest & { badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function update(request: UpdateBadgeRequest & { badgeId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://badges.roblox.com/v1/badges/{request.badgeId}`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
 	})
 
@@ -254,10 +258,11 @@ end
 
 --- Gets badge information by the badge Id.
 --- @within badges
-local function get(badgeId: number): BadgeResponse
+local function get(badgeId: number, cookie: string?): BadgeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/{badgeId}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -267,10 +272,11 @@ end
 
 --- Gets the number of free badges left for the current UTC day by their awarding game.
 --- @within badges
-local function freeQuota(universeId: number): number
+local function freeQuota(universeId: number, cookie: string?): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/universes/{universeId}/free-badges-quota`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -280,11 +286,11 @@ end
 
 --- Removes a badge from the user.
 --- @within badges
-local function removeFrom(request: { userId: number, badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function removeFrom(request: { userId: number, badgeId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://badges.roblox.com/v1/user/{request.userId}/badges/{request.badgeId}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -294,10 +300,11 @@ end
 
 --- Gets metadata about the badges system.
 --- @within badges
-local function metadata(request: {}): BadgeMetadataResponse
+local function metadata(request: {}, cookie: string?): BadgeMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/metadata`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -307,20 +314,22 @@ end
 
 --- Creates a new badge.
 --- @within badges
-local function create(request: {
-	universeId: number,
-	name: string?,
-	description: string?,
-	paymentSourceType: number?,
-	files: buffer?,
-	expectedCost: number?,
-	isActive: boolean?,
-	cookie: string,
-}): BadgeResponseV2
+local function create(
+	request: {
+		universeId: number,
+		name: string?,
+		description: string?,
+		paymentSourceType: number?,
+		files: buffer?,
+		expectedCost: number?,
+		isActive: boolean?,
+	},
+	cookie: string
+): BadgeResponseV2
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://badges.roblox.com/v1/universes/{request.universeId}/badges?name={request.name or ""}&description={request.description or ""}&paymentSourceType={request.paymentSourceType or ""}&files={request.files or ""}&expectedCost={request.expectedCost or ""}&isActive={request.isActive or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -330,16 +339,20 @@ end
 
 --- Gets badges by their awarding game.
 --- @within badges
-local function universe(request: {
-	universeId: number,
-	sortBy: "Rank" | "DateCreated"?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-}): BadgeResponsePages
+local function universe(
+	request: {
+		universeId: number,
+		sortBy: "Rank" | "DateCreated"?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+	},
+	cookie: string?
+): BadgeResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/universes/{request.universeId}/badges?sortBy={request.sortBy or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -349,11 +362,11 @@ end
 
 --- Removes a badge from the authenticated user.
 --- @within badges
-local function remove(request: { badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function remove(badgeId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
-		url = `https://badges.roblox.com/v1/user/badges/{request.badgeId}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://badges.roblox.com/v1/user/badges/{badgeId}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -364,11 +377,13 @@ end
 --- Gets a list of badges a user has been awarded.
 --- @within badges
 local function of(
-	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
+	cookie: string?
 ): GetBadgesByUserResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/users/{request.userId}/badges?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

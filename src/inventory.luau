@@ -228,10 +228,11 @@ export type AssetOwnerResponse =
 
 --- Return favorites categories for a user
 --- @within inventory
-local function favorites(userId: number): { AssetsExplorerCategoryModel }
+local function favorites(userId: number, cookie: string?): { AssetsExplorerCategoryModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{userId}/categories/favorites`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -241,10 +242,11 @@ end
 
 --- Gets whether the specified user's inventory can be viewed.
 --- @within inventory
-local function canView(userId: number): boolean
+local function canView(userId: number, cookie: string?): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{userId}/can-view-inventory`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -254,18 +256,20 @@ end
 
 --- Gets all collectible assets owned by the specified user.
 --- @within inventory
-local function collectibles(request: {
-	userId: number,
-	assetType: number?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-	cookie: string,
-}): CollectibleUserAssetModelPages
+local function collectibles(
+	request: {
+		userId: number,
+		assetType: number?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+	},
+	cookie: string
+): CollectibleUserAssetModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{request.userId}/assets/collectibles?assetType={request.assetType or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -276,12 +280,13 @@ end
 --- Gets Created, MyGames, or OtherGames places inventory for a user
 --- @within inventory
 local function games(
-	request: { userId: number, placesTab: number, itemsPerPage: number, cursor: number, cookie: string }
+	request: { userId: number, placesTab: number, itemsPerPage: number, cursor: number },
+	cookie: string
 ): PlaceModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{request.userId}/places/inventory?placesTab={request.placesTab}&itemsPerPage={request.itemsPerPage}&cursor={request.cursor}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -291,10 +296,11 @@ end
 
 --- Return inventory categories for a user
 --- @within inventory
-local function categories(userId: number): { AssetsExplorerCategoryModel }
+local function categories(userId: number, cookie: string?): { AssetsExplorerCategoryModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{userId}/categories`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -304,10 +310,11 @@ end
 
 --- Gets whether a user owns an item of type itemType with id itemTargetId.
 --- @within inventory
-local function owns(request: { userId: number, itemType: number, itemTargetId: number }): boolean
+local function owns(request: { userId: number, itemType: number, itemTargetId: number }, cookie: string?): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{request.userId}/items/{request.itemType}/{request.itemTargetId}/is-owned`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -317,99 +324,101 @@ end
 
 --- Get user's inventory by multiple Roblox.Platform.Assets.AssetType.
 --- @within inventory
-local function of(request: {
-	userId: number,
-	assetTypes: {
-		"Image"
-		| "TShirt"
-		| "Audio"
-		| "Mesh"
-		| "Lua"
-		| "HTML"
-		| "Text"
-		| "Hat"
-		| "Place"
-		| "Model"
-		| "Shirt"
-		| "Pants"
-		| "Decal"
-		| "Avatar"
-		| "Head"
-		| "Face"
-		| "Gear"
-		| "Badge"
-		| "GroupEmblem"
-		| "Animation"
-		| "Arms"
-		| "Legs"
-		| "Torso"
-		| "RightArm"
-		| "LeftArm"
-		| "LeftLeg"
-		| "RightLeg"
-		| "Package"
-		| "YouTubeVideo"
-		| "GamePass"
-		| "App"
-		| "Code"
-		| "Plugin"
-		| "SolidModel"
-		| "MeshPart"
-		| "HairAccessory"
-		| "FaceAccessory"
-		| "NeckAccessory"
-		| "ShoulderAccessory"
-		| "FrontAccessory"
-		| "BackAccessory"
-		| "WaistAccessory"
-		| "ClimbAnimation"
-		| "DeathAnimation"
-		| "FallAnimation"
-		| "IdleAnimation"
-		| "JumpAnimation"
-		| "RunAnimation"
-		| "SwimAnimation"
-		| "WalkAnimation"
-		| "PoseAnimation"
-		| "LocalizationTableManifest"
-		| "LocalizationTableTranslation"
-		| "EmoteAnimation"
-		| "Video"
-		| "TexturePack"
-		| "TShirtAccessory"
-		| "ShirtAccessory"
-		| "PantsAccessory"
-		| "JacketAccessory"
-		| "SweaterAccessory"
-		| "ShortsAccessory"
-		| "LeftShoeAccessory"
-		| "RightShoeAccessory"
-		| "DressSkirtAccessory"
-		| "FontFamily"
-		| "FontFace"
-		| "MeshHiddenSurfaceRemoval"
-		| "EyebrowAccessory"
-		| "EyelashAccessory"
-		| "MoodAnimation"
-		| "DynamicHead"
-		| "CodeSnippet"
-		| "AdsVideo"
-		| "OtaUpdate"
+local function of(
+	request: {
+		userId: number,
+		assetTypes: {
+			"Image"
+			| "TShirt"
+			| "Audio"
+			| "Mesh"
+			| "Lua"
+			| "HTML"
+			| "Text"
+			| "Hat"
+			| "Place"
+			| "Model"
+			| "Shirt"
+			| "Pants"
+			| "Decal"
+			| "Avatar"
+			| "Head"
+			| "Face"
+			| "Gear"
+			| "Badge"
+			| "GroupEmblem"
+			| "Animation"
+			| "Arms"
+			| "Legs"
+			| "Torso"
+			| "RightArm"
+			| "LeftArm"
+			| "LeftLeg"
+			| "RightLeg"
+			| "Package"
+			| "YouTubeVideo"
+			| "GamePass"
+			| "App"
+			| "Code"
+			| "Plugin"
+			| "SolidModel"
+			| "MeshPart"
+			| "HairAccessory"
+			| "FaceAccessory"
+			| "NeckAccessory"
+			| "ShoulderAccessory"
+			| "FrontAccessory"
+			| "BackAccessory"
+			| "WaistAccessory"
+			| "ClimbAnimation"
+			| "DeathAnimation"
+			| "FallAnimation"
+			| "IdleAnimation"
+			| "JumpAnimation"
+			| "RunAnimation"
+			| "SwimAnimation"
+			| "WalkAnimation"
+			| "PoseAnimation"
+			| "LocalizationTableManifest"
+			| "LocalizationTableTranslation"
+			| "EmoteAnimation"
+			| "Video"
+			| "TexturePack"
+			| "TShirtAccessory"
+			| "ShirtAccessory"
+			| "PantsAccessory"
+			| "JacketAccessory"
+			| "SweaterAccessory"
+			| "ShortsAccessory"
+			| "LeftShoeAccessory"
+			| "RightShoeAccessory"
+			| "DressSkirtAccessory"
+			| "FontFamily"
+			| "FontFace"
+			| "MeshHiddenSurfaceRemoval"
+			| "EyebrowAccessory"
+			| "EyelashAccessory"
+			| "MoodAnimation"
+			| "DynamicHead"
+			| "CodeSnippet"
+			| "AdsVideo"
+			| "OtaUpdate"
+		},
+		filterDisapprovedAssets: boolean?,
+		showApprovedOnly: boolean?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
 	},
-	filterDisapprovedAssets: boolean?,
-	showApprovedOnly: boolean?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-	cookie: string,
-}): UserAssetItemModelV2Pages
+	cookie: string
+): UserAssetItemModelV2Pages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v2/users/{request.userId}/inventory?assetTypes={table.concat(
 			request.assetTypes,
 			"&assetTypes="
 		)}&filterDisapprovedAssets={request.filterDisapprovedAssets or ""}&showApprovedOnly={request.showApprovedOnly or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -420,12 +429,13 @@ end
 --- Gets a list of owners of an asset.
 --- @within inventory
 local function owners(
-	request: { assetId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
+	request: { assetId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
+	cookie: string
 ): AssetOwnerResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v2/assets/{request.assetId}/owners?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -437,11 +447,11 @@ end
 --- Assets that are created by Roblox user or are limited edition are not eligible for deletion
 --- and will return NotEligibleForDelete.
 --- @within inventory
-local function remove(request: { assetId: number, cookie: string }): ApiEmptyResponseModel
+local function remove(assetId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
-		url = `https://inventory.roblox.com/v2/inventory/asset/{request.assetId}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://inventory.roblox.com/v2/inventory/asset/{assetId}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

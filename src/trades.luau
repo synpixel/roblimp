@@ -138,18 +138,13 @@ export type TradeOfferResponse = { robux: number, userAssets: { UserAssetRespons
 --- Fetches a list of the authenticated user's trades.
 --- @within trades
 local function all(
-	request: {
-		tradeStatusType: number,
-		limit: number?,
-		cursor: string?,
-		sortOrder: "Asc" | "Desc"?,
-		cookie: string,
-	}
+	request: { tradeStatusType: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
+	cookie: string
 ): TradeResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/{request.tradeStatusType}?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -159,11 +154,11 @@ end
 
 --- Accepts a trade.
 --- @within trades
-local function accept(request: { tradeId: number, cookie: string }): ApiEmptyResponseModel
+local function accept(tradeId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://trades.roblox.com/v1/trades/{request.tradeId}/accept`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://trades.roblox.com/v1/trades/{tradeId}/accept`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -173,7 +168,7 @@ end
 
 --- Gets metadata about the trade system.
 --- @within trades
-local function metadata(cookie: string): TradeMetadata
+local function metadata(request: {}, cookie: string): TradeMetadata
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/metadata`,
@@ -187,11 +182,11 @@ end
 
 --- Returns whether you can trade with another user.
 --- @within trades
-local function canSend(request: { userId: number, cookie: string }): CanTradeResponse
+local function canSend(userId: number, cookie: string): CanTradeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://trades.roblox.com/v1/users/{request.userId}/can-trade-with`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://trades.roblox.com/v1/users/{userId}/can-trade-with`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -201,11 +196,11 @@ end
 
 --- Gets detailed information about a trade.
 --- @within trades
-local function get(request: { tradeId: number, cookie: string }): TradeDetailResponse
+local function get(tradeId: number, cookie: string): TradeDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://trades.roblox.com/v1/trades/{request.tradeId}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://trades.roblox.com/v1/trades/{tradeId}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -215,12 +210,12 @@ end
 
 --- Sends a trade.
 --- @within trades
-local function send(request: TradeRequest & { cookie: string }): number
+local function send(offers: { TradeOfferRequest }, cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://trades.roblox.com/v1/trades/send`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
-		body = serde.encode("json", request),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
+		body = serde.encode("json", { offers = offers }),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -231,11 +226,11 @@ end
 --- Gets the total number of pending trades for the authenticated user.
 --- Inbound is the only accepted tradeStatusType.
 --- @within trades
-local function count(request: { tradeStatusType: number, cookie: string }): number
+local function count(tradeStatusType: number, cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://trades.roblox.com/v1/trades/{request.tradeStatusType}/count`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://trades.roblox.com/v1/trades/{tradeStatusType}/count`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -245,11 +240,11 @@ end
 
 --- Counters a trade.
 --- @within trades
-local function counter(request: TradeRequest & { tradeId: number, cookie: string }): number
+local function counter(request: TradeRequest & { tradeId: number }, cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://trades.roblox.com/v1/trades/{request.tradeId}/counter`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
 	})
 
@@ -260,11 +255,11 @@ end
 
 --- Declines a trade.
 --- @within trades
-local function decline(request: { tradeId: number, cookie: string }): ApiEmptyResponseModel
+local function decline(tradeId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://trades.roblox.com/v1/trades/{request.tradeId}/decline`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://trades.roblox.com/v1/trades/{tradeId}/decline`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

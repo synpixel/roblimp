@@ -561,11 +561,11 @@ export type UniverseSettingsRequestV2 = {
 
 --- Activates a universes.
 --- @within develop
-local function activate(request: { universeId: number, cookie: string }): ApiEmptyResponseModel
+local function activate(universeId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://develop.roblox.com/v1/universes/{request.universeId}/activate`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://develop.roblox.com/v1/universes/{universeId}/activate`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -575,10 +575,11 @@ end
 
 --- Gets plugin details by ids.
 --- @within develop
-local function plugins(pluginIds: { number }): { PluginResponse }
+local function plugins(pluginIds: { number }, cookie: string?): { PluginResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/plugins?pluginIds={table.concat(pluginIds, "&pluginIds=")}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -589,18 +590,13 @@ end
 --- Gets a list of universes for the authenticated user.
 --- @within develop
 local function multiple(
-	request: {
-		isArchived: boolean?,
-		limit: number?,
-		cursor: string?,
-		sortOrder: "Asc" | "Desc"?,
-		cookie: string,
-	}
+	request: { isArchived: boolean?, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
+	cookie: string
 ): UniverseModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/user/universes?isArchived={request.isArchived or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -611,12 +607,13 @@ end
 --- Updates a plugin.
 --- @within develop
 local function configurePlugin(
-	request: UpdatePluginRequest & { pluginId: number, cookie: string }
+	request: UpdatePluginRequest & { pluginId: number },
+	cookie: string
 ): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://develop.roblox.com/v1/plugins/{request.pluginId}`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
 	})
 
@@ -627,11 +624,11 @@ end
 
 --- Deactivates a universe.
 --- @within develop
-local function deactivate(request: { universeId: number, cookie: string }): ApiEmptyResponseModel
+local function deactivate(universeId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://develop.roblox.com/v1/universes/{request.universeId}/deactivate`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://develop.roblox.com/v1/universes/{universeId}/deactivate`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -648,11 +645,13 @@ local function ofGroup(
 		limit: number?,
 		cursor: string?,
 		sortOrder: "Asc" | "Desc"?,
-	}
+	},
+	cookie: string?
 ): UniverseModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/groups/{request.groupId}/universes?isArchived={request.isArchived or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -662,10 +661,11 @@ end
 
 --- Gets a page of templates that can be used to start off making games.
 --- @within develop
-local function templates(request: {}): { GameTemplateModel }
+local function templates(request: {}, cookie: string?): { GameTemplateModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/gametemplates`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -675,11 +675,11 @@ end
 
 --- Returns list of granted and declined permissions related to the universe with the id universeId for authenticated user
 --- @within develop
-local function permissions(request: { universeId: number, cookie: string }): UniversePermissionsModel
+local function permissions(universeId: number, cookie: string): UniversePermissionsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://develop.roblox.com/v1/universes/{request.universeId}/permissions`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://develop.roblox.com/v1/universes/{universeId}/permissions`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -689,16 +689,20 @@ end
 
 --- Gets a list of places for a universe.
 --- @within develop
-local function places(request: {
-	universeId: number,
-	isUniverseCreation: boolean?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-}): IPlaceModelPages
+local function places(
+	request: {
+		universeId: number,
+		isUniverseCreation: boolean?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+	},
+	cookie: string?
+): IPlaceModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/universes/{request.universeId}/places?isUniverseCreation={request.isUniverseCreation or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -710,12 +714,13 @@ end
 --- V2 Contains data for avatar scale and asset override.
 --- @within develop
 local function configure(
-	request: UniverseSettingsRequestV2 & { universeId: number, cookie: string }
+	request: UniverseSettingsRequestV2 & { universeId: number },
+	cookie: string
 ): UniverseSettingsResponseV2
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://develop.roblox.com/v2/universes/{request.universeId}/configuration`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
 	})
 
@@ -726,11 +731,11 @@ end
 
 --- Updates the place configuration for the place with the id placeId
 --- @within develop
-local function configurePlace(request: PlaceConfigurationModelV2 & { placeId: number, cookie: string }): PlaceModelV2
+local function configurePlace(request: PlaceConfigurationModelV2 & { placeId: number }, cookie: string): PlaceModelV2
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://develop.roblox.com/v2/places/{request.placeId}`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
 	})
 
@@ -741,11 +746,11 @@ end
 
 --- Gets the place configuration for the place with the id placeId
 --- @within develop
-local function place(request: { placeId: number, cookie: string }): PlaceModelV2
+local function place(placeId: number, cookie: string): PlaceModelV2
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://develop.roblox.com/v2/places/{request.placeId}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		url = `https://develop.roblox.com/v2/places/{placeId}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

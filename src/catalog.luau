@@ -331,10 +331,11 @@ export type ElasticsearchDebugInfo = {
 
 --- Returns details about the given bundleId.
 --- @within catalog
-local function bundle(bundleId: number): BundleDetailsModel
+local function bundle(bundleId: number, cookie: string?): BundleDetailsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/bundles/{bundleId}/details`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -344,14 +345,12 @@ end
 
 --- Returns list of item details.
 --- @within catalog
-local function items(
-	request: MultigetItemDetailsRequestModel & { cookie: string }
-): { CatalogSearchDetailedResponseItem }
+local function items(items: { MultigetItemDetailsRequestItem }, cookie: string): { CatalogSearchDetailedResponseItem }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://catalog.roblox.com/v1/catalog/items/details`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
-		body = serde.encode("json", request),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
+		body = serde.encode("json", { items = items }),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -361,10 +360,11 @@ end
 
 --- Returns details about the given bundleIds.
 --- @within catalog
-local function bundles(bundleIds: { number }): { BundleDetailsModel }
+local function bundles(bundleIds: { number }, cookie: string?): { BundleDetailsModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/bundles/details?bundleIds={table.concat(bundleIds, "&bundleIds=")}`,
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -375,12 +375,13 @@ end
 --- Lists the bundles owned by a given user.
 --- @within catalog
 local function bundlesOf(
-	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
+	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
+	cookie: string?
 ): OwnedBundleModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/users/{request.userId}/bundles?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -390,33 +391,35 @@ end
 
 --- Search for catalog items.
 --- @within catalog
-local function search(request: {
-	assetTypeIds: { number }?,
-	bundleTypeIds: { number }?,
-	sortAggregation: number?,
-	sortType: number?,
-	creatorType: number?,
-	creatorTargetId: number?,
-	creatorName: string?,
-	maxPrice: number?,
-	minPrice: number?,
-	keyword: string?,
-	includeNotForSale: boolean?,
-	triggeredByTopicDiscovery: boolean?,
-	salesTypeFilter: number?,
-	topics: string?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Desc"?,
-	cookie: string,
-}): CatalogSearchDetailedResponseItemPages
+local function search(
+	request: {
+		assetTypeIds: { number }?,
+		bundleTypeIds: { number }?,
+		sortAggregation: number?,
+		sortType: number?,
+		creatorType: number?,
+		creatorTargetId: number?,
+		creatorName: string?,
+		maxPrice: number?,
+		minPrice: number?,
+		keyword: string?,
+		includeNotForSale: boolean?,
+		triggeredByTopicDiscovery: boolean?,
+		salesTypeFilter: number?,
+		topics: string?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Desc"?,
+	},
+	cookie: string
+): CatalogSearchDetailedResponseItemPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v2/search/items/details?assetTypeIds={table.concat(
 			request.assetTypeIds or {},
 			"&assetTypeIds="
 		)}&bundleTypeIds={table.concat(request.bundleTypeIds or {}, "&bundleTypeIds=")}&sortAggregation={request.sortAggregation or ""}&sortType={request.sortType or ""}&creatorType={request.creatorType or ""}&creatorTargetId={request.creatorTargetId or ""}&creatorName={request.creatorName or ""}&maxPrice={request.maxPrice or ""}&minPrice={request.minPrice or ""}&keyword={request.keyword or ""}&includeNotForSale={request.includeNotForSale or ""}&triggeredByTopicDiscovery={request.triggeredByTopicDiscovery or ""}&salesTypeFilter={request.salesTypeFilter or ""}&topics={request.topics or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
