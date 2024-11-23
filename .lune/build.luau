@@ -298,6 +298,10 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v2/stream-notifications/clear-unread"] = { post = "clearUnread" },
 		["/v2/stream-notifications/game-update-notification-read"] = { post = "acknowledgeGameUpdate" },
 	},
+	premiumfeatures = {
+		-- /v1/users/{userId}/premium-upsell-precheck
+		["/v1/users/{userId}/validate-membership"] = { get = "has" },
+	},
 	presence = {
 		-- ["/v1/presence/last-online"] = { post = "getLastOnlineTimestamps" },
 		["/v1/presence/users"] = { post = "get" },
