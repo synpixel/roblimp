@@ -67,7 +67,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v2/avatar/users/{userId}/outfits"] = { get = "outfitsOf" },
 		["/v2/avatar/set-body-colors"] = { post = "setBodyColors" },
 		["/v2/avatar/set-wearing-assets"] = { post = "setAssetsWorn" },
-		["/v3/outfits/{userOutfitId}/details"] = { get = "outfitDetails" },
+		["/v3/outfits/{userOutfitId}/details"] = { get = "outfit" },
 		["/v3/outfits/create"] = { post = "createOutfit" },
 		["/v3/outfits/{userOutfitId}"] = { patch = "updateOutfit" },
 	},
@@ -80,6 +80,9 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/users/{userId}/badges/awarded-dates"] = { get = "awardedTimestamps" },
 		["/v1/user/badges/{badgeId}"] = { delete = "remove" },
 		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeFrom" },
+	},
+	catalog = {
+		["/v1/catalog/items/details"] = { post = "items" },
 	},
 	chat = {
 		["/v2/metadata"] = { get = "metadata" },
@@ -343,7 +346,6 @@ local function resolveOpenApiDefinition(namespace: string, version: number): Ope
 	local response = net.request(
 		`https://create.roblox.com/docs/_next/data/-lXptKM5ny0kISifArYeq/cloud/legacy/{namespace}/v{version}.json`
 	)
-
 	if response.statusCode == 404 then
 		return nil
 	end
@@ -451,6 +453,10 @@ for namespace, definitions in mappings do
 	end
 
 	for _, openapi in openapis do
+		if openapi.definitions == nil then
+			continue
+		end
+
 		for name, model in openapi.definitions do
 			if model.description ~= nil then
 				local patch = model.description:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
@@ -461,6 +467,7 @@ for namespace, definitions in mappings do
 
 			local patchName = patchOpenApiModelName(name)
 			if file:match(`export type {patchName} =`) ~= nil then
+				file ..= "\n"
 				continue
 			end
 
@@ -517,7 +524,7 @@ for namespace, definitions in mappings do
 					end
 				end
 
-				local needsCookie = route.responses["401"] ~= nil
+				local needsCookie = route.responses["401"] ~= nil or route.responses["403"] ~= nil
 
 				local parameters: { { name: string, type: string } } = {}
 				local bodyParameter
