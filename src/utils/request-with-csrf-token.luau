@@ -1,4 +1,4 @@
-local net = require("./net")
+local net = require("@lune/net")
 
 local csrfTokenCache = {}
 

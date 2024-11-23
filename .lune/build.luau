@@ -484,7 +484,7 @@ end
 for namespace, definitions in mappings do
 	local file = ""
 
-	file ..= `local serde = require("./utils/serde")\n`
+	file ..= `local serde = require("@lune/serde")\n`
 	file ..= `local requestWithCsrfToken = require("./utils/request-with-csrf-token")\n\n`
 
 	local openapis = {}

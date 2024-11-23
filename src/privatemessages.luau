@@ -1,4 +1,4 @@
-local serde = require("./utils/serde")
+local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
 --- [privatemessages.roblox.com](https://privatemessages.roblox.com)
