@@ -754,14 +754,7 @@ for namespace in mappings do
 	file ..= `local {namespace} = require("./{namespace}")\n`
 end
 
-file ..= "\n--- @class roblimp"
-
-for namespace in mappings do
-	file ..= `\n\n--- @prop {namespace} {namespace}\n`
-	file ..= "--- @within roblimp"
-end
-
-file ..= "\n\nreturn {"
+file ..= "\nreturn {"
 
 for namespace, _ in mappings do
 	file ..= `{namespace} = {namespace},`
