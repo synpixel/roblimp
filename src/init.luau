@@ -1,5 +1,6 @@
 local users = require("./users")
 local trades = require("./trades")
+local catalog = require("./catalog")
 local avatar = require("./avatar")
 local privatemessages = require("./privatemessages")
 local presence = require("./presence")
@@ -17,6 +18,7 @@ local develop = require("./develop")
 return {
 	users = users,
 	trades = trades,
+	catalog = catalog,
 	avatar = avatar,
 	privatemessages = privatemessages,
 	presence = presence,

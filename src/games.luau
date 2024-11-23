@@ -4,9 +4,6 @@ local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 --- Response model for getting whether a universe has private servers enabled.
 export type PrivateServersEnabledInUniverseResponse = { privateServersEnabled: boolean }
 
---- Parent class to derive custom data for each spotlight type.
-export type SpotlightTypeData = {}
-
 --- Response model for a VIP server place
 export type PlaceResponse = { id: number, name: string }
 
@@ -47,6 +44,9 @@ export type GameFavoriteResponse = { isFavorited: boolean }
 --- Response model for getting the game vote
 export type GameVoteResponse = { id: number, upVotes: number, downVotes: number }
 
+--- <no description>
+export type PurchaseData = { localizedFiatPrice: string, basePriceId: string }
+
 --- Response model for VIP server subscription.
 export type VipServerSubscriptionResponse = {
 	hasPriceChanged: boolean,
@@ -77,19 +77,8 @@ export type GameServerResponse = {
 --- Response model for a VIP server game.
 export type GameResponse = { id: number, name: string, rootPlace: PlaceResponse }
 
---- Response model for a spotlight game.
-export type GameSpotlightResponse = {
-	gameInfo: GameResponseModel,
-	spotlightActionText: string,
-	spotlightType: string,
-	spotlightTypeData: SpotlightTypeData,
-}
-
 --- Request model to update a VIP server.
 export type VipServerUpdateRequest = { newJoinCode: boolean, name: string, active: boolean }
-
---- <no description>
-export type GameServerResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GameServerResponse } }
 
 --- User Presences Response model
 export type PrivateServersResponse = { privateServerResponses: { GameServerResponse } }
@@ -100,12 +89,21 @@ export type GameDetailResponsePages = { data: { GameDetailResponse } }
 --- An create request for a vip server
 export type CreateVipServersRequest = { expectedPrice: number, name: string, isPurchaseConfirmed: boolean }
 
---- Thumbnail response model.
-export type Thumbnail =
-	{ universeId: number, cdnUrl: string, retryToken: string, url: string, placeId: number, final: boolean }
+--- Response model for a VIP server.
+export type VipServerResponse = {
+	active: boolean,
+	id: number,
+	subscription: VipServerSubscriptionResponse,
+	joinCode: string,
+	permissions: VipServerPermissionsResponse,
+	name: string,
+	game: GameResponse,
+	link: string,
+	voiceSettings: VipServerVoiceSettingsResponse,
+}
 
 --- <no description>
-export type GamePassResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GamePassResponse } }
+export type GameServerResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GameServerResponse } }
 
 --- Response model for games.
 export type GameResponseModel = {
@@ -132,10 +130,10 @@ export type GameResponseModel = {
 }
 
 --- <no description>
-export type GameVoteResponsePages = { data: { GameVoteResponse } }
+export type GamePassResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GamePassResponse } }
 
 --- <no description>
-export type GameSpotlightResponsePages = { data: { GameSpotlightResponse } }
+export type GameVoteResponsePages = { data: { GameVoteResponse } }
 
 --- <no description>
 export type GameProductResponsePages = { data: { GameProductResponse } }
@@ -149,23 +147,20 @@ export type GameProductResponse = {
 	isForSale: boolean,
 	price: number,
 	sellerId: number,
+	fiatPurchaseData: PurchaseData,
 	productId: number,
 }
 
 --- Response model for getting a universe's playability status for a user
-export type PlayabilityStatusResponse = { isPlayable: boolean, universeId: number, playabilityStatus: number }
-
---- Response model for getting game passes
-export type GamePassResponse = {
-	isOwned: boolean,
-	sellerName: string,
-	name: string,
-	productId: number,
-	id: number,
-	sellerId: number,
-	price: number,
-	displayName: string,
+export type PlayabilityStatusResponse = {
+	isPlayable: boolean,
+	universeId: number,
+	unplayableDisplayText: string,
+	playabilityStatus: number,
 }
+
+--- <no description>
+export type RefundPolicy = { locale: string, articleId: string, policyText: string, learnMoreBaseUrl: string }
 
 --- <no description>
 export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
@@ -180,6 +175,9 @@ export type GameDetailResponse = {
 	genre: string,
 	genre_l2: string,
 	updated: string,
+	refundPolicy: RefundPolicy,
+	localizedFiatPrice: string,
+	refundLink: string,
 	favoritedCount: number,
 	isFavoritedByUser: boolean,
 	playing: number,
@@ -236,17 +234,16 @@ export type VipServerUpdatePermissionsRequest = {
 --- Contains voice settings of a vip server
 export type VipServerVoiceSettingsResponse = { enabled: boolean }
 
---- Response model for a VIP server.
-export type VipServerResponse = {
-	active: boolean,
-	id: number,
-	subscription: VipServerSubscriptionResponse,
-	joinCode: string,
-	permissions: VipServerPermissionsResponse,
+--- Response model for getting game passes
+export type GamePassResponse = {
+	isOwned: boolean,
+	sellerName: string,
 	name: string,
-	game: GameResponse,
-	link: string,
-	voiceSettings: VipServerVoiceSettingsResponse,
+	productId: number,
+	id: number,
+	sellerId: number,
+	price: number,
+	displayName: string,
 }
 
 --- Response model for getting the game media item
@@ -269,6 +266,7 @@ export type PlaceDetails = {
 	reasonProhibited: string,
 	sourceName: string,
 	description: string,
+	fiatPurchaseData: PurchaseData,
 	builder: string,
 	placeId: number,
 	hasVerifiedBadge: boolean,
@@ -307,17 +305,7 @@ export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: nu
 --- <no description>
 export type Int32Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int32Pages }
 
---- A response model representing a game.
-export type GameResponseV2 = {
-	created: string,
-	updated: string,
-	name: string,
-	placeVisits: number,
-	id: number,
-	description: string,
-	creator: CreatorTypePages,
-	rootPlace: AssetTypePages,
-}
+--- <no description>
 
 --- Response model for getting the game media item
 export type GameMediaItemResponseV2 = {
@@ -334,15 +322,31 @@ export type GameMediaItemResponseV2 = {
 export type GameMediaItemResponseV2Pages = { data: { GameMediaItemResponseV2 } }
 
 --- <no description>
+
+--- <no description>
 export type GameResponseV2Pages = { nextPageCursor: string, previousPageCursor: string, data: { GameResponseV2 } }
 
 --- <no description>
+
 --- <no description>
---- <no description>
-export type CreatorTypePages = { id: number, type: number, name: string }
 
 --- <no description>
 export type AssetTypePages = { id: number, type: number, name: string }
+
+--- <no description>
+export type CreatorTypePages = { id: number, type: number, name: string }
+
+--- A response model representing a game.
+export type GameResponseV2 = {
+	created: string,
+	updated: string,
+	name: string,
+	placeVisits: number,
+	id: number,
+	description: string,
+	creator: CreatorTypePages,
+	rootPlace: AssetTypePages,
+}
 
 --- Get the game server list
 local function servers(with: {
@@ -418,19 +422,6 @@ local function playability(with: { universeIds: { number } }): { PlayabilityStat
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
 	return serde.decode("json", response.body)
-end
-
---- Gets games that the client should spotlight.
-local function spotlight(): { GameSpotlightResponse }
-	local response = requestWithCsrfToken({
-		method = "GET",
-		url = `https://games.roblox.com/v1/games/list-spotlight`,
-		headers = {},
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
 end
 
 --- Update friend/clan access and allowed friends/clan list

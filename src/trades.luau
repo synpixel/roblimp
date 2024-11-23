@@ -26,6 +26,7 @@ export type UserAssetResponse = {
 }
 
 --- <no description>
+
 --- <no description>
 export type CanTradeResponse = { canTrade: boolean, status: number }
 

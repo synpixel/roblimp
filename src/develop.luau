@@ -98,17 +98,20 @@ export type AssetVotingModel = {
 --- Model for UniverseSettings patch requests
 export type UniverseSettingsRequest = {
 	universeCollisionType: number,
-	isMeshTextureApiAccessAllowed: boolean,
 	price: number,
-	isFriendsOnly: boolean,
 	genre: number,
+	isMeshTextureApiAccessAllowed: boolean,
+	isFriendsOnly: boolean,
+	universeBodyType: number,
+	fiatBasePriceId: string,
+	fiatProductChangeType: number,
 	universeAvatarType: number,
 	universeScaleType: number,
-	playableDevices: { number },
+	isRewardedOnDemandAdsAllowed: boolean,
 	name: string,
 	isForSale: boolean,
+	playableDevices: { number },
 	isArchived: boolean,
-	universeBodyType: number,
 	universeJointPositioningType: number,
 	universeAnimationType: number,
 }
@@ -123,6 +126,7 @@ export type GroupModel = { id: number, name: string }
 export type TeamCreateMembershipRequest = { userId: number }
 
 --- <no description>
+
 --- A model containing information about a place to be configured
 export type PlaceConfigurationModel = { name: string, description: string }
 
@@ -133,6 +137,7 @@ export type UniverseIdPermissionsModelPages = { data: { UniverseIdPermissionsMod
 export type GroupModelPages = { data: { GroupModel } }
 
 --- <no description>
+
 --- A request model for updating a plugin.
 export type UpdatePluginRequest = { commentsEnabled: boolean, name: string, description: string }
 
@@ -146,14 +151,18 @@ export type UniverseSettingsResponse = {
 	genre: number,
 	isMeshTextureApiAccessAllowed: boolean,
 	isFriendsOnly: boolean,
-	universeBodyType: number,
+	isForSaleInFiat: boolean,
+	fiatModerationStatus: number,
+	fiatBasePriceId: string,
 	privacyType: string,
-	allowPrivateServers: boolean,
+	universeBodyType: number,
 	isStudioAccessToApisAllowed: boolean,
-	isArchived: boolean,
-	universeAvatarType: number,
+	allowPrivateServers: boolean,
 	universeScaleType: number,
 	playableDevices: { number },
+	universeAvatarType: number,
+	isRewardedOnDemandAdsAllowed: boolean,
+	isArchived: boolean,
 	name: string,
 	isForSale: boolean,
 	privateServerPrice: number,
@@ -172,16 +181,20 @@ export type UniverseSettingsResponseV2 = {
 	genre: number,
 	isMeshTextureApiAccessAllowed: boolean,
 	isFriendsOnly: boolean,
+	isForSaleInFiat: boolean,
 	universeAvatarMinScales: ScaleModel,
 	optInRegions: { UniverseModerationPolicyStatus },
+	fiatModerationStatus: number,
 	universeAvatarAssetOverrides: { UniverseAvatarAssetOverrideResponseModel },
+	fiatBasePriceId: string,
 	permissions: UniversePluginPermissions,
 	studioAccessToApisAllowed: boolean,
-	allowPrivateServers: boolean,
 	universeAvatarMaxScales: ScaleModel,
+	allowPrivateServers: boolean,
 	id: number,
-	universeAvatarType: number,
 	playableDevices: { number },
+	universeAvatarType: number,
+	isRewardedOnDemandAdsAllowed: boolean,
 	isArchived: boolean,
 	name: string,
 	isForSale: boolean,
@@ -243,6 +256,7 @@ export type AssetVersion = {
 }
 
 --- <no description>
+
 --- <no description>
 export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
 
@@ -251,6 +265,7 @@ export type ScaleModel =
 	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
 
 --- <no description>
+
 --- <no description>
 export type UniversePluginPermissions = {
 	IsThirdPartyTeleportAllowed: boolean,
@@ -267,14 +282,17 @@ export type UniverseSettingsRequestV2 = {
 	isFriendsOnly: boolean,
 	universeAvatarMinScales: ScaleModel,
 	optInRegions: { number },
+	fiatProductChangeType: number,
 	universeAvatarAssetOverrides: { UniverseAvatarAssetOverrideResponseModel },
-	universeAvatarMaxScales: ScaleModel,
+	fiatBasePriceId: string,
+	isArchived: boolean,
 	permissions: UniversePluginPermissions,
-	allowPrivateServers: boolean,
 	studioAccessToApisAllowed: boolean,
+	allowPrivateServers: boolean,
+	universeAvatarMaxScales: ScaleModel,
 	optOutRegions: { number },
 	universeAvatarType: number,
-	isArchived: boolean,
+	isRewardedOnDemandAdsAllowed: boolean,
 	playableDevices: { number },
 	name: string,
 	isForSale: boolean,

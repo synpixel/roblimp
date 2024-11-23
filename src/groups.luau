@@ -95,6 +95,7 @@ export type GroupMembershipMetadataResponse = {
 	isBannedFromGroup: boolean,
 	isNotificationsEnabled: boolean,
 	isPrimary: boolean,
+	IsBanEvading: boolean,
 	areEnemiesAllowed: boolean,
 	areGroupFundsVisible: boolean,
 }
@@ -232,10 +233,22 @@ export type GroupNameHistoryResponseItemPages = {
 }
 
 --- <no description>
+export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
+
+--- <no description>
 export type GroupPolicyRequest = { groupIds: { number } }
 
 --- <no description>
-export type GroupRoleDetailResponsePages = { data: { GroupRoleDetailResponse } }
+export type Stream = {
+	CanRead: boolean,
+	CanWrite: boolean,
+	CanTimeout: boolean,
+	Position: number,
+	WriteTimeout: number,
+	Length: number,
+	ReadTimeout: number,
+	CanSeek: boolean,
+}
 
 --- <no description>
 export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
@@ -267,17 +280,8 @@ export type GroupJoinRequestResponsePages = {
 --- <no description>
 export type RelationshipsRequest = { GroupIds: { number } }
 
---- <no description>
-export type Stream = {
-	CanRead: boolean,
-	CanWrite: boolean,
-	CanTimeout: boolean,
-	Position: number,
-	WriteTimeout: number,
-	Length: number,
-	ReadTimeout: number,
-	CanSeek: boolean,
-}
+--- A group role's permissions response model
+export type GroupPermissionsResponse = { permissions: GroupPermissionsModel, role: GroupRoleResponse, groupId: number }
 
 --- A request model for setting the authenticated user's primary group.
 export type PostGroupStatusRequest = { message: string }
@@ -293,25 +297,24 @@ export type GroupSearchPageResponse = {
 --- <no description>
 export type GroupWallPostModelPages = { nextPageCursor: string, previousPageCursor: string, data: { GroupWallPostModel } }
 
---- A group role's permissions response model
-export type GroupPermissionsResponse = { permissions: GroupPermissionsModel, role: GroupRoleResponse, groupId: number }
-
 --- <no description>
 export type UserModelPages = { nextPageCursor: string, previousPageCursor: string, data: { UserModel } }
+
+--- <no description>
+export type SocialLinkResponsePages = { data: { SocialLinkResponse } }
 
 --- <no description>
 export type GroupPolicyResponse = { canViewGroup: boolean, groupId: number }
 
 --- <no description>
-export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
+export type GroupRoleDetailResponsePages = { data: { GroupRoleDetailResponse } }
 
 --- A request model for setting the authenticated user's primary group.
 export type PrimaryGroupRequest = { groupId: number }
 
 --- <no description>
+
 --- <no description>
---- <no description>
-export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
 
 --- A social link response from a create request
 export type SocialLinkResponse = { id: number, type: number, title: string, url: string }
@@ -325,6 +328,9 @@ export type GroupOwnerTypePages = { id: number, type: number, name: string }
 --- <no description>
 export type GroupBasicResponse = { id: number, hasVerifiedBadge: boolean, name: string, memberCount: number }
 
+--- <no description>
+export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
+
 --- A request model for paying out Robux.
 export type PayoutRecipientRequest = { amount: number, recipientType: number, recipientId: number }
 
@@ -335,8 +341,16 @@ export type GroupAuditLogResponseItemPages = {
 	data: { GroupAuditLogResponseItem },
 }
 
---- <no description>
-export type SocialLinkResponsePages = { data: { SocialLinkResponse } }
+--- A model representing group posts permissions
+export type GroupForumsPermissionsModel = {
+	createPosts: boolean,
+	pinPosts: boolean,
+	removePosts: boolean,
+	lockPosts: boolean,
+	removeComments: boolean,
+	createComments: boolean,
+	manageCategories: boolean,
+}
 
 --- <no description>
 export type UpdateGroupNameResponse = { newName: string }
@@ -357,7 +371,14 @@ export type UpdatePermissionsRequest = {
 		AddGroupPlaces: boolean,
 		PostToWall: boolean,
 		BanMembers: boolean,
+		CreatePosts: boolean,
 		PostToStatus: boolean,
+		RemoveComments: boolean,
+		CreateComments: boolean,
+		PinPosts: boolean,
+		LockPosts: boolean,
+		RemovePosts: boolean,
+		ManageCategories: boolean,
 		ManageGroupGames: boolean,
 		ChangeRank: boolean,
 		RemoveMembers: boolean,
@@ -387,6 +408,7 @@ export type StartIndexCursor = { discriminator: string, count: number, startInde
 export type UpdateGroupDescriptionRequest = { description: string }
 
 --- <no description>
+
 --- <no description>
 export type GroupPoliciesResponse = { groups: { GroupPolicyResponse } }
 
@@ -446,6 +468,7 @@ export type GroupsDisplayOptionsResponse = {
 --- A model for group permissions.
 export type GroupPermissionsModel = {
 	groupMembershipPermissions: GroupMembershipPermissionsModel,
+	groupForumsPermissions: GroupForumsPermissionsModel,
 	groupEconomyPermissions: GroupEconomyPermissionsModel,
 	groupOpenCloudPermissions: GroupOpenCloudPermissionsModel,
 	groupPostsPermissions: GroupPostsPermissionsModel,
@@ -468,10 +491,12 @@ export type GroupSearchMetadataResponse = { ShowFriendsGroupsSort: boolean, Sugg
 export type GroupPayoutResponse = { percentage: number, user: UserModel }
 
 --- <no description>
+
 --- <no description>
 export type GroupMembershipResponsePages = { data: { GroupMembershipResponse } }
 
 --- A group role response model
+
 --- <no description>
 export type GroupWallPostV2ModelPages =
 	{ nextPageCursor: string, previousPageCursor: string, data: { GroupWallPostV2Model } }
@@ -487,15 +512,22 @@ export type GroupMembershipResponse = {
 }
 
 --- <no description>
+
 --- A user group role response model
+
 --- A request model for creating a group wall post
+
 --- <no description>
+
 --- <no description>
 export type GroupRoleBasicResponse = { id: number, name: string, rank: number }
 
 --- <no description>
+
 --- A model representing data about an Roblox.Platform.Membership.IUser
+
 --- <no description>
+
 --- A response model for group wall post information
 export type GroupWallPostV2Model = {
 	created: string,
@@ -592,19 +624,18 @@ local function joinRequests(
 end
 
 --- Gets a list of users in a group for a specific roleset.
-local function usersWithRole(
-	with: {
-		groupId: number,
-		roleSetId: number,
-		limit: number?,
-		cursor: string?,
-		sortOrder: "Asc" | "Desc"?,
-	}
-): UserModelPages
+local function usersWithRole(with: {
+	groupId: number,
+	roleSetId: number,
+	limit: number?,
+	cursor: string?,
+	sortOrder: "Asc" | "Desc"?,
+	cookie: string,
+}): UserModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/roles/{with.roleSetId}/users?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -779,11 +810,11 @@ local function setName(with: UpdateGroupNameRequest & { groupId: number, cookie:
 end
 
 --- Gets a list of all groups the specified users' friends are in.
-local function withFriendsOf(with: { userId: number }): { UserGroupMembershipResponse }
+local function withFriendsOf(with: { userId: number, cookie: string }): { UserGroupMembershipResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/users/{with.userId}/friends/groups/roles`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -821,12 +852,12 @@ end
 
 --- Gets the Group's name change history.
 local function nameHistory(
-	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): GroupNameHistoryResponseItemPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/name-history?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -847,7 +878,7 @@ local function searchMetadata(): GroupSearchMetadataResponse
 	return serde.decode("json", response.body)
 end
 
---- Updates the user's group notification preferences
+--- Updates the group's settings
 local function toggleNotifications(
 	with: UpdateGroupNotificationPreferenceRequest & { groupId: number, cookie: string }
 ): number
@@ -1478,12 +1509,12 @@ end
 
 --- Gets a list of group wall posts.
 local function messages(
-	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): GroupWallPostV2ModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/groups/{with.groupId}/wall/posts?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

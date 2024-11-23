@@ -7,14 +7,24 @@ export type EmptyResponse = {}
 --- A model containing details about avatar-related business rules
 export type DefaultClothingAssets = { defaultPantAssetIds: { number }, defaultShirtAssetIds: { number } }
 
+--- Filtered page response
+export type OutfitModelPages = { filteredCount: number, data: { OutfitModel }, total: number }
+
 --- A model container BrickColor ids for each body part.
 export type BodyColorModel = { hexColor: string, name: string, brickColorId: number }
 
 --- A model that contains a playerAvatarType
 export type PlayerAvatarTypeModel = { playerAvatarType: number }
 
+--- <no description>
+export type ScaleModel =
+	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
+
 --- A model for wear outfit responses
 export type WearResponseModel = { invalidAssets: { AssetModelV2 }, invalidAssetIds: { number }, success: boolean }
+
+--- <no description>
+export type AccessoryScaleModel = { yScale: number, xScale: number, zScale: number }
 
 --- A model containing details about an asset
 --- - V2: adds CurrentVersionId, AssetMetaModel
@@ -26,11 +36,44 @@ export type AssetModelV2 = {
 	currentVersionId: number,
 }
 
+--- Response object representing a user's emote
+export type EmoteResponseModel = { assetId: number, assetName: string, position: number }
+
 --- A model containing details about an asset type and its business rules
 export type AssetTypeRulesModel = { id: number, maxNumber: number, name: string }
 
 --- A model containing details about an asset type
 export type AssetTypeModel = { id: number, name: string }
+
+--- A model containing website metadata for avatars
+export type AvatarMetadataModel = {
+	isBodyTypeScaleOutOfTab: boolean,
+	scaleWidthIncrement: number,
+	isJustinUiChangesEnabled: boolean,
+	scaleHeadIncrement: number,
+	supportProportionAndBodyType: boolean,
+	scaleHeightIncrement: number,
+	isCategoryReorgEnabled: boolean,
+	isAvatarScaleEmbeddedInTab: boolean,
+	showDefaultClothingMessageOnPageLoad: boolean,
+	enableDefaultClothingMessage: boolean,
+	isLCCompletelyEnabled: boolean,
+	isAvatarWearingApiCallsLockingOnFrontendEnabled: boolean,
+	LCEnabledInEditorAndCatalog: boolean,
+	isOutfitHandlingOnFrontendEnabled: boolean,
+	scaleProportionIncrement: number,
+	scaleBodyTypeIncrement: number,
+	areThreeDeeThumbsEnabled: boolean,
+}
+
+--- <no description>
+export type AssetPosition = { Y: number, X: number, Z: number }
+
+--- <no description>
+export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
+
+--- <no description>
+export type AssetScale = { Y: number, X: number, Z: number }
 
 --- Exhaustive model denoting all possible metadata fields of an asset
 export type AssetMetaModelV1 = {
@@ -40,6 +83,16 @@ export type AssetMetaModelV1 = {
 	order: number,
 	puffiness: number,
 	scale: AssetScale,
+}
+
+--- <no description>
+export type AccessoryRotationModel = { xRotation: number, zRotation: number, yRotation: number }
+
+--- <no description>
+export type AccessoryRefinementModel = {
+	rotation: AccessoryRotationModel,
+	scale: AccessoryScaleModel,
+	position: AccessoryPositionModel,
 }
 
 --- A model containing details about a user outfit
@@ -56,15 +109,17 @@ export type OutfitDetailsModel = {
 	assets: { AssetModelV2 },
 }
 
---- A model container BrickColor ids for each body part.
-export type BodyColorsModel = {
-	headColorId: number,
-	torsoColorId: number,
-	rightArmColorId: number,
-	leftLegColorId: number,
-	rightLegColorId: number,
-	leftArmColorId: number,
-}
+--- Success response class
+export type AvatarApiSuccessResponse = { success: boolean }
+
+--- <no description>
+export type AccessoryPositionModel = { xPosition: number, yPosition: number, zPosition: number }
+
+--- A model that contains a list of asset ids
+export type AssetIdListModel = { assetIds: { number } }
+
+--- <no description>
+export type AssetRotation = { Y: number, X: number, Z: number }
 
 --- A model containing details about avatar-related business rules
 export type AvatarRulesModel = {
@@ -235,89 +290,17 @@ export type AvatarRulesModel = {
 	},
 }
 
---- A model containing details needed to update or create an outfit
-export type OutfitUpdateModelV1 = {
-	bodyColors: BodyColorsModel,
-	name: string,
-	assetIds: { number },
-	outfitType: number,
-	playerAvatarType: string,
-	scale: ScaleModel,
-}
-
---- <no description>
-export type RecentItemModelPages = { data: { RecentItemModel }, total: number }
-
---- Filtered page response
-export type OutfitModelPages = { filteredCount: number, data: { OutfitModel }, total: number }
-
---- <no description>
-export type ScaleModel =
-	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
-
---- <no description>
-export type AccessoryScaleModel = { yScale: number, xScale: number, zScale: number }
-
---- <no description>
-export type AccessoryRefinementModel = {
-	rotation: AccessoryRotationModel,
-	scale: AccessoryScaleModel,
-	position: AccessoryPositionModel,
-}
-
---- A model containing website metadata for avatars
-export type AvatarMetadataModel = {
-	isBodyTypeScaleOutOfTab: boolean,
-	scaleWidthIncrement: number,
-	isJustinUiChangesEnabled: boolean,
-	scaleHeadIncrement: number,
-	supportProportionAndBodyType: boolean,
-	scaleHeightIncrement: number,
-	isCategoryReorgEnabled: boolean,
-	isAvatarScaleEmbeddedInTab: boolean,
-	showDefaultClothingMessageOnPageLoad: boolean,
-	enableDefaultClothingMessage: boolean,
-	isLCCompletelyEnabled: boolean,
-	isAvatarWearingApiCallsLockingOnFrontendEnabled: boolean,
-	LCEnabledInEditorAndCatalog: boolean,
-	isOutfitHandlingOnFrontendEnabled: boolean,
-	scaleProportionIncrement: number,
-	scaleBodyTypeIncrement: number,
-	areThreeDeeThumbsEnabled: boolean,
-}
-
---- <no description>
-export type AssetScale = { Y: number, X: number, Z: number }
-
---- <no description>
-export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
-
 --- A model that contains information about the max/mins for each scale
 export type ScaleRulesModel = { min: number, increment: number, max: number }
 
---- Success response class
-export type AvatarApiSuccessResponse = { success: boolean }
-
---- A model that contains a list of asset ids
-export type AssetIdListModel = { assetIds: { number } }
-
---- <no description>
-export type AssetRotation = { Y: number, X: number, Z: number }
-
---- <no description>
-export type AccessoryPositionModel = { xPosition: number, yPosition: number, zPosition: number }
-
---- <no description>
-export type AssetPosition = { Y: number, X: number, Z: number }
-
---- <no description>
-export type AccessoryRotationModel = { xRotation: number, zRotation: number, yRotation: number }
+--- A slim model for user outfits.
+export type OutfitModel = { id: number, outfitType: string, name: string, isEditable: boolean }
 
 --- A model containing details about a recent item
 export type RecentItemModel = { type: number, name: string, id: number, assetType: AssetTypeModel, isEditable: boolean }
 
---- A slim model for user outfits.
-export type OutfitModel = { id: number, outfitType: string, name: string, isEditable: boolean }
+--- <no description>
+export type RecentItemModelPages = { data: { RecentItemModel }, total: number }
 
 --- The game start info
 export type GameStartInfoResponse = {
@@ -333,8 +316,15 @@ export type GameStartInfoResponse = {
 	universeAvatarMaxScales: ScaleModel,
 }
 
---- Response object representing a user's emote
-export type EmoteResponseModel = { assetId: number, assetName: string, position: number }
+--- A model container BrickColor ids for each body part.
+export type BodyColorsModel = {
+	headColorId: number,
+	torsoColorId: number,
+	rightArmColorId: number,
+	leftLegColorId: number,
+	rightLegColorId: number,
+	leftArmColorId: number,
+}
 
 --- A model containing details about an avatar
 export type AvatarModelV2 = {
@@ -359,6 +349,7 @@ export type AvatarModelV3 = {
 }
 
 --- <no description>
+
 --- A model containing details needed to update or create an outfit
 export type OutfitUpdateModelV2 = {
 	bodyColors: BodyColorsModel,
@@ -374,8 +365,11 @@ export type WearRequestModel = { assets: { AssetWearModel } }
 
 --- A model containing details about an asset
 --- - V2: adds CurrentVersionId, AssetMetaModel
+
 --- <no description>
+
 --- A model containing details about an asset type
+
 --- <no description>
 export type ApiEmptyResponseModel = {}
 
@@ -385,10 +379,15 @@ export type ApiEmptyResponseModel = {}
 export type AssetWearModel = { id: number, meta: AssetMetaModelV1 }
 
 --- Exhaustive model denoting all possible metadata fields of an asset
+
 --- Success response class
+
 --- A model container BrickColor ids for each body part.
+
 --- <no description>
+
 --- Response object representing a user's emote
+
 --- <no description>
 export type BodyColorsModelV2 = {
 	leftLegColor3: string,
@@ -410,10 +409,15 @@ export type BodyColors3Model = {
 }
 
 --- <no description>
+
 --- A model for wear outfit responses
+
 --- A slim model for user outfits.
+
 --- Avatar page response.
+
 --- Exhaustive model denoting all possible metadata fields of an asset
+
 --- A model containing details about a user outfit
 export type OutfitDetailsModelV2 = {
 	assets: { AssetModelV2 },
@@ -440,18 +444,28 @@ export type OutfitUpdateModelV3 = {
 }
 
 --- <no description>
+
 --- <no description>
+
 --- A model containing details about an asset
 --- - V2: adds CurrentVersionId, AssetMetaModel
+
 --- <no description>
+
 --- <no description>
+
 --- A model containing details about an asset type
+
 --- <no description>
+
 --- A slim model for user outfits.
+
 --- A model containing RGB hex colors for each body part.
+
 --- A model which contains
 --- - an asset id
 --- - AssetMetaModel
+
 --- Returns the business rules related to avatars
 local function rules(): AvatarRulesModel
 	local response = requestWithCsrfToken({
@@ -662,11 +676,11 @@ local function createOutfit(with: OutfitUpdateModelV3 & { cookie: string }): Out
 end
 
 --- Gets details about the contents of an outfit.
-local function outfitDetails(with: { userOutfitId: number }): OutfitDetailsModelV2
+local function outfit(with: { userOutfitId: number, cookie: string }): OutfitDetailsModelV2
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v3/outfits/{with.userOutfitId}/details`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -681,7 +695,7 @@ return {
 	of = of,
 	rules = rules,
 	setBodyColors = setBodyColors,
-	outfitDetails = outfitDetails,
+	outfit = outfit,
 	setScales = setScales,
 	redrawThumbnail = redrawThumbnail,
 	setRigType = setRigType,

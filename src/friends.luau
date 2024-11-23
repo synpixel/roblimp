@@ -49,6 +49,9 @@ export type PendingFriendRequestCountModel = { count: number }
 --- <no description>
 export type FriendRequestsPlatformExclusiveStartKeyPages = { SortOrder: number, PagingDirection: number, Count: number }
 
+--- The friendship status response model.
+export type ClearNewFriendRequestResponse = { status: boolean }
+
 --- Response model for MultigetAreFriendsResponse
 export type MultigetAreFriendsResponse = { friendsId: { number } }
 
@@ -79,6 +82,9 @@ export type MultigetAreFriendsRequestModel = { targetUserIds: { number } }
 
 --- Request model for FollowingExists endpoint
 export type FollowingExistsRequestModel = { targetUserIds: { number } }
+
+--- The friendship status response model.
+export type NewFriendRequestsCountResponse = { count: number }
 
 --- <no description>
 export type UserResponsePages = { data: { UserResponse } }
@@ -116,6 +122,7 @@ export type FriendRequestResponse = {
 }
 
 --- <no description>
+
 --- <no description>
 export type FriendRequestResponsePages = {
 	nextPageCursor: string,
@@ -127,11 +134,14 @@ export type FriendRequestResponsePages = {
 export type FriendStatusResponsePages = { data: { FriendStatusResponse } }
 
 --- <no description>
+
 --- This is response model to notify when action succeeded, failed, or captcha is required
 export type CaptchaStatusResponseModel = { success: boolean, isCaptchaRequired: boolean }
 
 --- <no description>
+
 --- <no description>
+
 --- A response model representing a friend request.
 export type FriendRequest = {
 	originSourceType: number,
@@ -275,13 +285,17 @@ local function declineAllFriendRequests(with: { cookie: string }): boolean
 end
 
 --- Get all users that user with targetUserId is following in page response format
-local function followingsOf(
-	with: { targetUserId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
-): UserResponsePages
+local function followingsOf(with: {
+	targetUserId: number,
+	limit: number?,
+	cursor: string?,
+	sortOrder: "Asc" | "Desc"?,
+	cookie: string,
+}): UserResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followings?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -290,11 +304,11 @@ local function followingsOf(
 end
 
 --- Check if the requesting user is friends with the specified users.
-local function areFriends(with: MultigetAreFriendsRequestModel & { userId: number }): { number }
+local function areFriends(with: MultigetAreFriendsRequestModel & { userId: number, cookie: string }): { number }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/{with.userId}/multiget-are-friends`,
-		headers = { ["Content-Type"] = "application/json" },
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
 		body = serde.encode("json", with),
 	})
 
@@ -305,12 +319,18 @@ end
 
 --- Get all users that follow user with targetUserId in page response format
 local function followersOf(
-	with: { targetUserId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+	with: {
+		targetUserId: number,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+		cookie: string,
+	}
 ): UserResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followers?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = {},
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -429,12 +449,12 @@ end
 
 --- Get a paginated list of all friends for the specified user.
 local function friendshipsOf(
-	with: { userId: number, userSort: number?, cursor: string?, limit: number?, cookie: string }
+	with: { userId: number, userSort: number?, cursor: string?, limit: number? }
 ): FriendResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/find?userSort={with.userSort or ""}&cursor={with.cursor or ""}&limit={with.limit or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = {},
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
