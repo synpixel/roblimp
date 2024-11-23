@@ -557,17 +557,10 @@ for namespace, definitions in mappings do
 						end
 					end
 
-					local count, lastKey = 0, nil
-					if schema.type == "object" and schema.properties ~= nil then
-						for key in schema.properties do
-							count += 1
-							lastKey = key
-						end
-					end
-
-					if count == 1 then
-						patchModelName = translateOpenApiType(schema.properties[lastKey])
-						accessKey = lastKey
+					local firstKey = if schema.properties ~= nil then next(schema.properties) else nil
+					if firstKey ~= nil and next(schema.properties, firstKey) == nil then
+						patchModelName = translateOpenApiType(schema.properties[firstKey])
+						accessKey = firstKey
 					end
 				end
 
