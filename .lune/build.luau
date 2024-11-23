@@ -324,7 +324,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/trades/{tradeId}"] = { get = "get" },
 		["/v1/trades/{tradeStatusType}"] = { get = "all" },
 		["/v1/trades/{tradeStatusType}/count"] = { get = "count" },
-		["/v1/users/{userId}/can-trade-with"] = { get = "canTradeWith" },
+		["/v1/users/{userId}/can-trade-with"] = { get = "canSend" },
 		["/v1/trades/{tradeId}/accept"] = { post = "accept" },
 		["/v1/trades/{tradeId}/counter"] = { post = "counter" },
 		["/v1/trades/{tradeId}/decline"] = { post = "decline" },

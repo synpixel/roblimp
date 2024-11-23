@@ -116,7 +116,7 @@ local function metadata(with: { cookie: string }): TradeMetadata
 end
 
 --- Returns whether you can trade with another user.
-local function canTradeWith(with: { userId: number, cookie: string }): CanTradeResponse
+local function canSend(with: { userId: number, cookie: string }): CanTradeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/users/{with.userId}/can-trade-with`,
@@ -200,7 +200,7 @@ return {
 	all = all,
 	accept = accept,
 	metadata = metadata,
-	canTradeWith = canTradeWith,
+	canSend = canSend,
 	get = get,
 	send = send,
 	count = count,
