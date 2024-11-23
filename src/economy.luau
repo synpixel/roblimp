@@ -1,10 +1,16 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- <no description>
+--- [economy.roblox.com](https://economy.roblox.com)
+--- @class economy
+
+--- @interface CurrencyResponse
+--- .robux number
+--- @within economy
 export type CurrencyResponse = { robux: number }
 
 --- Gets currency for the authenticated user.
+--- @within economy
 local function robux(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",

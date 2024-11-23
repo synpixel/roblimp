@@ -9,6 +9,7 @@ local stdio = require("@lune/stdio")
 type EndpointMappings = { [string]: { get: string?, post: string?, patch: string?, delete: string? } }
 
 type OpenApiDefinition = {
+	title: string,
 	host: string,
 	paths: {
 		[string]: {
@@ -272,6 +273,19 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v2/groups/{groupId}/wall/posts"] = { get = "messages", post = "sendMessage" },
 		["/v2/users/{userId}/groups/roles"] = { get = "rolesOf" },
 	},
+	inventory = {
+		["/v1/users/{userId}/assets/collectibles"] = { get = "collectibles" },
+		["/v1/users/{userId}/can-view-inventory"] = { get = "canView" },
+		["/v1/users/{userId}/categories"] = { get = "categories" },
+		["/v1/users/{userId}/categories/favorites"] = { get = "favorites" },
+		-- /v1/users/{userId}/items/{itemType}/{itemTargetId}
+		["/v1/users/{userId}/items/{itemType}/{itemTargetId}/is-owned"] = { get = "owns" },
+		["/v1/users/{userId}/places/inventory"] = { get = "games" },
+		-- /v1/collections/items/{itemType}/{itemTargetId}
+		["/v2/assets/{assetId}/owners"] = { get = "owners" },
+		["/v2/users/{userId}/inventory"] = { get = "of" },
+		["/v2/inventory/asset/{assetId}"] = { delete = "remove" },
+	},
 	notifications = {
 		["/v2/push-notifications/metadata"] = { get = "metadata" },
 		["/v2/stream-notifications/metadata"] = { get = "streamMetadata" },
@@ -391,6 +405,13 @@ local function translateOpenApiType(openapiType: { type: string, [string]: any }
 		local enum = {}
 
 		for _, item in openapiType.enum do
+			if openapiType.description ~= nil then
+				local mappedItem = openapiType.description:match(`'([^']-)' = {item}`)
+				if mappedItem ~= nil then
+					item = mappedItem
+				end
+			end
+
 			if typeof(item) == "string" then
 				table.insert(enum, `"{item}"`)
 				continue
@@ -399,7 +420,7 @@ local function translateOpenApiType(openapiType: { type: string, [string]: any }
 			table.insert(enum, item)
 		end
 
-		return `{table.concat(enum, "|")}`
+		return `{table.concat(enum, " | ")}`
 	end
 
 	if openapiType.type == "array" then
@@ -407,7 +428,7 @@ local function translateOpenApiType(openapiType: { type: string, [string]: any }
 			return "{}"
 		end
 
-		return `\{{translateOpenApiType(openapiType.items)}\}`
+		return `\{ {translateOpenApiType(openapiType.items)} \}`
 	end
 
 	if openapiType.type == "object" then
@@ -431,6 +452,24 @@ local function translateOpenApiType(openapiType: { type: string, [string]: any }
 	end
 
 	return openapiType.type
+end
+
+local function documentOpenApiType(name: string, openapiType: { type: string, [string]: any }): string
+	if openapiType.type == "object" then
+		local comment = `--- @interface {name}`
+
+		if openapiType.properties == nil then
+			return comment
+		end
+
+		for name, type in openapiType.properties do
+			comment ..= `\n--- .{name} {translateOpenApiType(type)}`
+		end
+
+		return comment
+	end
+
+	return `--- @type {name} {translateOpenApiType(openapiType)}`
 end
 
 local function stylua(file: string): string
@@ -457,25 +496,28 @@ for namespace, definitions in mappings do
 		table.insert(openapis, openapi)
 	end
 
+	file ..= `--- [{openapis[1].host}](https://{openapis[1].host})\n`
+	file ..= `--- @class {namespace}\n\n`
+
 	for _, openapi in openapis do
 		if openapi.definitions == nil then
 			continue
 		end
 
 		for name, model in openapi.definitions do
-			if model.description ~= nil then
-				local patch = model.description:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
-				file ..= `{patch}\n`
-			else
-				file ..= "--- <no description>\n"
-			end
-
 			local patchName = patchOpenApiModelName(name)
 			if file:match(`export type {patchName} =`) ~= nil then
 				file ..= "\n"
 				continue
 			end
 
+			if model.description ~= nil then
+				local patch = model.description:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
+				file ..= `{patch}\n`
+			end
+
+			file ..= documentOpenApiType(patchName, model) .. "\n"
+			file ..= `--- @within {namespace}\n`
 			file ..= `export type {patchName} = {translateOpenApiType(model)}\n\n`
 		end
 	end
@@ -559,9 +601,9 @@ for namespace, definitions in mappings do
 				if route.summary ~= nil then
 					local patchSummary = route.summary:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
 					file ..= `{patchSummary}\n`
-				else
-					file ..= "--- <no description>\n"
 				end
+
+				file ..= `--- @within {namespace}\n`
 
 				if next(parameters) == nil then
 					file ..= `local function {name}(`
@@ -671,11 +713,18 @@ end
 
 local file = ""
 
-for namespace, _ in mappings do
+for namespace in mappings do
 	file ..= `local {namespace} = require("./{namespace}")\n`
 end
 
-file ..= "\nreturn {"
+file ..= "\n--- @class roblimp"
+
+for namespace in mappings do
+	file ..= `\n\n--- @prop {namespace} {namespace}\n`
+	file ..= "--- @within roblimp"
+end
+
+file ..= "\n\nreturn {"
 
 for namespace, _ in mappings do
 	file ..= `{namespace} = {namespace},`

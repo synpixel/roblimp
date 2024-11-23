@@ -1,10 +1,25 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
+--- [followings.roblox.com](https://followings.roblox.com)
+--- @class followings
+
 --- Model for a user following a universe controller responses
+--- @interface UserFollowingUniverseResponse
+--- .userId number
+--- .universeId number
+--- @within followings
 export type UserFollowingUniverseResponse = { userId: number, universeId: number }
 
 --- Model for a user following a universe  state controller responses
+--- @interface UserFollowingUniverseStatusResponse
+--- .UniverseId number
+--- .IsFollowing boolean
+--- .FollowingLimitByType number
+--- .FollowingCountByType number
+--- .UserId number
+--- .CanFollow boolean
+--- @within followings
 export type UserFollowingUniverseStatusResponse = {
 	UniverseId: number,
 	IsFollowing: boolean,
@@ -15,9 +30,16 @@ export type UserFollowingUniverseStatusResponse = {
 }
 
 --- Data model containing collection of all followed sources of a specific type.
+--- @interface FollowsByTypeResponse
+--- .followedSources {}
+--- .followerId number
+--- .followerType number
+--- .sourceType number
+--- @within followings
 export type FollowsByTypeResponse = { followedSources: {}, followerId: number, followerType: number, sourceType: number }
 
 --- Gets the status of a following relationship between a user and a universe.
+--- @within followings
 local function followingStatus(
 	with: { userId: number, universeId: number, cookie: string }
 ): UserFollowingUniverseStatusResponse
@@ -33,6 +55,7 @@ local function followingStatus(
 end
 
 --- Creates the following between a user with userId and universe with universeId
+--- @within followings
 local function follow(with: { userId: number, universeId: number, cookie: string }): UserFollowingUniverseResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -46,6 +69,7 @@ local function follow(with: { userId: number, universeId: number, cookie: string
 end
 
 --- Deletes the following between a user with userId and universe with universeId
+--- @within followings
 local function unfollow(with: { userId: number, universeId: number, cookie: string }): UserFollowingUniverseResponse
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -59,6 +83,7 @@ local function unfollow(with: { userId: number, universeId: number, cookie: stri
 end
 
 --- Gets all universes followed by a user.
+--- @within followings
 local function followingsOf(with: { userId: number, cookie: string }): FollowsByTypeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",

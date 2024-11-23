@@ -1,7 +1,17 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- <no description>
+--- [friends.roblox.com](https://friends.roblox.com)
+--- @class friends
+
+--- @interface FriendsPageMetadataResponse
+--- .isFriendsFilterBarEnabled boolean
+--- .isFriendsUserDataStoreCacheEnabled boolean
+--- .frequentFriendSortRollout number
+--- .isFriendsPageSortExperimentEnabled boolean
+--- .userName string
+--- .displayName string
+--- @within friends
 export type FriendsPageMetadataResponse = {
 	isFriendsFilterBarEnabled: boolean,
 	isFriendsUserDataStoreCacheEnabled: boolean,
@@ -12,15 +22,41 @@ export type FriendsPageMetadataResponse = {
 }
 
 --- Response contained in list for FollowingExists endpoint. Corresponds to a single userId.
+--- @interface FollowingExistsResponse
+--- .userId number
+--- .isFollowing boolean
+--- .isFollowed boolean
+--- @within friends
 export type FollowingExistsResponse = { userId: number, isFollowing: boolean, isFollowed: boolean }
 
 --- Request model for AcceptFriendRequestWithToken endpoint
+--- @interface FriendingTokenRequestModel
+--- .friendingToken string
+--- @within friends
 export type FriendingTokenRequestModel = { friendingToken: string }
 
---- <no description>
+--- @interface FriendshipRequestModel
+--- .senderNickname string
+--- .friendshipOriginSourceType number
+--- @within friends
 export type FriendshipRequestModel = { senderNickname: string, friendshipOriginSourceType: number }
 
 --- A response model representing user information that also contains select presence information
+--- @interface UserResponse
+--- .created string
+--- .description string
+--- .isOnline boolean
+--- .id number
+--- .hasVerifiedBadge boolean
+--- .displayName string
+--- .isDeleted boolean
+--- .name string
+--- .externalAppDisplayName string
+--- .friendFrequentScore number
+--- .presenceType number
+--- .isBanned boolean
+--- .friendFrequentRank number
+--- @within friends
 export type UserResponse = {
 	created: string,
 	description: string,
@@ -38,61 +74,129 @@ export type UserResponse = {
 }
 
 --- The friendship status response model.
+--- @interface FriendStatusResponse
+--- .id number
+--- .status number
+--- @within friends
 export type FriendStatusResponse = { id: number, status: number }
 
 --- Response model for following or followers Count
+--- @interface FollowCountResponse
+--- .count number
+--- @within friends
 export type FollowCountResponse = { count: number }
 
 --- Response model for Pending Friend Request Count
+--- @interface PendingFriendRequestCountModel
+--- .count number
+--- @within friends
 export type PendingFriendRequestCountModel = { count: number }
 
---- <no description>
+--- @interface FriendRequestsPlatformExclusiveStartKeyPages
+--- .SortOrder number
+--- .PagingDirection number
+--- .Count number
+--- @within friends
 export type FriendRequestsPlatformExclusiveStartKeyPages = { SortOrder: number, PagingDirection: number, Count: number }
 
 --- The friendship status response model.
+--- @interface ClearNewFriendRequestResponse
+--- .status boolean
+--- @within friends
 export type ClearNewFriendRequestResponse = { status: boolean }
 
 --- Response model for MultigetAreFriendsResponse
+--- @interface MultigetAreFriendsResponse
+--- .friendsId { number }
+--- @within friends
 export type MultigetAreFriendsResponse = { friendsId: { number } }
 
 --- A response model representing user presence information.
+--- @interface UserPresenceResponse
+--- .id number
+--- .userPresence UserPresenceResponseModel
+--- .name string
+--- .displayName string
+--- @within friends
 export type UserPresenceResponse =
 	{ id: number, userPresence: UserPresenceResponseModel, name: string, displayName: string }
 
---- <no description>
+--- @interface CaptchaTokenRequest
+--- .captchaToken string
+--- .captchaId string
+--- .captchaProvider string
+--- .challengeId string
+--- @within friends
 export type CaptchaTokenRequest = { captchaToken: string, captchaId: string, captchaProvider: string, challengeId: string }
 
 --- Response model for Friends Count
+--- @interface FriendsCountResponse
+--- .count number
+--- @within friends
 export type FriendsCountResponse = { count: number }
 
 --- A response model representing friend information
+--- @interface FriendResponse
+--- .id number
+--- .hasVerifiedBadge boolean
+--- @within friends
 export type FriendResponse = { id: number, hasVerifiedBadge: boolean }
 
---- <no description>
+--- @interface Int64Pages
+--- .CursorRecipe string
+--- .ExclusiveStartKeyInfo Int64Pages
+--- @within friends
 export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
 
---- <no description>
+--- @interface StringPages
+--- .Item2 StringPages
+--- .Item1 Int64Pages
+--- @within friends
 export type StringPages = { Item2: StringPages, Item1: Int64Pages }
 
---- <no description>
+--- @interface UserPresenceResponsePages
+--- .data { UserPresenceResponse }
+--- @within friends
 export type UserPresenceResponsePages = { data: { UserPresenceResponse } }
 
 --- Request model for MultigetAreFriends endpoint
+--- @interface MultigetAreFriendsRequestModel
+--- .targetUserIds { number }
+--- @within friends
 export type MultigetAreFriendsRequestModel = { targetUserIds: { number } }
 
 --- Request model for FollowingExists endpoint
+--- @interface FollowingExistsRequestModel
+--- .targetUserIds { number }
+--- @within friends
 export type FollowingExistsRequestModel = { targetUserIds: { number } }
 
 --- The friendship status response model.
+--- @interface NewFriendRequestsCountResponse
+--- .count number
+--- @within friends
 export type NewFriendRequestsCountResponse = { count: number }
 
---- <no description>
+--- @interface UserResponsePages
+--- .data { UserResponse }
+--- @within friends
 export type UserResponsePages = { data: { UserResponse } }
 
---- <no description>
+--- @interface ApiEmptyResponseModel
+--- @within friends
 export type ApiEmptyResponseModel = {}
 
 --- Response model for Roblox.Web.Presence.Interfaces.IUserPresence objects
+--- @interface UserPresenceResponseModel
+--- .UserPresenceType string
+--- .universeId number
+--- .UserLocationType string
+--- .lastOnline string
+--- .lastLocation string
+--- .placeId number
+--- .gameInstanceId string
+--- .rootPlaceId number
+--- @within friends
 export type UserPresenceResponseModel = {
 	UserPresenceType: string,
 	universeId: number,
@@ -105,9 +209,24 @@ export type UserPresenceResponseModel = {
 }
 
 --- Response model for FollowingExists endpoint.
+--- @interface FollowingExistsResponseModel
+--- .followings { FollowingExistsResponse }
+--- @within friends
 export type FollowingExistsResponseModel = { followings: { FollowingExistsResponse } }
 
 --- A response model representing a friend request.
+--- @interface FriendRequestResponse
+--- .created string
+--- .description string
+--- .id number
+--- .hasVerifiedBadge boolean
+--- .displayName string
+--- .name string
+--- .mutualFriendsList { string }
+--- .externalAppDisplayName string
+--- .isBanned boolean
+--- .friendRequest FriendRequest
+--- @within friends
 export type FriendRequestResponse = {
 	created: string,
 	description: string,
@@ -121,28 +240,38 @@ export type FriendRequestResponse = {
 	friendRequest: FriendRequest,
 }
 
---- <no description>
-
---- <no description>
+--- @interface FriendRequestResponsePages
+--- .nextPageCursor string
+--- .previousPageCursor string
+--- .data { FriendRequestResponse }
+--- @within friends
 export type FriendRequestResponsePages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { FriendRequestResponse },
 }
 
---- <no description>
+--- @interface FriendStatusResponsePages
+--- .data { FriendStatusResponse }
+--- @within friends
 export type FriendStatusResponsePages = { data: { FriendStatusResponse } }
 
---- <no description>
-
 --- This is response model to notify when action succeeded, failed, or captcha is required
+--- @interface CaptchaStatusResponseModel
+--- .success boolean
+--- .isCaptchaRequired boolean
+--- @within friends
 export type CaptchaStatusResponseModel = { success: boolean, isCaptchaRequired: boolean }
 
---- <no description>
-
---- <no description>
-
 --- A response model representing a friend request.
+--- @interface FriendRequest
+--- .originSourceType number
+--- .contactName string
+--- .sentAt string
+--- .senderId number
+--- .sourceUniverseId number
+--- .senderNickname string
+--- @within friends
 export type FriendRequest = {
 	originSourceType: number,
 	contactName: string,
@@ -152,7 +281,12 @@ export type FriendRequest = {
 	senderNickname: string,
 }
 
---- <no description>
+--- @interface FriendResponsePages
+--- .PreviousCursor string
+--- .PageItems { FriendResponse }
+--- .HasMore boolean
+--- .NextCursor string
+--- @within friends
 export type FriendResponsePages = {
 	PreviousCursor: string,
 	PageItems: { FriendResponse },
@@ -161,9 +295,13 @@ export type FriendResponsePages = {
 }
 
 --- response for DeclineAllFriendRequests
+--- @interface DeclineAllFriendRequestsResponse
+--- .backgrounded boolean
+--- @within friends
 export type DeclineAllFriendRequestsResponse = { backgrounded: boolean }
 
 --- Returns whether or not the current user is following each userId in a list of userIds
+--- @within friends
 local function following(with: FollowingExistsRequestModel & { cookie: string }): { FollowingExistsResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -178,6 +316,7 @@ local function following(with: FollowingExistsRequestModel & { cookie: string })
 end
 
 --- Creates the following between a user and user with targetUserId
+--- @within friends
 local function follow(with: CaptchaTokenRequest & { targetUserId: number, cookie: string }): CaptchaStatusResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -192,6 +331,7 @@ local function follow(with: CaptchaTokenRequest & { targetUserId: number, cookie
 end
 
 --- Get the number of friends a user has
+--- @within friends
 local function countFriendsOf(with: { userId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -204,7 +344,7 @@ local function countFriendsOf(with: { userId: number }): number
 	return serde.decode("json", response.body).count
 end
 
---- <no description>
+--- @within friends
 local function metadata(with: { targetUserId: number? }): FriendsPageMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -218,6 +358,7 @@ local function metadata(with: { targetUserId: number? }): FriendsPageMetadataRes
 end
 
 --- Get the number of friends a user has
+--- @within friends
 local function count(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -231,6 +372,7 @@ local function count(with: { cookie: string }): number
 end
 
 --- Accept a friend request.
+--- @within friends
 local function acceptFriendRequest(with: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -244,6 +386,7 @@ local function acceptFriendRequest(with: { requesterUserId: number, cookie: stri
 end
 
 --- Search for friends by name using a text query.
+--- @within friends
 local function search(
 	with: { userId: number, query: string?, cursor: string?, limit: number?, cookie: string }
 ): FriendResponsePages
@@ -259,6 +402,7 @@ local function search(
 end
 
 --- Get list of all online friends for the specified user.
+--- @within friends
 local function onlineFriendsOf(with: { userId: number, userSort: number?, cookie: string }): { UserPresenceResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -272,6 +416,7 @@ local function onlineFriendsOf(with: { userId: number, userSort: number?, cookie
 end
 
 --- Decline all pending friend requests for the authenticated user.
+--- @within friends
 local function declineAllFriendRequests(with: { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -285,6 +430,7 @@ local function declineAllFriendRequests(with: { cookie: string }): boolean
 end
 
 --- Get all users that user with targetUserId is following in page response format
+--- @within friends
 local function followingsOf(with: {
 	targetUserId: number,
 	limit: number?,
@@ -304,6 +450,7 @@ local function followingsOf(with: {
 end
 
 --- Check if the requesting user is friends with the specified users.
+--- @within friends
 local function areFriends(with: MultigetAreFriendsRequestModel & { userId: number, cookie: string }): { number }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -318,15 +465,14 @@ local function areFriends(with: MultigetAreFriendsRequestModel & { userId: numbe
 end
 
 --- Get all users that follow user with targetUserId in page response format
-local function followersOf(
-	with: {
-		targetUserId: number,
-		limit: number?,
-		cursor: string?,
-		sortOrder: "Asc" | "Desc"?,
-		cookie: string,
-	}
-): UserResponsePages
+--- @within friends
+local function followersOf(with: {
+	targetUserId: number,
+	limit: number?,
+	cursor: string?,
+	sortOrder: "Asc" | "Desc"?,
+	cookie: string,
+}): UserResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followers?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -339,6 +485,7 @@ local function followersOf(
 end
 
 --- Unfriend a user
+--- @within friends
 local function unfriend(with: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -352,6 +499,7 @@ local function unfriend(with: { targetUserId: number, cookie: string }): ApiEmpt
 end
 
 --- Send a friend request to target user
+--- @within friends
 local function sendFriendRequest(
 	with: FriendshipRequestModel & { targetUserId: number, cookie: string }
 ): CaptchaStatusResponseModel
@@ -368,6 +516,7 @@ local function sendFriendRequest(
 end
 
 --- Get the number of following a user has
+--- @within friends
 local function countFollowingsOf(with: { targetUserId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -381,6 +530,7 @@ local function countFollowingsOf(with: { targetUserId: number }): number
 end
 
 --- Deletes the following between a user and user with targetUserId
+--- @within friends
 local function unfollow(with: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -394,6 +544,7 @@ local function unfollow(with: { targetUserId: number, cookie: string }): ApiEmpt
 end
 
 --- Get list of inactive friends for the specified user.
+--- @within friends
 local function inactiveFriendsOf(with: { userId: number, cookie: string }): { UserResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -407,6 +558,7 @@ local function inactiveFriendsOf(with: { userId: number, cookie: string }): { Us
 end
 
 --- Get all users that friend requests with targetUserId using exclusive start paging
+--- @within friends
 local function friendRequests(
 	with: { limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): FriendRequestResponsePages
@@ -422,6 +574,7 @@ local function friendRequests(
 end
 
 --- Decline a friend request.
+--- @within friends
 local function declineFriendRequest(with: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -435,6 +588,7 @@ local function declineFriendRequest(with: { requesterUserId: number, cookie: str
 end
 
 --- Get list of all friends for the specified user.
+--- @within friends
 local function friendsOf(with: { userId: number, userSort: number? }): { UserResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -448,6 +602,7 @@ local function friendsOf(with: { userId: number, userSort: number? }): { UserRes
 end
 
 --- Get a paginated list of all friends for the specified user.
+--- @within friends
 local function friendshipsOf(
 	with: { userId: number, userSort: number?, cursor: string?, limit: number? }
 ): FriendResponsePages
@@ -463,6 +618,7 @@ local function friendshipsOf(
 end
 
 --- Return the number of pending friend requests.
+--- @within friends
 local function countFriendRequests(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -476,6 +632,7 @@ local function countFriendRequests(with: { cookie: string }): number
 end
 
 --- Get the number of following a user has
+--- @within friends
 local function countFollowersOf(with: { targetUserId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",

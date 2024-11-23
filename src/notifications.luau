@@ -1,7 +1,16 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- <no description>
+--- [notifications.roblox.com](https://notifications.roblox.com)
+--- @class notifications
+
+--- @interface ReceiverDestinationSettingModel
+--- .platform "ChromeOnDesktop" | "AndroidNative" | "FirefoxOnDesktop" | "IOSNative" | "AndroidAmazon" | "IOSTencent" | "AndroidTencentService" | "IOSPushKit"
+--- .name string
+--- .isEnabled boolean
+--- .destinationId number
+--- .isSetByReceiver boolean
+--- @within notifications
 export type ReceiverDestinationSettingModel = {
 	platform: "ChromeOnDesktop"
 		| "AndroidNative"
@@ -17,7 +26,14 @@ export type ReceiverDestinationSettingModel = {
 	isSetByReceiver: boolean,
 }
 
---- <no description>
+--- @interface ReceiverNotificationSettingGroupModel
+--- .notificationSourceType "Test" | "FriendRequestReceived" | "FriendRequestAccepted" | "PartyInviteReceived" | "PartyMemberJoined" | "ChatNewMessage" | "PrivateMessageReceived" | "UserAddedToPrivateServerWhiteList" | "ConversationUniverseChanged" | "TeamCreateInvite" | "GameUpdate" | "DeveloperMetricsAvailable" | "GroupJoinRequestAccepted" | "Sendr" | "ExperienceInvitation"
+--- .receiverDestinationType "DesktopPush" | "MobilePush" | "NotificationStream"
+--- .isEnabled boolean
+--- .isOverridable boolean
+--- .isSetByReceiver boolean
+--- .pushNotificationDestinationPreferences { ReceiverDestinationSettingModel }
+--- @within notifications
 export type ReceiverNotificationSettingGroupModel = {
 	notificationSourceType: "Test"
 		| "FriendRequestReceived"
@@ -41,16 +57,29 @@ export type ReceiverNotificationSettingGroupModel = {
 	pushNotificationDestinationPreferences: { ReceiverDestinationSettingModel },
 }
 
---- <no description>
+--- @interface GetPushDestinationsResponseModel
+--- .statusMessage string
+--- .destinations { UserPushDestination }
+--- @within notifications
 export type GetPushDestinationsResponseModel = { statusMessage: string, destinations: { UserPushDestination } }
 
---- <no description>
+--- @interface NotificationIdsResponseModel
+--- .statusMessage string
+--- .ids { string }
+--- @within notifications
 export type NotificationIdsResponseModel = { statusMessage: string, ids: { string } }
 
---- <no description>
+--- @interface RegisterChromeRequestModel
+--- .notificationToken string
+--- .initiatedByUser boolean
+--- @within notifications
 export type RegisterChromeRequestModel = { notificationToken: string, initiatedByUser: boolean }
 
---- <no description>
+--- @interface UserNotificationSettingsModel
+--- .optedOutReceiverDestinationTypes { "DesktopPush" | "MobilePush" | "NotificationStream" }
+--- .notificationBandSettings { ReceiverNotificationSettingGroupModel }
+--- .optedOutNotificationSourceTypes { "Test" | "FriendRequestReceived" | "FriendRequestAccepted" | "PartyInviteReceived" | "PartyMemberJoined" | "ChatNewMessage" | "PrivateMessageReceived" | "UserAddedToPrivateServerWhiteList" | "ConversationUniverseChanged" | "TeamCreateInvite" | "GameUpdate" | "DeveloperMetricsAvailable" | "GroupJoinRequestAccepted" | "Sendr" | "ExperienceInvitation" }
+--- @within notifications
 export type UserNotificationSettingsModel = {
 	optedOutReceiverDestinationTypes: { "DesktopPush" | "MobilePush" | "NotificationStream" },
 	notificationBandSettings: { ReceiverNotificationSettingGroupModel },
@@ -73,13 +102,28 @@ export type UserNotificationSettingsModel = {
 	},
 }
 
---- <no description>
+--- @interface SuccessResponseModel
+--- .statusMessage string
+--- @within notifications
 export type SuccessResponseModel = { statusMessage: string }
 
---- <no description>
+--- @interface RolloutSettingsModel
+--- .isValidFeature boolean
+--- .isRolloutEnabled boolean
+--- .featureName string
+--- @within notifications
 export type RolloutSettingsModel = { isValidFeature: boolean, isRolloutEnabled: boolean, featureName: string }
 
---- <no description>
+--- @interface NotificationStreamEntriesModel
+--- .isInteracted boolean
+--- .notificationSourceType "Test" | "FriendRequestReceived" | "FriendRequestAccepted" | "PartyInviteReceived" | "PartyMemberJoined" | "ChatNewMessage" | "PrivateMessageReceived" | "UserAddedToPrivateServerWhiteList" | "ConversationUniverseChanged" | "TeamCreateInvite" | "GameUpdate" | "DeveloperMetricsAvailable" | "GroupJoinRequestAccepted" | "Sendr" | "ExperienceInvitation"
+--- .metadataCollection { nil }
+--- .eventCount number
+--- .id string
+--- .timestamp string
+--- .content nil
+--- .eventDate string
+--- @within notifications
 export type NotificationStreamEntriesModel = {
 	isInteracted: boolean,
 	notificationSourceType: "Test"
@@ -106,6 +150,14 @@ export type NotificationStreamEntriesModel = {
 }
 
 --- Model for a game update message to be displayed in notification stream.
+--- @interface GameUpdateNotificationModel
+--- .createdOnKey string
+--- .universeId number
+--- .createdOn string
+--- .rootPlaceId number
+--- .content string
+--- .universeName string
+--- @within notifications
 export type GameUpdateNotificationModel = {
 	createdOnKey: string,
 	universeId: number,
@@ -115,10 +167,18 @@ export type GameUpdateNotificationModel = {
 	universeName: string,
 }
 
---- <no description>
+--- @interface MarkInteractedRequestModel
+--- .eventId string
+--- @within notifications
 export type MarkInteractedRequestModel = { eventId: string }
 
---- <no description>
+--- @interface PushNotificationRegistration
+--- .application string
+--- .platform "ChromeOnDesktop" | "AndroidNative" | "FirefoxOnDesktop" | "IOSNative" | "AndroidAmazon" | "IOSTencent" | "AndroidTencentService" | "IOSPushKit"
+--- .name string
+--- .userPushNotificationDestinationId number
+--- .notificationToken string
+--- @within notifications
 export type PushNotificationRegistration = {
 	application: string,
 	platform: "ChromeOnDesktop"
@@ -134,27 +194,53 @@ export type PushNotificationRegistration = {
 	notificationToken: string,
 }
 
---- <no description>
+--- @interface PushNotificationClientMetadata
+--- .fallbackDelivered boolean
+--- .type string
+--- .detail nil
+--- .notificationId string
+--- @within notifications
 export type PushNotificationClientMetadata =
 	{ fallbackDelivered: boolean, type: string, detail: nil, notificationId: string }
 
---- <no description>
+--- @interface GetMetadataResponseModel
+--- .statusMessage string
+--- .metadata PushNotificationClientMetadata
+--- @within notifications
 export type GetMetadataResponseModel = { statusMessage: string, metadata: PushNotificationClientMetadata }
 
---- <no description>
+--- @interface RealTimeNotificationsSettingsResponseModel
+--- .fallbackDomain string
+--- .primaryDomain string
+--- @within notifications
 export type RealTimeNotificationsSettingsResponseModel = { fallbackDomain: string, primaryDomain: string }
 
---- <no description>
+--- @interface GetCurrentPushDestinationResponseModel
+--- .statusMessage string
+--- .destination UserPushDestination
+--- @within notifications
 export type GetCurrentPushDestinationResponseModel = { statusMessage: string, destination: UserPushDestination }
 
---- <no description>
+--- @interface RegisterFirefoxRequestModel
+--- .notificationEndpoint string
+--- .notificationToken string
+--- .initiatedByUser boolean
+--- @within notifications
 export type RegisterFirefoxRequestModel = {
 	notificationEndpoint: string,
 	notificationToken: string,
 	initiatedByUser: boolean,
 }
 
---- <no description>
+--- @interface UserPushDestination
+--- .supportsUpdateNotifications boolean
+--- .platform "ChromeOnDesktop" | "AndroidNative" | "FirefoxOnDesktop" | "IOSNative" | "AndroidAmazon" | "IOSTencent" | "AndroidTencentService" | "IOSPushKit"
+--- .name string
+--- .user NotificationUser
+--- .userPushNotificationDestinationId number
+--- .notificationToken string
+--- .application string
+--- @within notifications
 export type UserPushDestination = {
 	supportsUpdateNotifications: boolean,
 	platform: "ChromeOnDesktop"
@@ -173,12 +259,22 @@ export type UserPushDestination = {
 }
 
 --- Chrome Manifest to link GCM project to Chrome browser
+--- @interface ChromeManifestModel
+--- .name string
+--- .gcm_sender_id string
+--- @within notifications
 export type ChromeManifestModel = { name: string, gcm_sender_id: string }
 
---- <no description>
+--- @interface NotificationUser
+--- .name string
+--- .userId number
+--- @within notifications
 export type NotificationUser = { name: string, userId: number }
 
---- <no description>
+--- @interface MarkAsReadRequestModel
+--- .platformType "ChromeOnDesktop" | "AndroidNative" | "FirefoxOnDesktop" | "IOSNative" | "AndroidAmazon" | "IOSTencent" | "AndroidTencentService" | "IOSPushKit"
+--- .notificationId string
+--- @within notifications
 export type MarkAsReadRequestModel = {
 	platformType: "ChromeOnDesktop"
 		| "AndroidNative"
@@ -191,7 +287,13 @@ export type MarkAsReadRequestModel = {
 	notificationId: string,
 }
 
---- <no description>
+--- @interface RegisterIOSNativeRequestModel
+--- .oldNotificationToken string
+--- .deviceName string
+--- .authorizeForUser boolean
+--- .destinationIdentifier string
+--- .notificationToken string
+--- @within notifications
 export type RegisterIOSNativeRequestModel = {
 	oldNotificationToken: string,
 	deviceName: string,
@@ -200,26 +302,47 @@ export type RegisterIOSNativeRequestModel = {
 	notificationToken: string,
 }
 
---- <no description>
+--- @interface NotificationRolloutSettingsModel
+--- .rollOutFeatureEnabledList { RolloutSettingsModel }
+--- @within notifications
 export type NotificationRolloutSettingsModel = { rollOutFeatureEnabledList: { RolloutSettingsModel } }
 
---- <no description>
+--- @interface GameUpdateNotificationReadRequestModel
+--- .universeId number
+--- .createdOn string
+--- .currentUserId number
+--- @within notifications
 export type GameUpdateNotificationReadRequestModel = { universeId: number, createdOn: string, currentUserId: number }
 
---- <no description>
+--- @interface UnreadStreamNotificationsModel
+--- .unreadNotifications number
+--- .statusMessage string
+--- @within notifications
 export type UnreadStreamNotificationsModel = { unreadNotifications: number, statusMessage: string }
 
---- <no description>
+--- @interface NotificationStreamMetadataResponse
+--- .bannerDismissTimeSpan number
+--- .canLaunchGameFromGameUpdate boolean
+--- .signalRDisconnectionResponseInMilliseconds number
+--- @within notifications
 export type NotificationStreamMetadataResponse = {
 	bannerDismissTimeSpan: number,
 	canLaunchGameFromGameUpdate: boolean,
 	signalRDisconnectionResponseInMilliseconds: number,
 }
 
---- <no description>
+--- @interface RegistrationResponseModel
+--- .statusMessage string
+--- .registration PushNotificationRegistration
+--- @within notifications
 export type RegistrationResponseModel = { statusMessage: string, registration: PushNotificationRegistration }
 
---- <no description>
+--- @interface RegisterTencentServiceRequestModel
+--- .deviceName string
+--- .destinationIdentifier string
+--- .notificationToken string
+--- .authorizeForUser boolean
+--- @within notifications
 export type RegisterTencentServiceRequestModel = {
 	deviceName: string,
 	destinationIdentifier: string,
@@ -227,7 +350,13 @@ export type RegisterTencentServiceRequestModel = {
 	authorizeForUser: boolean,
 }
 
---- <no description>
+--- @interface RegisterIOSPushKitRequestModel
+--- .oldNotificationToken string
+--- .deviceName string
+--- .authorizeForUser boolean
+--- .destinationIdentifier string
+--- .notificationToken string
+--- @within notifications
 export type RegisterIOSPushKitRequestModel = {
 	oldNotificationToken: string,
 	deviceName: string,
@@ -236,7 +365,12 @@ export type RegisterIOSPushKitRequestModel = {
 	notificationToken: string,
 }
 
---- <no description>
+--- @interface RegisterAndroidRequestModel
+--- .oldNotificationToken string
+--- .deviceName string
+--- .notificationToken string
+--- .authorizeForUser boolean
+--- @within notifications
 export type RegisterAndroidRequestModel = {
 	oldNotificationToken: string,
 	deviceName: string,
@@ -244,7 +378,12 @@ export type RegisterAndroidRequestModel = {
 	authorizeForUser: boolean,
 }
 
---- <no description>
+--- @interface RegisterAndroidAmazonRequestModel
+--- .oldNotificationToken string
+--- .deviceName string
+--- .notificationToken string
+--- .authorizeForUser boolean
+--- @within notifications
 export type RegisterAndroidAmazonRequestModel = {
 	oldNotificationToken: string,
 	deviceName: string,
@@ -252,7 +391,12 @@ export type RegisterAndroidAmazonRequestModel = {
 	authorizeForUser: boolean,
 }
 
---- <no description>
+--- @interface MarkInteractionRequestModel
+--- .interactionType "Click" | "Dismiss" | "Action"
+--- .notificationToken string
+--- .platformType "ChromeOnDesktop" | "AndroidNative" | "FirefoxOnDesktop" | "IOSNative" | "AndroidAmazon" | "IOSTencent" | "AndroidTencentService" | "IOSPushKit"
+--- .notificationId string
+--- @within notifications
 export type MarkInteractionRequestModel = {
 	interactionType: "Click" | "Dismiss" | "Action",
 	notificationToken: string,
@@ -267,7 +411,11 @@ export type MarkInteractionRequestModel = {
 	notificationId: string,
 }
 
---- <no description>
+--- @interface MarkCategoryAsReadRequestModel
+--- .latestNotificationId string
+--- .notificationType "Test" | "FriendRequestReceived" | "FriendRequestAccepted" | "PartyInviteReceived" | "PartyMemberJoined" | "ChatNewMessage" | "PrivateMessageReceived" | "UserAddedToPrivateServerWhiteList" | "ConversationUniverseChanged" | "TeamCreateInvite" | "GameUpdate" | "DeveloperMetricsAvailable" | "GroupJoinRequestAccepted" | "Sendr" | "ExperienceInvitation"
+--- .category string
+--- @within notifications
 export type MarkCategoryAsReadRequestModel = {
 	latestNotificationId: string,
 	notificationType: "Test"
@@ -289,6 +437,7 @@ export type MarkCategoryAsReadRequestModel = {
 }
 
 --- Gets the recent entries from the notification stream
+--- @within notifications
 local function recent(
 	with: { startIndex: number?, maxRows: number?, cookie: string }
 ): { NotificationStreamEntriesModel }
@@ -304,6 +453,7 @@ local function recent(
 end
 
 --- Registers IOS device for pushkit notifications
+--- @within notifications
 local function registerIOSPushkit(with: RegisterIOSPushKitRequestModel & { cookie: string }): RegistrationResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -318,6 +468,7 @@ local function registerIOSPushkit(with: RegisterIOSPushKitRequestModel & { cooki
 end
 
 --- De-register all devices to disable push notifications
+--- @within notifications
 local function deregisterAllDevices(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -331,6 +482,7 @@ local function deregisterAllDevices(with: { cookie: string }): string
 end
 
 --- De-register current device to disable push notifications
+--- @within notifications
 local function deregisterDevice(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -344,6 +496,7 @@ local function deregisterDevice(with: { cookie: string }): string
 end
 
 --- Get Chrome Manifest to link GCM project to Chrome Browser
+--- @within notifications
 local function chromeManifest(with: { cookie: string }): ChromeManifestModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -357,6 +510,7 @@ local function chromeManifest(with: { cookie: string }): ChromeManifestModel
 end
 
 --- De-register current device to disable pushkit notifications
+--- @within notifications
 local function deregisterIOSPushkit(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -370,6 +524,7 @@ local function deregisterIOSPushkit(with: { cookie: string }): string
 end
 
 --- Get Notification Stream metadata.
+--- @within notifications
 local function streamMetadata(with: { cookie: string }): NotificationStreamMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -383,6 +538,7 @@ local function streamMetadata(with: { cookie: string }): NotificationStreamMetad
 end
 
 --- Clears the unread Notification stream count
+--- @within notifications
 local function clearUnread(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -396,6 +552,7 @@ local function clearUnread(with: { cookie: string }): string
 end
 
 --- Sends metrics when a Game Update Notification is Read from the Game Update Notifications Section of the Notification Stream
+--- @within notifications
 local function acknowledgeGameUpdate(with: GameUpdateNotificationReadRequestModel & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -410,6 +567,7 @@ local function acknowledgeGameUpdate(with: GameUpdateNotificationReadRequestMode
 end
 
 --- Gets valid destinations associated with the signed user
+--- @within notifications
 local function destinations(with: { cookie: string }): GetPushDestinationsResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -423,6 +581,7 @@ local function destinations(with: { cookie: string }): GetPushDestinationsRespon
 end
 
 --- Gets the notificationIds for the specified notification token
+--- @within notifications
 local function notifications(
 	with: { notificationToken: string, limit: number, cursor: number?, cookie: string }
 ): NotificationIdsResponseModel
@@ -438,6 +597,7 @@ local function notifications(
 end
 
 --- Registers IOS device for push notifications
+--- @within notifications
 local function registerIOSNative(with: RegisterIOSNativeRequestModel & { cookie: string }): RegistrationResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -452,6 +612,7 @@ local function registerIOSNative(with: RegisterIOSNativeRequestModel & { cookie:
 end
 
 --- Register Android Native for push notifications
+--- @within notifications
 local function registerAndroidNative(with: RegisterAndroidRequestModel & { cookie: string }): RegistrationResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -466,6 +627,7 @@ local function registerAndroidNative(with: RegisterAndroidRequestModel & { cooki
 end
 
 --- Register Android Tencent service device for push notifications
+--- @within notifications
 local function registerAndroidTencentService(
 	with: RegisterTencentServiceRequestModel & { cookie: string }
 ): RegistrationResponseModel
@@ -482,6 +644,7 @@ local function registerAndroidTencentService(
 end
 
 --- Registers Firefox for push notifications
+--- @within notifications
 local function registerFirefox(with: RegisterFirefoxRequestModel & { cookie: string }): RegistrationResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -496,6 +659,7 @@ local function registerFirefox(with: RegisterFirefoxRequestModel & { cookie: str
 end
 
 --- Registers Chrome for push notifications
+--- @within notifications
 local function registerChrome(with: RegisterChromeRequestModel & { cookie: string }): RegistrationResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -510,6 +674,7 @@ local function registerChrome(with: RegisterChromeRequestModel & { cookie: strin
 end
 
 --- Gets the count of unread Notification stream entries
+--- @within notifications
 local function countUnread(with: { cookie: string }): UnreadStreamNotificationsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -523,6 +688,7 @@ local function countUnread(with: { cookie: string }): UnreadStreamNotificationsM
 end
 
 --- Gets the corresponding metadata for the specified notification
+--- @within notifications
 local function metadata(
 	with: { notificationToken: string, notificationId: string, cookie: string }
 ): GetMetadataResponseModel
@@ -538,6 +704,7 @@ local function metadata(
 end
 
 --- Gets the current device destination
+--- @within notifications
 local function destination(with: { cookie: string }): GetCurrentPushDestinationResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -551,6 +718,7 @@ local function destination(with: { cookie: string }): GetCurrentPushDestinationR
 end
 
 --- Marks a Notification Stream Entry as Interacted
+--- @within notifications
 local function markInteracted(with: MarkInteractedRequestModel & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -565,6 +733,7 @@ local function markInteracted(with: MarkInteractedRequestModel & { cookie: strin
 end
 
 --- Marks Interaction status for push notification
+--- @within notifications
 local function markInteraction(with: MarkInteractionRequestModel & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -579,6 +748,7 @@ local function markInteraction(with: MarkInteractionRequestModel & { cookie: str
 end
 
 --- Gets the notification settings related to realtime
+--- @within notifications
 local function realtimeSettings(with: { cookie: string }): RealTimeNotificationsSettingsResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -592,6 +762,7 @@ local function realtimeSettings(with: { cookie: string }): RealTimeNotifications
 end
 
 --- Register Amazon Android for push notifications
+--- @within notifications
 local function registerAmazonAndroid(
 	with: RegisterAndroidAmazonRequestModel & { cookie: string }
 ): RegistrationResponseModel
@@ -607,7 +778,7 @@ local function registerAmazonAndroid(
 	return serde.decode("json", response.body)
 end
 
---- <no description>
+--- @within notifications
 local function latestGameUpdates(
 	with: { universeIds: { number }, sinceDateTime: string?, cookie: string }
 ): { GameUpdateNotificationModel }

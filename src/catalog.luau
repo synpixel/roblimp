@@ -1,10 +1,22 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- <no description>
+--- [catalog.roblox.com](https://catalog.roblox.com)
+--- @class catalog
+
+--- @interface Int64Pages
+--- .CursorRecipe string
+--- .ExclusiveStartKeyInfo Int64Pages
+--- @within catalog
 export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
 
 --- A response containing favorited bundles and whether there are more.
+--- @interface FavoriteBundlesResponse
+--- .moreFavorites boolean
+--- .previousCursor string
+--- .nextCursor string
+--- .favorites { BundleDetailsModel }
+--- @within catalog
 export type FavoriteBundlesResponse = {
 	moreFavorites: boolean,
 	previousCursor: string,
@@ -13,6 +25,35 @@ export type FavoriteBundlesResponse = {
 }
 
 --- The detailed model for catalog items.
+--- @interface CatalogSearchDetailedResponseItem
+--- .description string
+--- .creatorTargetId number
+--- .bundledItems { BundleItemDetailModel }
+--- .priceStatus string
+--- .assetType number
+--- .isOffSale boolean
+--- .productId number
+--- .itemRestrictions { number }
+--- .itemStatus { number }
+--- .quantityLimitPerUser number
+--- .totalQuantity number
+--- .saleLocationType number
+--- .favoriteCount number
+--- .itemType number
+--- .hasResellers boolean
+--- .id number
+--- .collectibleItemId string
+--- .unitsAvailableForConsumption number
+--- .creatorHasVerifiedBadge boolean
+--- .bundleType number
+--- .offSaleDeadline string
+--- .name string
+--- .lowestResalePrice number
+--- .price number
+--- .lowestPrice number
+--- .creatorName string
+--- .creatorType number
+--- @within catalog
 export type CatalogSearchDetailedResponseItem = {
 	description: string,
 	creatorTargetId: number,
@@ -43,10 +84,25 @@ export type CatalogSearchDetailedResponseItem = {
 	creatorType: number,
 }
 
---- <no description>
+--- @interface BundleCreatorModel
+--- .id number
+--- .type string
+--- .name string
+--- .hasVerifiedBadge boolean
+--- @within catalog
 export type BundleCreatorModel = { id: number, type: string, name: string, hasVerifiedBadge: boolean }
 
---- <no description>
+--- @interface BundleDetailsModel
+--- .description string
+--- .id number
+--- .product BundleProductModel
+--- .bundleType string
+--- .name string
+--- .itemRestrictions { number }
+--- .collectibleItemDetail CollectibleItemDetail
+--- .creator BundleCreatorModel
+--- .items { BundleItemDetailModel }
+--- @within catalog
 export type BundleDetailsModel = {
 	description: string,
 	id: number,
@@ -60,28 +116,48 @@ export type BundleDetailsModel = {
 }
 
 --- Response model for avatar topics
+--- @interface TopicModel
+--- .originalTopicName string
+--- .displayName string
+--- @within catalog
 export type TopicModel = { originalTopicName: string, displayName: string }
 
---- <no description>
+--- @interface MultigetItemDetailsRequestModel
+--- .items { MultigetItemDetailsRequestItem }
+--- @within catalog
 export type MultigetItemDetailsRequestModel = { items: { MultigetItemDetailsRequestItem } }
 
---- <no description>
+--- @interface OwnedBundleModelPages
+--- .nextPageCursor string
+--- .previousPageCursor string
+--- .data { OwnedBundleModel }
+--- @within catalog
 export type OwnedBundleModelPages = { nextPageCursor: string, previousPageCursor: string, data: { OwnedBundleModel } }
 
---- <no description>
-
 --- A model to represent asset favorites.
+--- @interface AssetFavoriteModel
+--- .created string
+--- .assetId number
+--- .userId number
+--- @within catalog
 export type AssetFavoriteModel = { created: string, assetId: number, userId: number }
 
---- <no description>
+--- @interface ApiEmptyResponseModel
+--- @within catalog
 export type ApiEmptyResponseModel = {}
 
---- <no description>
+--- @interface CatalogSearchDetailedResponseItemPages
+--- .data { CatalogSearchDetailedResponseItem }
+--- @within catalog
 export type CatalogSearchDetailedResponseItemPages = { data: { CatalogSearchDetailedResponseItem } }
 
---- <no description>
-
---- <no description>
+--- @interface TopicRequestModel
+--- .items { AvatarItem }
+--- .inputQuery string
+--- .selectTopics { string }
+--- .genderType number
+--- .maxResult number
+--- @within catalog
 export type TopicRequestModel = {
 	items: { AvatarItem },
 	inputQuery: string,
@@ -91,6 +167,12 @@ export type TopicRequestModel = {
 }
 
 --- SaleLocation information for a collectible item (asset or bundle).
+--- @interface SaleLocation
+--- .saleLocationType number
+--- .universeIds { number }
+--- .enabledUniverseIds { number }
+--- .saleLocationTypeId number
+--- @within catalog
 export type SaleLocation = {
 	saleLocationType: number,
 	universeIds: { number },
@@ -98,30 +180,73 @@ export type SaleLocation = {
 	saleLocationTypeId: number,
 }
 
---- <no description>
+--- @interface IBundleInstancePages
+--- .CursorRecipe string
+--- .ExclusiveStartKeyInfo IBundleInstancePages
+--- @within catalog
 export type IBundleInstancePages = { CursorRecipe: string, ExclusiveStartKeyInfo: IBundleInstancePages }
 
 --- Defines the Premium pricing for a catalog item
+--- @interface PremiumPricingModel
+--- .premiumDiscountPercentage number
+--- .premiumPriceInRobux number
+--- @within catalog
 export type PremiumPricingModel = { premiumDiscountPercentage: number, premiumPriceInRobux: number }
 
---- <no description>
+--- @interface BundleDetailsModelPages
+--- .data { BundleDetailsModel }
+--- @within catalog
 export type BundleDetailsModelPages = { data: { BundleDetailsModel } }
 
---- <no description>
+--- @interface Error
+--- .Message string
+--- .Code number
+--- @within catalog
 export type Error = { Message: string, Code: number }
 
 --- A model to represent bundle favorites.
+--- @interface BundleFavoriteModel
+--- .created string
+--- .bundleId number
+--- .userId number
+--- @within catalog
 export type BundleFavoriteModel = { created: string, bundleId: number, userId: number }
 
 --- A model to represent owned bundles.
+--- @interface OwnedBundleModel
+--- .id number
+--- .creator BundleCreatorModel
+--- .name string
+--- .bundleType string
+--- @within catalog
 export type OwnedBundleModel = { id: number, creator: BundleCreatorModel, name: string, bundleType: string }
 
---- <no description>
+--- @interface BundleItemDetailModel
+--- .owned boolean
+--- .type string
+--- .name string
+--- .id number
+--- @within catalog
 export type BundleItemDetailModel = { owned: boolean, type: string, name: string, id: number }
 
---- <no description>
-
---- <no description>
+--- @interface CollectibleItemDetail
+--- .lowestAvailableResaleItemInstanceId string
+--- .unitsAvailable number
+--- .totalQuantity number
+--- .hasResellers boolean
+--- .price number
+--- .resaleRestriction number
+--- .collectibleItemId string
+--- .collectibleItemType number
+--- .collectibleProductId string
+--- .offSaleDeadline string
+--- .lowestAvailableResaleProductId string
+--- .lowestResalePrice number
+--- .saleStatus number
+--- .lowestPrice number
+--- .quantityLimitPerUser number
+--- .saleLocation SaleLocation
+--- @within catalog
 export type CollectibleItemDetail = {
 	lowestAvailableResaleItemInstanceId: string,
 	unitsAvailable: number,
@@ -141,12 +266,22 @@ export type CollectibleItemDetail = {
 	saleLocation: SaleLocation,
 }
 
---- <no description>
-
---- <no description>
+--- @interface AvatarItem
+--- .TargetId number
+--- .ItemType number
+--- @within catalog
 export type AvatarItem = { TargetId: number, ItemType: number }
 
---- <no description>
+--- @interface BundleProductModel
+--- .isPublicDomain boolean
+--- .type string
+--- .isFree boolean
+--- .isForSale boolean
+--- .id number
+--- .priceInRobux number
+--- .noPriceText string
+--- .premiumPricing PremiumPricingModel
+--- @within catalog
 export type BundleProductModel = {
 	isPublicDomain: boolean,
 	type: string,
@@ -158,20 +293,33 @@ export type BundleProductModel = {
 	premiumPricing: PremiumPricingModel,
 }
 
---- <no description>
+--- @interface TopicResponse
+--- .topics { TopicModel }
+--- .error Error
+--- @within catalog
 export type TopicResponse = { topics: { TopicModel }, error: Error }
 
---- <no description>
+--- @interface MultigetItemDetailsRequestItem
+--- .itemType number
+--- .id number
+--- @within catalog
 export type MultigetItemDetailsRequestItem = { itemType: number, id: number }
 
---- <no description>
-
---- The detailed model for catalog items.
-
---- <no description>
+--- @interface Int32Pages
+--- .SortOrder number
+--- .PagingDirection number
+--- .Count number
+--- @within catalog
 export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
---- <no description>
+--- @interface ElasticsearchDebugInfo
+--- .isForceTerminationEnabledByRequest boolean
+--- .searchResultDataSource string
+--- .isFromCache boolean
+--- .indexName string
+--- .elasticsearchQuery string
+--- .isTerminatedEarly boolean
+--- @within catalog
 export type ElasticsearchDebugInfo = {
 	isForceTerminationEnabledByRequest: boolean,
 	searchResultDataSource: string,
@@ -181,11 +329,8 @@ export type ElasticsearchDebugInfo = {
 	isTerminatedEarly: boolean,
 }
 
---- <no description>
-
---- ApiPageResponse for catalog search
-
 --- Returns list of item details.
+--- @within catalog
 local function items(with: MultigetItemDetailsRequestModel & { cookie: string }): { CatalogSearchDetailedResponseItem }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -200,6 +345,7 @@ local function items(with: MultigetItemDetailsRequestModel & { cookie: string })
 end
 
 --- Search for catalog items.
+--- @within catalog
 local function search(with: {
 	assetTypeIds: { number }?,
 	bundleTypeIds: { number }?,

@@ -1,33 +1,78 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
+--- [avatar.roblox.com](https://avatar.roblox.com)
+--- @class avatar
+
 --- Empty response, will be in WebAPI base soon
+--- @interface EmptyResponse
+--- @within avatar
 export type EmptyResponse = {}
 
 --- A model containing details about avatar-related business rules
+--- @interface DefaultClothingAssets
+--- .defaultPantAssetIds { number }
+--- .defaultShirtAssetIds { number }
+--- @within avatar
 export type DefaultClothingAssets = { defaultPantAssetIds: { number }, defaultShirtAssetIds: { number } }
 
 --- Filtered page response
+--- @interface OutfitModelPages
+--- .filteredCount number
+--- .data { OutfitModel }
+--- .total number
+--- @within avatar
 export type OutfitModelPages = { filteredCount: number, data: { OutfitModel }, total: number }
 
 --- A model container BrickColor ids for each body part.
+--- @interface BodyColorModel
+--- .hexColor string
+--- .name string
+--- .brickColorId number
+--- @within avatar
 export type BodyColorModel = { hexColor: string, name: string, brickColorId: number }
 
 --- A model that contains a playerAvatarType
+--- @interface PlayerAvatarTypeModel
+--- .playerAvatarType number
+--- @within avatar
 export type PlayerAvatarTypeModel = { playerAvatarType: number }
 
---- <no description>
+--- @interface ScaleModel
+--- .bodyType number
+--- .head number
+--- .height number
+--- .depth number
+--- .proportion number
+--- .width number
+--- @within avatar
 export type ScaleModel =
 	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
 
 --- A model for wear outfit responses
+--- @interface WearResponseModel
+--- .invalidAssets { AssetModelV2 }
+--- .invalidAssetIds { number }
+--- .success boolean
+--- @within avatar
 export type WearResponseModel = { invalidAssets: { AssetModelV2 }, invalidAssetIds: { number }, success: boolean }
 
---- <no description>
+--- @interface AccessoryScaleModel
+--- .yScale number
+--- .xScale number
+--- .zScale number
+--- @within avatar
 export type AccessoryScaleModel = { yScale: number, xScale: number, zScale: number }
 
 --- A model containing details about an asset
 --- - V2: adds CurrentVersionId, AssetMetaModel
+--- @interface AssetModelV2
+--- .name string
+--- .id number
+--- .meta AssetMetaModelV1
+--- .assetType AssetTypeModel
+--- .currentVersionId number
+--- @within avatar
 export type AssetModelV2 = {
 	name: string,
 	id: number,
@@ -37,15 +82,48 @@ export type AssetModelV2 = {
 }
 
 --- Response object representing a user's emote
+--- @interface EmoteResponseModel
+--- .assetId number
+--- .assetName string
+--- .position number
+--- @within avatar
 export type EmoteResponseModel = { assetId: number, assetName: string, position: number }
 
 --- A model containing details about an asset type and its business rules
+--- @interface AssetTypeRulesModel
+--- .id number
+--- .maxNumber number
+--- .name string
+--- @within avatar
 export type AssetTypeRulesModel = { id: number, maxNumber: number, name: string }
 
 --- A model containing details about an asset type
+--- @interface AssetTypeModel
+--- .id number
+--- .name string
+--- @within avatar
 export type AssetTypeModel = { id: number, name: string }
 
 --- A model containing website metadata for avatars
+--- @interface AvatarMetadataModel
+--- .isBodyTypeScaleOutOfTab boolean
+--- .scaleWidthIncrement number
+--- .isJustinUiChangesEnabled boolean
+--- .scaleHeadIncrement number
+--- .supportProportionAndBodyType boolean
+--- .scaleHeightIncrement number
+--- .isCategoryReorgEnabled boolean
+--- .isAvatarScaleEmbeddedInTab boolean
+--- .showDefaultClothingMessageOnPageLoad boolean
+--- .enableDefaultClothingMessage boolean
+--- .isLCCompletelyEnabled boolean
+--- .isAvatarWearingApiCallsLockingOnFrontendEnabled boolean
+--- .LCEnabledInEditorAndCatalog boolean
+--- .isOutfitHandlingOnFrontendEnabled boolean
+--- .scaleProportionIncrement number
+--- .scaleBodyTypeIncrement number
+--- .areThreeDeeThumbsEnabled boolean
+--- @within avatar
 export type AvatarMetadataModel = {
 	isBodyTypeScaleOutOfTab: boolean,
 	scaleWidthIncrement: number,
@@ -66,16 +144,36 @@ export type AvatarMetadataModel = {
 	areThreeDeeThumbsEnabled: boolean,
 }
 
---- <no description>
+--- @interface AssetPosition
+--- .Y number
+--- .X number
+--- .Z number
+--- @within avatar
 export type AssetPosition = { Y: number, X: number, Z: number }
 
---- <no description>
+--- @interface UniverseAvatarAssetOverrideResponseModel
+--- .assetID number
+--- .assetTypeID number
+--- .isPlayerChoice boolean
+--- @within avatar
 export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
 
---- <no description>
+--- @interface AssetScale
+--- .Y number
+--- .X number
+--- .Z number
+--- @within avatar
 export type AssetScale = { Y: number, X: number, Z: number }
 
 --- Exhaustive model denoting all possible metadata fields of an asset
+--- @interface AssetMetaModelV1
+--- .rotation AssetRotation
+--- .version number
+--- .position AssetPosition
+--- .order number
+--- .puffiness number
+--- .scale AssetScale
+--- @within avatar
 export type AssetMetaModelV1 = {
 	rotation: AssetRotation,
 	version: number,
@@ -85,10 +183,18 @@ export type AssetMetaModelV1 = {
 	scale: AssetScale,
 }
 
---- <no description>
+--- @interface AccessoryRotationModel
+--- .xRotation number
+--- .zRotation number
+--- .yRotation number
+--- @within avatar
 export type AccessoryRotationModel = { xRotation: number, zRotation: number, yRotation: number }
 
---- <no description>
+--- @interface AccessoryRefinementModel
+--- .rotation AccessoryRotationModel
+--- .scale AccessoryScaleModel
+--- .position AccessoryPositionModel
+--- @within avatar
 export type AccessoryRefinementModel = {
 	rotation: AccessoryRotationModel,
 	scale: AccessoryScaleModel,
@@ -96,6 +202,18 @@ export type AccessoryRefinementModel = {
 }
 
 --- A model containing details about a user outfit
+--- @interface OutfitDetailsModel
+--- .universeId number
+--- .id number
+--- .moderationStatus string
+--- .bodyColors BodyColorsModel
+--- .name string
+--- .isEditable boolean
+--- .playerAvatarType string
+--- .outfitType string
+--- .scale ScaleModel
+--- .assets { AssetModelV2 }
+--- @within avatar
 export type OutfitDetailsModel = {
 	universeId: number,
 	id: number,
@@ -110,18 +228,47 @@ export type OutfitDetailsModel = {
 }
 
 --- Success response class
+--- @interface AvatarApiSuccessResponse
+--- .success boolean
+--- @within avatar
 export type AvatarApiSuccessResponse = { success: boolean }
 
---- <no description>
+--- @interface AccessoryPositionModel
+--- .xPosition number
+--- .yPosition number
+--- .zPosition number
+--- @within avatar
 export type AccessoryPositionModel = { xPosition: number, yPosition: number, zPosition: number }
 
 --- A model that contains a list of asset ids
+--- @interface AssetIdListModel
+--- .assetIds { number }
+--- @within avatar
 export type AssetIdListModel = { assetIds: { number } }
 
---- <no description>
+--- @interface AssetRotation
+--- .Y number
+--- .X number
+--- .Z number
+--- @within avatar
 export type AssetRotation = { Y: number, X: number, Z: number }
 
 --- A model containing details about avatar-related business rules
+--- @interface AvatarRulesModel
+--- .accessoryRefinementTypes { number }
+--- .bundlesEnabledForUser boolean
+--- .emotesEnabledForUser boolean
+--- .proportionsAndBodyTypeEnabledForUser boolean
+--- .wearableAssetTypes { AssetTypeRulesModel }
+--- .playerAvatarTypes { number }
+--- .scales {}
+--- .basicBodyColorsPalette { BodyColorModel }
+--- .minimumDeltaEBodyColorDifference number
+--- .defaultClothingAssetLists DefaultClothingAssets
+--- .bodyColorsPalette { BodyColorModel }
+--- .accessoryRefinementUpperBounds {Badge: AccessoryRefinementModel,Code: AccessoryRefinementModel,Legs: AccessoryRefinementModel,Face: AccessoryRefinementModel,ShortsAccessory: AccessoryRefinementModel,HTML: AccessoryRefinementModel,Shirt: AccessoryRefinementModel,Mesh: AccessoryRefinementModel,HairAccessory: AccessoryRefinementModel,RightArm: AccessoryRefinementModel,Lua: AccessoryRefinementModel,Head: AccessoryRefinementModel,Video: AccessoryRefinementModel,FallAnimation: AccessoryRefinementModel,RightLeg: AccessoryRefinementModel,YouTubeVideo: AccessoryRefinementModel,LeftLeg: AccessoryRefinementModel,Decal: AccessoryRefinementModel,Package: AccessoryRefinementModel,Image: AccessoryRefinementModel,LeftShoeAccessory: AccessoryRefinementModel,Pants: AccessoryRefinementModel,Animation: AccessoryRefinementModel,RightShoeAccessory: AccessoryRefinementModel,DynamicHead: AccessoryRefinementModel,ShirtAccessory: AccessoryRefinementModel,Plugin: AccessoryRefinementModel,Model: AccessoryRefinementModel,WalkAnimation: AccessoryRefinementModel,App: AccessoryRefinementModel,Avatar: AccessoryRefinementModel,ClimbAnimation: AccessoryRefinementModel,FaceAccessory: AccessoryRefinementModel,Arms: AccessoryRefinementModel,CodeSnippet: AccessoryRefinementModel,Audio: AccessoryRefinementModel,AdsVideo: AccessoryRefinementModel,OtaUpdate: AccessoryRefinementModel,LeftArm: AccessoryRefinementModel,MoodAnimation: AccessoryRefinementModel,EyelashAccessory: AccessoryRefinementModel,EyebrowAccessory: AccessoryRefinementModel,MeshHiddenSurfaceRemoval: AccessoryRefinementModel,FontFamily: AccessoryRefinementModel,FontFace: AccessoryRefinementModel,TexturePack: AccessoryRefinementModel,DressSkirtAccessory: AccessoryRefinementModel,Place: AccessoryRefinementModel,SweaterAccessory: AccessoryRefinementModel,SolidModel: AccessoryRefinementModel,FrontAccessory: AccessoryRefinementModel,WaistAccessory: AccessoryRefinementModel,BackAccessory: AccessoryRefinementModel,ShoulderAccessory: AccessoryRefinementModel,EmoteAnimation: AccessoryRefinementModel,LocalizationTableTranslation: AccessoryRefinementModel,LocalizationTableManifest: AccessoryRefinementModel,PoseAnimation: AccessoryRefinementModel,GamePass: AccessoryRefinementModel,SwimAnimation: AccessoryRefinementModel,Hat: AccessoryRefinementModel,RunAnimation: AccessoryRefinementModel,JumpAnimation: AccessoryRefinementModel,TShirtAccessory: AccessoryRefinementModel,Text: AccessoryRefinementModel,DeathAnimation: AccessoryRefinementModel,PantsAccessory: AccessoryRefinementModel,NeckAccessory: AccessoryRefinementModel,JacketAccessory: AccessoryRefinementModel,IdleAnimation: AccessoryRefinementModel,MeshPart: AccessoryRefinementModel,Torso: AccessoryRefinementModel,GroupEmblem: AccessoryRefinementModel,Gear: AccessoryRefinementModel,TShirt: AccessoryRefinementModel,}
+--- .accessoryRefinementLowerBounds {Badge: AccessoryRefinementModel,Code: AccessoryRefinementModel,Legs: AccessoryRefinementModel,Face: AccessoryRefinementModel,ShortsAccessory: AccessoryRefinementModel,HTML: AccessoryRefinementModel,Shirt: AccessoryRefinementModel,Mesh: AccessoryRefinementModel,HairAccessory: AccessoryRefinementModel,RightArm: AccessoryRefinementModel,Lua: AccessoryRefinementModel,Head: AccessoryRefinementModel,Video: AccessoryRefinementModel,FallAnimation: AccessoryRefinementModel,RightLeg: AccessoryRefinementModel,YouTubeVideo: AccessoryRefinementModel,LeftLeg: AccessoryRefinementModel,Decal: AccessoryRefinementModel,Package: AccessoryRefinementModel,Image: AccessoryRefinementModel,LeftShoeAccessory: AccessoryRefinementModel,Pants: AccessoryRefinementModel,Animation: AccessoryRefinementModel,RightShoeAccessory: AccessoryRefinementModel,DynamicHead: AccessoryRefinementModel,ShirtAccessory: AccessoryRefinementModel,Plugin: AccessoryRefinementModel,Model: AccessoryRefinementModel,WalkAnimation: AccessoryRefinementModel,App: AccessoryRefinementModel,Avatar: AccessoryRefinementModel,ClimbAnimation: AccessoryRefinementModel,FaceAccessory: AccessoryRefinementModel,Arms: AccessoryRefinementModel,CodeSnippet: AccessoryRefinementModel,Audio: AccessoryRefinementModel,AdsVideo: AccessoryRefinementModel,OtaUpdate: AccessoryRefinementModel,LeftArm: AccessoryRefinementModel,MoodAnimation: AccessoryRefinementModel,EyelashAccessory: AccessoryRefinementModel,EyebrowAccessory: AccessoryRefinementModel,MeshHiddenSurfaceRemoval: AccessoryRefinementModel,FontFamily: AccessoryRefinementModel,FontFace: AccessoryRefinementModel,TexturePack: AccessoryRefinementModel,DressSkirtAccessory: AccessoryRefinementModel,Place: AccessoryRefinementModel,SweaterAccessory: AccessoryRefinementModel,SolidModel: AccessoryRefinementModel,FrontAccessory: AccessoryRefinementModel,WaistAccessory: AccessoryRefinementModel,BackAccessory: AccessoryRefinementModel,ShoulderAccessory: AccessoryRefinementModel,EmoteAnimation: AccessoryRefinementModel,LocalizationTableTranslation: AccessoryRefinementModel,LocalizationTableManifest: AccessoryRefinementModel,PoseAnimation: AccessoryRefinementModel,GamePass: AccessoryRefinementModel,SwimAnimation: AccessoryRefinementModel,Hat: AccessoryRefinementModel,RunAnimation: AccessoryRefinementModel,JumpAnimation: AccessoryRefinementModel,TShirtAccessory: AccessoryRefinementModel,Text: AccessoryRefinementModel,DeathAnimation: AccessoryRefinementModel,PantsAccessory: AccessoryRefinementModel,NeckAccessory: AccessoryRefinementModel,JacketAccessory: AccessoryRefinementModel,IdleAnimation: AccessoryRefinementModel,MeshPart: AccessoryRefinementModel,Torso: AccessoryRefinementModel,GroupEmblem: AccessoryRefinementModel,Gear: AccessoryRefinementModel,TShirt: AccessoryRefinementModel,}
+--- @within avatar
 export type AvatarRulesModel = {
 	accessoryRefinementTypes: { number },
 	bundlesEnabledForUser: boolean,
@@ -291,18 +438,51 @@ export type AvatarRulesModel = {
 }
 
 --- A model that contains information about the max/mins for each scale
+--- @interface ScaleRulesModel
+--- .min number
+--- .increment number
+--- .max number
+--- @within avatar
 export type ScaleRulesModel = { min: number, increment: number, max: number }
 
 --- A slim model for user outfits.
+--- @interface OutfitModel
+--- .id number
+--- .outfitType string
+--- .name string
+--- .isEditable boolean
+--- @within avatar
 export type OutfitModel = { id: number, outfitType: string, name: string, isEditable: boolean }
 
 --- A model containing details about a recent item
+--- @interface RecentItemModel
+--- .type number
+--- .name string
+--- .id number
+--- .assetType AssetTypeModel
+--- .isEditable boolean
+--- @within avatar
 export type RecentItemModel = { type: number, name: string, id: number, assetType: AssetTypeModel, isEditable: boolean }
 
---- <no description>
+--- @interface RecentItemModelPages
+--- .data { RecentItemModel }
+--- .total number
+--- @within avatar
 export type RecentItemModelPages = { data: { RecentItemModel }, total: number }
 
 --- The game start info
+--- @interface GameStartInfoResponse
+--- .universeAvatarCollisionType string
+--- .universeAvatarBodyType string
+--- .allowCustomAnimations string
+--- .moderationStatus string
+--- .message string
+--- .universeAvatarMinScales ScaleModel
+--- .gameAvatarType string
+--- .universeAvatarAssetOverrides { UniverseAvatarAssetOverrideResponseModel }
+--- .jointPositioningType string
+--- .universeAvatarMaxScales ScaleModel
+--- @within avatar
 export type GameStartInfoResponse = {
 	universeAvatarCollisionType: string,
 	universeAvatarBodyType: string,
@@ -317,6 +497,14 @@ export type GameStartInfoResponse = {
 }
 
 --- A model container BrickColor ids for each body part.
+--- @interface BodyColorsModel
+--- .headColorId number
+--- .torsoColorId number
+--- .rightArmColorId number
+--- .leftLegColorId number
+--- .rightLegColorId number
+--- .leftArmColorId number
+--- @within avatar
 export type BodyColorsModel = {
 	headColorId: number,
 	torsoColorId: number,
@@ -327,6 +515,15 @@ export type BodyColorsModel = {
 }
 
 --- A model containing details about an avatar
+--- @interface AvatarModelV2
+--- .bodyColors BodyColorsModel
+--- .scales ScaleModel
+--- .defaultPantsApplied boolean
+--- .defaultShirtApplied boolean
+--- .playerAvatarType number
+--- .emotes { EmoteResponseModel }
+--- .assets { AssetModelV2 }
+--- @within avatar
 export type AvatarModelV2 = {
 	bodyColors: BodyColorsModel,
 	scales: ScaleModel,
@@ -338,6 +535,15 @@ export type AvatarModelV2 = {
 }
 
 --- A model containing details about an avatar
+--- @interface AvatarModelV3
+--- .scales ScaleModel
+--- .bodyColor3s BodyColors3Model
+--- .defaultShirtApplied boolean
+--- .playerAvatarType number
+--- .emotes { EmoteResponseModel }
+--- .defaultPantsApplied boolean
+--- .assets { AssetModelV2 }
+--- @within avatar
 export type AvatarModelV3 = {
 	scales: ScaleModel,
 	bodyColor3s: BodyColors3Model,
@@ -348,9 +554,15 @@ export type AvatarModelV3 = {
 	assets: { AssetModelV2 },
 }
 
---- <no description>
-
 --- A model containing details needed to update or create an outfit
+--- @interface OutfitUpdateModelV2
+--- .bodyColors BodyColorsModel
+--- .assets { AssetWearModel }
+--- .name string
+--- .scale ScaleModel
+--- .outfitType number
+--- .playerAvatarType string
+--- @within avatar
 export type OutfitUpdateModelV2 = {
 	bodyColors: BodyColorsModel,
 	assets: { AssetWearModel },
@@ -361,34 +573,32 @@ export type OutfitUpdateModelV2 = {
 }
 
 --- A model that contains a list of AssetWear models
+--- @interface WearRequestModel
+--- .assets { AssetWearModel }
+--- @within avatar
 export type WearRequestModel = { assets: { AssetWearModel } }
 
---- A model containing details about an asset
---- - V2: adds CurrentVersionId, AssetMetaModel
-
---- <no description>
-
---- A model containing details about an asset type
-
---- <no description>
+--- @interface ApiEmptyResponseModel
+--- @within avatar
 export type ApiEmptyResponseModel = {}
 
 --- A model which contains
 --- - an asset id
 --- - AssetMetaModel
+--- @interface AssetWearModel
+--- .id number
+--- .meta AssetMetaModelV1
+--- @within avatar
 export type AssetWearModel = { id: number, meta: AssetMetaModelV1 }
 
---- Exhaustive model denoting all possible metadata fields of an asset
-
---- Success response class
-
---- A model container BrickColor ids for each body part.
-
---- <no description>
-
---- Response object representing a user's emote
-
---- <no description>
+--- @interface BodyColorsModelV2
+--- .leftLegColor3 string
+--- .torsoColor3 string
+--- .rightLegColor3 string
+--- .rightArmColor3 string
+--- .headColor3 string
+--- .leftArmColor3 string
+--- @within avatar
 export type BodyColorsModelV2 = {
 	leftLegColor3: string,
 	torsoColor3: string,
@@ -399,6 +609,14 @@ export type BodyColorsModelV2 = {
 }
 
 --- A model containing RGB hex colors for each body part.
+--- @interface BodyColors3Model
+--- .leftLegColor3 string
+--- .torsoColor3 string
+--- .rightLegColor3 string
+--- .rightArmColor3 string
+--- .headColor3 string
+--- .leftArmColor3 string
+--- @within avatar
 export type BodyColors3Model = {
 	leftLegColor3: string,
 	torsoColor3: string,
@@ -408,17 +626,20 @@ export type BodyColors3Model = {
 	leftArmColor3: string,
 }
 
---- <no description>
-
---- A model for wear outfit responses
-
---- A slim model for user outfits.
-
---- Avatar page response.
-
---- Exhaustive model denoting all possible metadata fields of an asset
-
 --- A model containing details about a user outfit
+--- @interface OutfitDetailsModelV2
+--- .assets { AssetModelV2 }
+--- .bodyColor3s BodyColors3Model
+--- .id number
+--- .moderationStatus string
+--- .bundleId number
+--- .name string
+--- .universeId number
+--- .playerAvatarType string
+--- .outfitType string
+--- .isEditable boolean
+--- .scale ScaleModel
+--- @within avatar
 export type OutfitDetailsModelV2 = {
 	assets: { AssetModelV2 },
 	bodyColor3s: BodyColors3Model,
@@ -434,6 +655,14 @@ export type OutfitDetailsModelV2 = {
 }
 
 --- A model containing details needed to update or create an outfit.
+--- @interface OutfitUpdateModelV3
+--- .assets { AssetWearModel }
+--- .name string
+--- .scale ScaleModel
+--- .outfitType number
+--- .playerAvatarType string
+--- .bodyColor3s BodyColorsModelV2
+--- @within avatar
 export type OutfitUpdateModelV3 = {
 	assets: { AssetWearModel },
 	name: string,
@@ -443,30 +672,8 @@ export type OutfitUpdateModelV3 = {
 	bodyColor3s: BodyColorsModelV2,
 }
 
---- <no description>
-
---- <no description>
-
---- A model containing details about an asset
---- - V2: adds CurrentVersionId, AssetMetaModel
-
---- <no description>
-
---- <no description>
-
---- A model containing details about an asset type
-
---- <no description>
-
---- A slim model for user outfits.
-
---- A model containing RGB hex colors for each body part.
-
---- A model which contains
---- - an asset id
---- - AssetMetaModel
-
 --- Returns the business rules related to avatars
+--- @within avatar
 local function rules(): AvatarRulesModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -480,6 +687,7 @@ local function rules(): AvatarRulesModel
 end
 
 --- Sets the authenticated user's scales
+--- @within avatar
 local function setScales(with: ScaleModel & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -494,6 +702,7 @@ local function setScales(with: ScaleModel & { cookie: string }): boolean
 end
 
 --- Requests the authenticated user's thumbnail be redrawn
+--- @within avatar
 local function redrawThumbnail(with: { cookie: string }): EmptyResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -507,6 +716,7 @@ local function redrawThumbnail(with: { cookie: string }): EmptyResponse
 end
 
 --- Sets the authenticated user's player avatar type (e.g. R6 or R15).
+--- @within avatar
 local function setRigType(with: PlayerAvatarTypeModel & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -522,6 +732,7 @@ end
 
 --- Returns a list of recent items
 --- Recent items can be Assets or Outfits
+--- @within avatar
 local function recentItems(with: { recentItemListType: number, cookie: string }): RecentItemModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -535,6 +746,7 @@ local function recentItems(with: { recentItemListType: number, cookie: string })
 end
 
 --- Returns metadata used by the avatar page of the website
+--- @within avatar
 local function metadata(): AvatarMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -548,6 +760,7 @@ local function metadata(): AvatarMetadataModel
 end
 
 --- Gets a list of asset ids that the user is currently wearing
+--- @within avatar
 local function assetsWorn(with: { userId: number }): { number }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -561,6 +774,7 @@ local function assetsWorn(with: { userId: number }): { number }
 end
 
 --- Deletes the outfit
+--- @within avatar
 local function deleteOutfit(with: { userOutfitId: number, cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -574,6 +788,7 @@ local function deleteOutfit(with: { userOutfitId: number, cookie: string }): boo
 end
 
 --- Returns details about the authenticated user's avatar
+--- @within avatar
 local function getAvatar(with: { cookie: string }): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -587,6 +802,7 @@ local function getAvatar(with: { cookie: string }): AvatarModelV3
 end
 
 --- Returns details about a specified user's avatar
+--- @within avatar
 local function of(with: { userId: number }): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -600,6 +816,7 @@ local function of(with: { userId: number }): AvatarModelV3
 end
 
 --- Sets the authenticated user's body colors
+--- @within avatar
 local function setBodyColors(with: BodyColorsModelV2 & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -614,6 +831,7 @@ local function setBodyColors(with: BodyColorsModelV2 & { cookie: string }): bool
 end
 
 --- Sets the avatar's current assets to the list
+--- @within avatar
 local function setAssetsWorn(with: WearRequestModel & { cookie: string }): WearResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -628,6 +846,7 @@ local function setAssetsWorn(with: WearRequestModel & { cookie: string }): WearR
 end
 
 --- Gets a list of outfits for the specified user.
+--- @within avatar
 local function outfitsOf(with: {
 	userId: number,
 	paginationToken: string?,
@@ -648,6 +867,7 @@ local function outfitsOf(with: {
 end
 
 --- Updates the contents of an outfit.
+--- @within avatar
 local function updateOutfit(with: OutfitUpdateModelV3 & { userOutfitId: number, cookie: string }): OutfitModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
@@ -662,6 +882,7 @@ local function updateOutfit(with: OutfitUpdateModelV3 & { userOutfitId: number, 
 end
 
 --- Creates a new outfit.
+--- @within avatar
 local function createOutfit(with: OutfitUpdateModelV3 & { cookie: string }): OutfitModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -676,6 +897,7 @@ local function createOutfit(with: OutfitUpdateModelV3 & { cookie: string }): Out
 end
 
 --- Gets details about the contents of an outfit.
+--- @within avatar
 local function outfit(with: { userOutfitId: number, cookie: string }): OutfitDetailsModelV2
 	local response = requestWithCsrfToken({
 		method = "GET",
