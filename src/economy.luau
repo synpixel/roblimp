@@ -5,7 +5,7 @@ local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 export type CurrencyResponse = { robux: number }
 
 --- Gets currency for the authenticated user.
-local function getCurrency(with: { cookie: string }): CurrencyResponse
+local function robux(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://economy.roblox.com/v1/user/currency`,
@@ -14,7 +14,7 @@ local function getCurrency(with: { cookie: string }): CurrencyResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).robux
 end
 
-return { getCurrency = getCurrency }
+return { robux = robux }

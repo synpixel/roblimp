@@ -293,7 +293,7 @@ export type UniverseSettingsRequestV2 = {
 }
 
 --- Activates a universes.
-local function activateUniverse(with: { universeId: number, cookie: string }): ApiEmptyResponseModel
+local function activate(with: { universeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://develop.roblox.com/v1/universes/{with.universeId}/activate`,
@@ -306,7 +306,7 @@ local function activateUniverse(with: { universeId: number, cookie: string }): A
 end
 
 --- Gets plugin details by ids.
-local function getPlugins(with: { pluginIds: { number } }): PluginResponsePages
+local function plugins(with: { pluginIds: { number } }): { PluginResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/plugins?pluginIds={table.concat(with.pluginIds, "&pluginIds=")}`,
@@ -315,17 +315,19 @@ local function getPlugins(with: { pluginIds: { number } }): PluginResponsePages
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Gets a list of universes for the authenticated user.
-local function getUniverses(with: {
-	isArchived: boolean?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-	cookie: string,
-}): UniverseModelPages
+local function multiple(
+	with: {
+		isArchived: boolean?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+		cookie: string,
+	}
+): UniverseModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/user/universes?isArchived={with.isArchived or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -338,7 +340,7 @@ local function getUniverses(with: {
 end
 
 --- Updates a plugin.
-local function updatePlugin(with: UpdatePluginRequest & { pluginId: number, cookie: string }): ApiEmptyResponseModel
+local function configurePlugin(with: UpdatePluginRequest & { pluginId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://develop.roblox.com/v1/plugins/{with.pluginId}`,
@@ -352,7 +354,7 @@ local function updatePlugin(with: UpdatePluginRequest & { pluginId: number, cook
 end
 
 --- Deactivates a universe.
-local function deactivateUniverse(with: { universeId: number, cookie: string }): ApiEmptyResponseModel
+local function deactivate(with: { universeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://develop.roblox.com/v1/universes/{with.universeId}/deactivate`,
@@ -364,27 +366,16 @@ local function deactivateUniverse(with: { universeId: number, cookie: string }):
 	return serde.decode("json", response.body)
 end
 
---- Gets a list of Groups that a user can manage.
-local function getGroups(with: { cookie: string }): GroupModelPages
-	local response = requestWithCsrfToken({
-		method = "GET",
-		url = `https://develop.roblox.com/v1/user/groups/canmanage`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
 --- Gets a list of universes for the given group.
-local function getUniversesByGroup(with: {
-	groupId: number,
-	isArchived: boolean?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-}): UniverseModelPages
+local function ofGroup(
+	with: {
+		groupId: number,
+		isArchived: boolean?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+	}
+): UniverseModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/groups/{with.groupId}/universes?isArchived={with.isArchived or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -397,7 +388,7 @@ local function getUniversesByGroup(with: {
 end
 
 --- Gets a page of templates that can be used to start off making games.
-local function getGameTemplates(): GameTemplateModelPages
+local function templates(): { GameTemplateModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/gametemplates`,
@@ -406,11 +397,11 @@ local function getGameTemplates(): GameTemplateModelPages
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Returns list of granted and declined permissions related to the universe with the id universeId for authenticated user
-local function getUniversePermissions(with: { universeId: number, cookie: string }): UniversePermissionsModel
+local function permissions(with: { universeId: number, cookie: string }): UniversePermissionsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/universes/{with.universeId}/permissions`,
@@ -423,7 +414,7 @@ local function getUniversePermissions(with: { universeId: number, cookie: string
 end
 
 --- Gets a list of places for a universe.
-local function getUniversePlaces(with: {
+local function places(with: {
 	universeId: number,
 	isUniverseCreation: boolean?,
 	limit: number?,
@@ -443,7 +434,7 @@ end
 
 --- Update universe settings for an owned universe.
 --- V2 Contains data for avatar scale and asset override.
-local function updateUniverse(
+local function configure(
 	with: UniverseSettingsRequestV2 & { universeId: number, cookie: string }
 ): UniverseSettingsResponseV2
 	local response = requestWithCsrfToken({
@@ -459,7 +450,7 @@ local function updateUniverse(
 end
 
 --- Updates the place configuration for the place with the id placeId
-local function updatePlace(with: PlaceConfigurationModelV2 & { placeId: number, cookie: string }): PlaceModelV2
+local function configurePlace(with: PlaceConfigurationModelV2 & { placeId: number, cookie: string }): PlaceModelV2
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://develop.roblox.com/v2/places/{with.placeId}`,
@@ -473,7 +464,7 @@ local function updatePlace(with: PlaceConfigurationModelV2 & { placeId: number, 
 end
 
 --- Gets the place configuration for the place with the id placeId
-local function getPlaceConfiguration(with: { placeId: number, cookie: string }): PlaceModelV2
+local function place(with: { placeId: number, cookie: string }): PlaceModelV2
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v2/places/{with.placeId}`,
@@ -486,17 +477,16 @@ local function getPlaceConfiguration(with: { placeId: number, cookie: string }):
 end
 
 return {
-	activateUniverse = activateUniverse,
-	getPlugins = getPlugins,
-	updateUniverse = updateUniverse,
-	getUniverses = getUniverses,
-	updatePlace = updatePlace,
-	getPlaceConfiguration = getPlaceConfiguration,
-	updatePlugin = updatePlugin,
-	deactivateUniverse = deactivateUniverse,
-	getGroups = getGroups,
-	getUniversesByGroup = getUniversesByGroup,
-	getGameTemplates = getGameTemplates,
-	getUniversePermissions = getUniversePermissions,
-	getUniversePlaces = getUniversePlaces,
+	activate = activate,
+	plugins = plugins,
+	multiple = multiple,
+	configure = configure,
+	configurePlace = configurePlace,
+	place = place,
+	configurePlugin = configurePlugin,
+	deactivate = deactivate,
+	ofGroup = ofGroup,
+	templates = templates,
+	permissions = permissions,
+	places = places,
 }

@@ -76,13 +76,9 @@ export type TradeCountResponse = { count: number }
 export type TradeOfferResponse = { robux: number, userAssets: { UserAssetResponse }, user: SkinnyUserResponse }
 
 --- Fetches a list of the authenticated user's trades.
-local function getTrades(with: {
-	tradeStatusType: number,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-	cookie: string,
-}): TradeResponsePages
+local function all(
+	with: { tradeStatusType: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
+): TradeResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/{with.tradeStatusType}?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -95,7 +91,7 @@ local function getTrades(with: {
 end
 
 --- Accepts a trade.
-local function acceptTrade(with: { tradeId: number, cookie: string }): ApiEmptyResponseModel
+local function accept(with: { tradeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://trades.roblox.com/v1/trades/{with.tradeId}/accept`,
@@ -108,7 +104,7 @@ local function acceptTrade(with: { tradeId: number, cookie: string }): ApiEmptyR
 end
 
 --- Gets metadata about the trade system.
-local function getMetadata(with: { cookie: string }): TradeMetadata
+local function metadata(with: { cookie: string }): TradeMetadata
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/metadata`,
@@ -134,7 +130,7 @@ local function canTradeWith(with: { userId: number, cookie: string }): CanTradeR
 end
 
 --- Gets detailed information about a trade.
-local function getTrade(with: { tradeId: number, cookie: string }): TradeDetailResponse
+local function get(with: { tradeId: number, cookie: string }): TradeDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/{with.tradeId}`,
@@ -147,7 +143,7 @@ local function getTrade(with: { tradeId: number, cookie: string }): TradeDetailR
 end
 
 --- Sends a trade.
-local function sendTrade(with: TradeRequest & { cookie: string }): NewTradeResponse
+local function send(with: TradeRequest & { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://trades.roblox.com/v1/trades/send`,
@@ -157,12 +153,12 @@ local function sendTrade(with: TradeRequest & { cookie: string }): NewTradeRespo
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).id
 end
 
 --- Gets the total number of pending trades for the authenticated user.
 --- Inbound is the only accepted tradeStatusType.
-local function getTotalTrades(with: { tradeStatusType: number, cookie: string }): TradeCountResponse
+local function count(with: { tradeStatusType: number, cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/{with.tradeStatusType}/count`,
@@ -171,11 +167,11 @@ local function getTotalTrades(with: { tradeStatusType: number, cookie: string })
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 --- Counters a trade.
-local function counterTrade(with: TradeRequest & { tradeId: number, cookie: string }): NewTradeResponse
+local function counter(with: TradeRequest & { tradeId: number, cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://trades.roblox.com/v1/trades/{with.tradeId}/counter`,
@@ -185,11 +181,11 @@ local function counterTrade(with: TradeRequest & { tradeId: number, cookie: stri
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).id
 end
 
 --- Declines a trade.
-local function declineTrade(with: { tradeId: number, cookie: string }): ApiEmptyResponseModel
+local function decline(with: { tradeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://trades.roblox.com/v1/trades/{with.tradeId}/decline`,
@@ -202,13 +198,13 @@ local function declineTrade(with: { tradeId: number, cookie: string }): ApiEmpty
 end
 
 return {
-	getTrades = getTrades,
-	acceptTrade = acceptTrade,
-	getMetadata = getMetadata,
+	all = all,
+	accept = accept,
+	metadata = metadata,
 	canTradeWith = canTradeWith,
-	getTrade = getTrade,
-	sendTrade = sendTrade,
-	getTotalTrades = getTotalTrades,
-	counterTrade = counterTrade,
-	declineTrade = declineTrade,
+	get = get,
+	send = send,
+	count = count,
+	counter = counter,
+	decline = decline,
 }

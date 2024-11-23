@@ -117,7 +117,7 @@ export type BadgeAwardResponse = { badgeId: number, awardedDate: string }
 export type BadgeAwardStatisticsResponse = { pastDayAwardedCount: number, winRatePercentage: number, awardedCount: number }
 
 --- Gets timestamps for when badges were awarded to a user.
-local function getBadgeAwardedTimestamps(with: { userId: number, badgeIds: { number } }): BadgeAwardResponsePages
+local function awardedTimestamps(with: { userId: number, badgeIds: { number } }): { BadgeAwardResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/users/{with.userId}/badges/awarded-dates?badgeIds={table.concat(
@@ -129,11 +129,11 @@ local function getBadgeAwardedTimestamps(with: { userId: number, badgeIds: { num
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Updates badge configuration.
-local function updateBadge(with: UpdateBadgeRequest & { badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function update(with: UpdateBadgeRequest & { badgeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://badges.roblox.com/v1/badges/{with.badgeId}`,
@@ -147,7 +147,7 @@ local function updateBadge(with: UpdateBadgeRequest & { badgeId: number, cookie:
 end
 
 --- Gets badge information by the badge Id.
-local function getBadge(with: { badgeId: number }): BadgeResponse
+local function get(with: { badgeId: number }): BadgeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/{with.badgeId}`,
@@ -160,7 +160,7 @@ local function getBadge(with: { badgeId: number }): BadgeResponse
 end
 
 --- Gets the number of free badges left for the current UTC day by their awarding game.
-local function getFreeBadgesQuota(with: { universeId: number }): number
+local function freeQuota(with: { universeId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/universes/{with.universeId}/free-badges-quota`,
@@ -173,7 +173,7 @@ local function getFreeBadgesQuota(with: { universeId: number }): number
 end
 
 --- Removes a badge from the user.
-local function removeBadgeFrom(with: { userId: number, badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function removeFrom(with: { userId: number, badgeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://badges.roblox.com/v1/user/{with.userId}/badges/{with.badgeId}`,
@@ -186,7 +186,7 @@ local function removeBadgeFrom(with: { userId: number, badgeId: number, cookie: 
 end
 
 --- Gets metadata about the badges system.
-local function getMetadata(): BadgeMetadataResponse
+local function metadata(): BadgeMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/metadata`,
@@ -199,7 +199,7 @@ local function getMetadata(): BadgeMetadataResponse
 end
 
 --- Creates a new badge.
-local function createBadge(with: {
+local function create(with: {
 	universeId: number,
 	name: string?,
 	description: string?,
@@ -221,7 +221,7 @@ local function createBadge(with: {
 end
 
 --- Gets badges by their awarding game.
-local function getBadgesFor(with: {
+local function universe(with: {
 	universeId: number,
 	sortBy: "Rank" | "DateCreated"?,
 	limit: number?,
@@ -240,7 +240,7 @@ local function getBadgesFor(with: {
 end
 
 --- Removes a badge from the authenticated user.
-local function removeBadge(with: { badgeId: number, cookie: string }): ApiEmptyResponseModel
+local function remove(with: { badgeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://badges.roblox.com/v1/user/badges/{with.badgeId}`,
@@ -253,7 +253,7 @@ local function removeBadge(with: { badgeId: number, cookie: string }): ApiEmptyR
 end
 
 --- Gets a list of badges a user has been awarded.
-local function getBadgesOf(
+local function of(
 	with: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): GetBadgesByUserResponsePages
 	local response = requestWithCsrfToken({
@@ -268,14 +268,14 @@ local function getBadgesOf(
 end
 
 return {
-	getBadgeAwardedTimestamps = getBadgeAwardedTimestamps,
-	updateBadge = updateBadge,
-	getBadge = getBadge,
-	getFreeBadgesQuota = getFreeBadgesQuota,
-	removeBadgeFrom = removeBadgeFrom,
-	getMetadata = getMetadata,
-	createBadge = createBadge,
-	getBadgesFor = getBadgesFor,
-	removeBadge = removeBadge,
-	getBadgesOf = getBadgesOf,
+	awardedTimestamps = awardedTimestamps,
+	update = update,
+	get = get,
+	freeQuota = freeQuota,
+	removeFrom = removeFrom,
+	metadata = metadata,
+	create = create,
+	universe = universe,
+	remove = remove,
+	of = of,
 }

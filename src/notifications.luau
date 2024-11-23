@@ -289,7 +289,7 @@ export type MarkCategoryAsReadRequestModel = {
 }
 
 --- Gets the recent entries from the notification stream
-local function getRecent(
+local function recent(
 	with: { startIndex: number?, maxRows: number?, cookie: string }
 ): { NotificationStreamEntriesModel }
 	local response = requestWithCsrfToken({
@@ -318,7 +318,7 @@ local function registerIOSPushkit(with: RegisterIOSPushKitRequestModel & { cooki
 end
 
 --- De-register all devices to disable push notifications
-local function deregisterAllDevices(with: { cookie: string }): SuccessResponseModel
+local function deregisterAllDevices(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-all-devices`,
@@ -327,11 +327,11 @@ local function deregisterAllDevices(with: { cookie: string }): SuccessResponseMo
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- De-register current device to disable push notifications
-local function deregisterDevice(with: { cookie: string }): SuccessResponseModel
+local function deregisterDevice(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-current-device`,
@@ -340,11 +340,11 @@ local function deregisterDevice(with: { cookie: string }): SuccessResponseModel
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Get Chrome Manifest to link GCM project to Chrome Browser
-local function getChromeManifest(with: { cookie: string }): ChromeManifestModel
+local function chromeManifest(with: { cookie: string }): ChromeManifestModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/chrome-manifest`,
@@ -357,7 +357,7 @@ local function getChromeManifest(with: { cookie: string }): ChromeManifestModel
 end
 
 --- De-register current device to disable pushkit notifications
-local function deregisterIOSPushkit(with: { cookie: string }): SuccessResponseModel
+local function deregisterIOSPushkit(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-current-device-ios-pushkit`,
@@ -366,11 +366,11 @@ local function deregisterIOSPushkit(with: { cookie: string }): SuccessResponseMo
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Get Notification Stream metadata.
-local function getStreamMetadata(with: { cookie: string }): NotificationStreamMetadataResponse
+local function streamMetadata(with: { cookie: string }): NotificationStreamMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/metadata`,
@@ -383,7 +383,7 @@ local function getStreamMetadata(with: { cookie: string }): NotificationStreamMe
 end
 
 --- Clears the unread Notification stream count
-local function clearUnread(with: { cookie: string }): SuccessResponseModel
+local function clearUnread(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/clear-unread`,
@@ -392,13 +392,11 @@ local function clearUnread(with: { cookie: string }): SuccessResponseModel
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Sends metrics when a Game Update Notification is Read from the Game Update Notifications Section of the Notification Stream
-local function acknowledgeGameUpdate(
-	with: GameUpdateNotificationReadRequestModel & { cookie: string }
-): SuccessResponseModel
+local function acknowledgeGameUpdate(with: GameUpdateNotificationReadRequestModel & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/game-update-notification-read`,
@@ -408,11 +406,11 @@ local function acknowledgeGameUpdate(
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Gets valid destinations associated with the signed user
-local function getDestinations(with: { cookie: string }): GetPushDestinationsResponseModel
+local function destinations(with: { cookie: string }): GetPushDestinationsResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/get-destinations`,
@@ -425,7 +423,7 @@ local function getDestinations(with: { cookie: string }): GetPushDestinationsRes
 end
 
 --- Gets the notificationIds for the specified notification token
-local function getNotificationIds(
+local function notifications(
 	with: { notificationToken: string, limit: number, cursor: number?, cookie: string }
 ): NotificationIdsResponseModel
 	local response = requestWithCsrfToken({
@@ -512,7 +510,7 @@ local function registerChrome(with: RegisterChromeRequestModel & { cookie: strin
 end
 
 --- Gets the count of unread Notification stream entries
-local function getTotalUnread(with: { cookie: string }): UnreadStreamNotificationsModel
+local function countUnread(with: { cookie: string }): UnreadStreamNotificationsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/unread-count`,
@@ -525,7 +523,7 @@ local function getTotalUnread(with: { cookie: string }): UnreadStreamNotificatio
 end
 
 --- Gets the corresponding metadata for the specified notification
-local function getMetadata(
+local function metadata(
 	with: { notificationToken: string, notificationId: string, cookie: string }
 ): GetMetadataResponseModel
 	local response = requestWithCsrfToken({
@@ -540,7 +538,7 @@ local function getMetadata(
 end
 
 --- Gets the current device destination
-local function getDeviceDestination(with: { cookie: string }): GetCurrentPushDestinationResponseModel
+local function destination(with: { cookie: string }): GetCurrentPushDestinationResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/get-current-device-destination`,
@@ -553,7 +551,7 @@ local function getDeviceDestination(with: { cookie: string }): GetCurrentPushDes
 end
 
 --- Marks a Notification Stream Entry as Interacted
-local function markInteracted(with: MarkInteractedRequestModel & { cookie: string }): SuccessResponseModel
+local function markInteracted(with: MarkInteractedRequestModel & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/mark-interacted`,
@@ -563,11 +561,11 @@ local function markInteracted(with: MarkInteractedRequestModel & { cookie: strin
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Marks Interaction status for push notification
-local function markInteraction(with: MarkInteractionRequestModel & { cookie: string }): SuccessResponseModel
+local function markInteraction(with: MarkInteractionRequestModel & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/mark-interaction`,
@@ -577,11 +575,11 @@ local function markInteraction(with: MarkInteractionRequestModel & { cookie: str
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Gets the notification settings related to realtime
-local function getRealtimeSettings(with: { cookie: string }): RealTimeNotificationsSettingsResponseModel
+local function realtimeSettings(with: { cookie: string }): RealTimeNotificationsSettingsResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/notifications/settings/realtime`,
@@ -610,7 +608,7 @@ local function registerAmazonAndroid(
 end
 
 --- <no description>
-local function getLatestGameUpdates(
+local function latestGameUpdates(
 	with: { universeIds: { number }, sinceDateTime: string?, cookie: string }
 ): { GameUpdateNotificationModel }
 	local response = requestWithCsrfToken({
@@ -628,28 +626,28 @@ local function getLatestGameUpdates(
 end
 
 return {
-	getRecent = getRecent,
+	recent = recent,
 	registerIOSPushkit = registerIOSPushkit,
 	deregisterAllDevices = deregisterAllDevices,
 	deregisterDevice = deregisterDevice,
-	getChromeManifest = getChromeManifest,
+	chromeManifest = chromeManifest,
 	deregisterIOSPushkit = deregisterIOSPushkit,
-	getStreamMetadata = getStreamMetadata,
+	streamMetadata = streamMetadata,
 	clearUnread = clearUnread,
 	acknowledgeGameUpdate = acknowledgeGameUpdate,
-	getDestinations = getDestinations,
-	getNotificationIds = getNotificationIds,
+	destinations = destinations,
+	notifications = notifications,
 	registerIOSNative = registerIOSNative,
 	registerAndroidNative = registerAndroidNative,
 	registerAndroidTencentService = registerAndroidTencentService,
 	registerFirefox = registerFirefox,
 	registerChrome = registerChrome,
-	getTotalUnread = getTotalUnread,
-	getMetadata = getMetadata,
-	getDeviceDestination = getDeviceDestination,
+	countUnread = countUnread,
+	metadata = metadata,
+	destination = destination,
 	markInteracted = markInteracted,
 	markInteraction = markInteraction,
-	getRealtimeSettings = getRealtimeSettings,
+	realtimeSettings = realtimeSettings,
 	registerAmazonAndroid = registerAmazonAndroid,
-	getLatestGameUpdates = getLatestGameUpdates,
+	latestGameUpdates = latestGameUpdates,
 }

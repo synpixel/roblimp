@@ -550,7 +550,7 @@ export type BodyColors3Model = {
 export type AssetWearModel = { id: number, meta: AssetMetaModelV1 }
 
 --- Returns the business rules related to avatars
-local function getAvatarRules(): AvatarRulesModel
+local function rules(): AvatarRulesModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar-rules`,
@@ -563,7 +563,7 @@ local function getAvatarRules(): AvatarRulesModel
 end
 
 --- Sets the authenticated user's scales
-local function setScales(with: ScaleModel & { cookie: string }): AvatarApiSuccessResponse
+local function setScales(with: ScaleModel & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/avatar/set-scales`,
@@ -573,7 +573,7 @@ local function setScales(with: ScaleModel & { cookie: string }): AvatarApiSucces
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).success
 end
 
 --- Requests the authenticated user's thumbnail be redrawn
@@ -590,7 +590,7 @@ local function redrawThumbnail(with: { cookie: string }): EmptyResponse
 end
 
 --- Sets the authenticated user's player avatar type (e.g. R6 or R15).
-local function setRigType(with: PlayerAvatarTypeModel & { cookie: string }): AvatarApiSuccessResponse
+local function setRigType(with: PlayerAvatarTypeModel & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/avatar/set-player-avatar-type`,
@@ -600,12 +600,12 @@ local function setRigType(with: PlayerAvatarTypeModel & { cookie: string }): Ava
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).success
 end
 
 --- Returns a list of recent items
 --- Recent items can be Assets or Outfits
-local function getRecentItems(with: { recentItemListType: number, cookie: string }): RecentItemModelPages
+local function recentItems(with: { recentItemListType: number, cookie: string }): RecentItemModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/recent-items/{with.recentItemListType}/list`,
@@ -618,7 +618,7 @@ local function getRecentItems(with: { recentItemListType: number, cookie: string
 end
 
 --- Returns metadata used by the avatar page of the website
-local function getMetadata(): AvatarMetadataModel
+local function metadata(): AvatarMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar/metadata`,
@@ -631,7 +631,7 @@ local function getMetadata(): AvatarMetadataModel
 end
 
 --- Gets a list of asset ids that the user is currently wearing
-local function getAssetsWorn(with: { userId: number }): AssetIdListModel
+local function assetsWorn(with: { userId: number }): { number }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/users/{with.userId}/currently-wearing`,
@@ -640,11 +640,11 @@ local function getAssetsWorn(with: { userId: number }): AssetIdListModel
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).assetIds
 end
 
 --- Deletes the outfit
-local function deleteOutfit(with: { userOutfitId: number, cookie: string }): AvatarApiSuccessResponse
+local function deleteOutfit(with: { userOutfitId: number, cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/outfits/{with.userOutfitId}/delete`,
@@ -653,7 +653,7 @@ local function deleteOutfit(with: { userOutfitId: number, cookie: string }): Ava
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).success
 end
 
 --- Returns details about the authenticated user's avatar
@@ -670,7 +670,7 @@ local function getAvatar(with: { cookie: string }): AvatarModelV3
 end
 
 --- Returns details about a specified user's avatar
-local function getAvatarOf(with: { userId: number }): AvatarModelV3
+local function of(with: { userId: number }): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v2/avatar/users/{with.userId}/avatar`,
@@ -683,7 +683,7 @@ local function getAvatarOf(with: { userId: number }): AvatarModelV3
 end
 
 --- Sets the authenticated user's body colors
-local function setBodyColors(with: BodyColorsModelV2 & { cookie: string }): AvatarApiSuccessResponse
+local function setBodyColors(with: BodyColorsModelV2 & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v2/avatar/set-body-colors`,
@@ -693,7 +693,7 @@ local function setBodyColors(with: BodyColorsModelV2 & { cookie: string }): Avat
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).success
 end
 
 --- Sets the avatar's current assets to the list
@@ -711,7 +711,7 @@ local function setAssetsWorn(with: WearRequestModel & { cookie: string }): WearR
 end
 
 --- Gets a list of outfits for the specified user.
-local function getOutfitsOf(with: {
+local function outfitsOf(with: {
 	userId: number,
 	paginationToken: string?,
 	outfitType: string?,
@@ -759,7 +759,7 @@ local function createOutfit(with: OutfitUpdateModelV3 & { cookie: string }): Out
 end
 
 --- Gets details about the contents of an outfit.
-local function getOufitDetails(with: { userOutfitId: number }): OutfitDetailsModelV2
+local function outfitDetails(with: { userOutfitId: number }): OutfitDetailsModelV2
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v3/outfits/{with.userOutfitId}/details`,
@@ -775,17 +775,17 @@ return {
 	updateOutfit = updateOutfit,
 	createOutfit = createOutfit,
 	getAvatar = getAvatar,
-	getAvatarOf = getAvatarOf,
-	getAvatarRules = getAvatarRules,
+	of = of,
+	rules = rules,
 	setBodyColors = setBodyColors,
-	getOufitDetails = getOufitDetails,
+	outfitDetails = outfitDetails,
 	setScales = setScales,
 	redrawThumbnail = redrawThumbnail,
 	setRigType = setRigType,
 	setAssetsWorn = setAssetsWorn,
-	getRecentItems = getRecentItems,
-	getMetadata = getMetadata,
-	getOutfitsOf = getOutfitsOf,
-	getAssetsWorn = getAssetsWorn,
+	recentItems = recentItems,
+	metadata = metadata,
+	outfitsOf = outfitsOf,
+	assetsWorn = assetsWorn,
 	deleteOutfit = deleteOutfit,
 }

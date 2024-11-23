@@ -214,7 +214,7 @@ export type RenameGroupConversationRequest = { newTitle: string, conversationId:
 export type ConversationUniverse = { rootPlaceId: number, universeId: number }
 
 --- Gets the rollout settings for requested feature
-local function getRolloutSettings(with: { featureNames: { string }, cookie: string }): RolloutSettingsResponse
+local function rolloutSettings(with: { featureNames: { string }, cookie: string }): { RolloutSettingModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-rollout-settings?featureNames={table.concat(
@@ -226,7 +226,7 @@ local function getRolloutSettings(with: { featureNames: { string }, cookie: stri
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).rolloutFeatures
 end
 
 --- Creates a new one-on-one conversation
@@ -246,7 +246,7 @@ local function createConversation(
 end
 
 --- Mark the specified conversation messages as seen
-local function markAsSeen(with: MarkAsSeenRequest & { cookie: string }): MarkAsSeenResponse
+local function markAsSeen(with: MarkAsSeenRequest & { cookie: string }): "Success"
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/mark-as-seen`,
@@ -256,7 +256,7 @@ local function markAsSeen(with: MarkAsSeenRequest & { cookie: string }): MarkAsS
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).resultType
 end
 
 --- <no description>
@@ -274,7 +274,7 @@ local function sendGameLink(with: SendGameLinkChatMessageRequest & { cookie: str
 end
 
 --- Gets the unread messages for the conversationIds specified in the parameters
-local function getUnreadMessages(
+local function unreadMessages(
 	with: { conversationIds: { number }, pageSize: number, cookie: string }
 ): { MultigetConversationMessagesResponse }
 	local response = requestWithCsrfToken({
@@ -292,7 +292,7 @@ local function getUnreadMessages(
 end
 
 --- Get Chat metadata.
-local function getMetadata(with: { cookie: string }): ChatMetadataResponse
+local function metadata(with: { cookie: string }): ChatMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/metadata`,
@@ -305,7 +305,7 @@ local function getMetadata(with: { cookie: string }): ChatMetadataResponse
 end
 
 --- Gets latest messages corresponding to the given list of conversation Ids
-local function getLatestMessages(
+local function latestMessages(
 	with: { conversationIds: { number }, pageSize: number, cookie: string }
 ): { MultigetConversationMessagesResponse }
 	local response = requestWithCsrfToken({
@@ -323,7 +323,7 @@ local function getLatestMessages(
 end
 
 --- Updates the status for whether a user is typing currently
-local function setTypingStatus(with: UpdateUserTypingStatusRequest & { cookie: string }): UserVisibleStatusResponse
+local function setTypingStatus(with: UpdateUserTypingStatusRequest & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/update-user-typing-status`,
@@ -333,11 +333,11 @@ local function setTypingStatus(with: UpdateUserTypingStatusRequest & { cookie: s
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).statusMessage
 end
 
 --- Gets conversations for the conversationIds specified in the parameters
-local function getConversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
+local function conversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-conversations?conversationIds={table.concat(
@@ -353,7 +353,7 @@ local function getConversations(with: { conversationIds: { number }, cookie: str
 end
 
 --- Gets messages corresponding to the given conversationId
-local function getMessages(
+local function messages(
 	with: { conversationId: number, pageSize: number, exclusiveStartMessageId: string?, cookie: string }
 ): { ChatMessage }
 	local response = requestWithCsrfToken({
@@ -398,7 +398,7 @@ local function createGroupConversation(
 end
 
 --- Gets all conversations associated with the logged-in User
-local function getActiveConversations(with: { pageNumber: number, pageSize: number, cookie: string }): { Conversation }
+local function conversations(with: { pageNumber: number, pageSize: number, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-user-conversations?pageNumber={with.pageNumber}&pageSize={with.pageSize}`,
@@ -411,7 +411,7 @@ local function getActiveConversations(with: { pageNumber: number, pageSize: numb
 end
 
 --- Mark the specified conversation messages as read
-local function markAsRead(with: MarkAsReadRequest & { cookie: string }): MarkAsReadResponse
+local function markAsRead(with: MarkAsReadRequest & { cookie: string }): "Success"
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/mark-as-read`,
@@ -421,7 +421,7 @@ local function markAsRead(with: MarkAsReadRequest & { cookie: string }): MarkAsR
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).resultType
 end
 
 --- Removes a user from an existing conversation
@@ -471,7 +471,7 @@ local function addToConversation(
 end
 
 --- For every authenticated user, the clients hit this endpoint to get the chat related settings. Example : Chat is enabled or not
-local function getSettings(with: { cookie: string }): ChatSettingsResponse
+local function settings(with: { cookie: string }): ChatSettingsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/chat-settings`,
@@ -484,7 +484,7 @@ local function getSettings(with: { cookie: string }): ChatSettingsResponse
 end
 
 --- Gets the count of unread conversations
-local function getTotalUnreadConversations(with: { cookie: string }): UnreadConversationCountResponse
+local function countUnreadConversations(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-unread-conversation-count`,
@@ -493,27 +493,27 @@ local function getTotalUnreadConversations(with: { cookie: string }): UnreadConv
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 return {
-	getRolloutSettings = getRolloutSettings,
+	rolloutSettings = rolloutSettings,
 	createConversation = createConversation,
 	markAsSeen = markAsSeen,
 	sendGameLink = sendGameLink,
-	getUnreadMessages = getUnreadMessages,
-	getMetadata = getMetadata,
-	getLatestMessages = getLatestMessages,
+	unreadMessages = unreadMessages,
+	metadata = metadata,
+	latestMessages = latestMessages,
 	setTypingStatus = setTypingStatus,
-	getConversations = getConversations,
-	getMessages = getMessages,
+	conversations = conversations,
+	messages = messages,
 	sendMessage = sendMessage,
 	createGroupConversation = createGroupConversation,
-	getActiveConversations = getActiveConversations,
+	conversations = conversations,
 	markAsRead = markAsRead,
 	removeFromConversation = removeFromConversation,
 	renameConversation = renameConversation,
 	addToConversation = addToConversation,
-	getSettings = getSettings,
-	getTotalUnreadConversations = getTotalUnreadConversations,
+	settings = settings,
+	countUnreadConversations = countUnreadConversations,
 }

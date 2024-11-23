@@ -18,7 +18,7 @@ export type UserFollowingUniverseStatusResponse = {
 export type FollowsByTypeResponse = { followedSources: {}, followerId: number, followerType: number, sourceType: number }
 
 --- Gets the status of a following relationship between a user and a universe.
-local function getFollowingStatus(
+local function followingStatus(
 	with: { userId: number, universeId: number, cookie: string }
 ): UserFollowingUniverseStatusResponse
 	local response = requestWithCsrfToken({
@@ -59,7 +59,7 @@ local function unfollow(with: { userId: number, universeId: number, cookie: stri
 end
 
 --- Gets all universes followed by a user.
-local function getFollowingsOf(with: { userId: number, cookie: string }): FollowsByTypeResponse
+local function followingsOf(with: { userId: number, cookie: string }): FollowsByTypeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://followings.roblox.com/v2/users/{with.userId}/universes`,
@@ -71,4 +71,4 @@ local function getFollowingsOf(with: { userId: number, cookie: string }): Follow
 	return serde.decode("json", response.body)
 end
 
-return { getFollowingStatus = getFollowingStatus, getFollowingsOf = getFollowingsOf, follow = follow, unfollow = unfollow }
+return { followingStatus = followingStatus, followingsOf = followingsOf, follow = follow, unfollow = unfollow }

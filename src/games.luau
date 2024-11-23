@@ -349,7 +349,7 @@ export type CreatorTypePages = { id: number, type: number, name: string }
 export type AssetTypePages = { id: number, type: number, name: string }
 
 --- Get the game server list
-local function getServers(with: {
+local function servers(with: {
 	placeId: number,
 	serverType: number,
 	sortOrder: number?,
@@ -369,7 +369,7 @@ local function getServers(with: {
 end
 
 --- Get the favorites count of the a specific game
-local function getTotalFavorites(with: { universeId: number }): GameFavoritesCountResponse
+local function favorites(with: { universeId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.universeId}/favorites/count`,
@@ -378,11 +378,11 @@ local function getTotalFavorites(with: { universeId: number }): GameFavoritesCou
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).favoritesCount
 end
 
 --- Updates vip server
-local function updatePrivateServer(with: VipServerUpdateRequest & { id: number, cookie: string }): VipServerResponse
+local function configurePrivate(with: VipServerUpdateRequest & { id: number, cookie: string }): VipServerResponse
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/vip-servers/{with.id}`,
@@ -396,7 +396,7 @@ local function updatePrivateServer(with: VipServerUpdateRequest & { id: number, 
 end
 
 --- Get necessary data to generate webpage
-local function getPrivateServer(with: { id: number, cookie: string }): VipServerResponse
+local function private(with: { id: number, cookie: string }): VipServerResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/vip-servers/{with.id}`,
@@ -409,7 +409,7 @@ local function getPrivateServer(with: { id: number, cookie: string }): VipServer
 end
 
 --- Gets a list of universe playability statuses for the authenticated user
-local function getPlayabilityStatuses(with: { universeIds: { number } }): { PlayabilityStatusResponse }
+local function playability(with: { universeIds: { number } }): { PlayabilityStatusResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/multiget-playability-status?universeIds={table.concat(
@@ -425,7 +425,7 @@ local function getPlayabilityStatuses(with: { universeIds: { number } }): { Play
 end
 
 --- Gets games that the client should spotlight.
-local function listSpotlight(): GameSpotlightResponsePages
+local function spotlight(): { GameSpotlightResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/list-spotlight`,
@@ -434,7 +434,7 @@ local function listSpotlight(): GameSpotlightResponsePages
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Update friend/clan access and allowed friends/clan list
@@ -454,7 +454,7 @@ local function updatePermissions(
 end
 
 --- Get list of private servers user can access for given game id.
-local function getPrivateServersFor(
+local function privatesIn(
 	with: { placeId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): GameServerResponsePages
 	local response = requestWithCsrfToken({
@@ -469,7 +469,7 @@ local function getPrivateServersFor(
 end
 
 --- Checks if the private servers are enabled in the specified universe.
-local function arePrivateServersEnabled(with: { universeId: number }): PrivateServersEnabledInUniverseResponse
+local function arePrivatesEnabled(with: { universeId: number }): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/private-servers/enabled-in-universe/{with.universeId}`,
@@ -478,11 +478,11 @@ local function arePrivateServersEnabled(with: { universeId: number }): PrivateSe
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).privateServersEnabled
 end
 
 --- Gets a list of universe vote status
-local function getVotes(with: { universeIds: { number } }): GameVoteResponsePages
+local function votes(with: { universeIds: { number } }): { GameVoteResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/votes?universeIds={table.concat(with.universeIds, "&universeIds=")}`,
@@ -491,11 +491,11 @@ local function getVotes(with: { universeIds: { number } }): GameVoteResponsePage
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Get the user's vote status for a game
-local function getVote(with: { universeId: number, cookie: string }): UserGameVoteResponse
+local function vote(with: { universeId: number, cookie: string }): UserGameVoteResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.universeId}/votes/user`,
@@ -508,9 +508,7 @@ local function getVote(with: { universeId: number, cookie: string }): UserGameVo
 end
 
 --- Create VIP server for a game
-local function createPrivateServer(
-	with: CreateVipServersRequest & { universeId: number, cookie: string }
-): GameServerResponse
+local function createPrivate(with: CreateVipServersRequest & { universeId: number, cookie: string }): GameServerResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://games.roblox.com/v1/games/vip-servers/{with.universeId}`,
@@ -524,7 +522,7 @@ local function createPrivateServer(
 end
 
 --- Gets a list of games' product info, used to purchase a game
-local function getProductInfo(with: { universeIds: { number } }): GameProductResponsePages
+local function products(with: { universeIds: { number } }): { GameProductResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/games-product-info?universeIds={table.concat(
@@ -536,11 +534,11 @@ local function getProductInfo(with: { universeIds: { number } }): GameProductRes
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Get the game's game passes
-local function getGamepasses(
+local function gamepasses(
 	with: { universeId: number, limit: number, sortOrder: number?, cursor: string? }
 ): GamePassResponsePages
 	local response = requestWithCsrfToken({
@@ -555,7 +553,7 @@ local function getGamepasses(
 end
 
 --- Gets a list of games' detail
-local function getUniverses(with: { universeIds: { number } }): GameDetailResponsePages
+local function multiple(with: { universeIds: { number } }): { GameDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games?universeIds={table.concat(with.universeIds, "&universeIds=")}`,
@@ -564,11 +562,11 @@ local function getUniverses(with: { universeIds: { number } }): GameDetailRespon
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Set the user's vote for a game
-local function vote(with: SetUserGameVoteRequest & { universeId: number, cookie: string }): ApiEmptyResponseModel
+local function setVote(with: SetUserGameVoteRequest & { universeId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/games/{with.universeId}/user-votes`,
@@ -582,7 +580,7 @@ local function vote(with: SetUserGameVoteRequest & { universeId: number, cookie:
 end
 
 --- Get private servers from private server ids
-local function getPrivateServers(with: { privateServerIds: { number }, cookie: string }): PrivateServersResponse
+local function privates(with: { privateServerIds: { number }, cookie: string }): { GameServerResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/private-servers?privateServerIds={table.concat(
@@ -594,17 +592,12 @@ local function getPrivateServers(with: { privateServerIds: { number }, cookie: s
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).privateServerResponses
 end
 
 --- Get private servers for the authenticated user
-local function getOwnedPrivateServers(
-	with: {
-		privateServersTab: number?,
-		itemsPerPage: number?,
-		cursor: string?,
-		cookie: string,
-	}
+local function ownedPrivates(
+	with: { privateServersTab: number?, itemsPerPage: number?, cursor: string?, cookie: string }
 ): MyPrivateServersResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -618,7 +611,7 @@ local function getOwnedPrivateServers(
 end
 
 --- Get games recommendations based on a given universe
-local function getRecommendations(with: {
+local function recommendations(with: {
 	universeId: number,
 	PaginationKey: string,
 	MaxRows: number,
@@ -636,7 +629,7 @@ local function getRecommendations(with: {
 end
 
 --- Determines if a user by id is allowed to receive a VIP Server invite from the authenticated user.
-local function canInvite(with: { userId: number, cookie: string }): VipServerCanInviteResponse
+local function canInviteToPrivate(with: { userId: number, cookie: string }): VipServerCanInviteResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/vip-server/can-invite/{with.userId}`,
@@ -665,9 +658,7 @@ local function updateSubscription(
 end
 
 --- Update voice settings for a private server.
-local function updateVoiceSettings(
-	with: VipServerUpdateVoiceSettingsRequest & { id: number, cookie: string }
-): VipServerVoiceSettingsResponse
+local function updateVoiceSettings(with: VipServerUpdateVoiceSettingsRequest & { id: number, cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/vip-servers/{with.id}/voicesettings`,
@@ -677,11 +668,11 @@ local function updateVoiceSettings(
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).enabled
 end
 
 --- Get place details
-local function getPlaceDetails(with: { placeIds: { number }, cookie: string }): { PlaceDetails }
+local function places(with: { placeIds: { number }, cookie: string }): { PlaceDetails }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/multiget-place-details?placeIds={table.concat(
@@ -711,7 +702,7 @@ local function favorite(with: GameFavoritesRequest & { universeId: number, cooki
 end
 
 --- Returns if a game was marked as favorite for the authenticated user
-local function isFavorited(with: { universeId: number, cookie: string }): GameFavoriteResponse
+local function favorited(with: { universeId: number, cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{with.universeId}/favorites`,
@@ -720,17 +711,13 @@ local function isFavorited(with: { universeId: number, cookie: string }): GameFa
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).isFavorited
 end
 
 --- Gets games created by the specified user.
-local function getUniversesBy(with: {
-	userId: number,
-	accessFilter: number?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-}): GameResponseV2Pages
+local function of(
+	with: { userId: number, accessFilter: number?, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
+): GameResponseV2Pages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/users/{with.userId}/games?accessFilter={with.accessFilter or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -743,7 +730,7 @@ local function getUniversesBy(with: {
 end
 
 --- Get the game media data
-local function getMedia(with: { universeId: number }): GameMediaItemResponseV2Pages
+local function media(with: { universeId: number }): { GameMediaItemResponseV2 }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/games/{with.universeId}/media`,
@@ -752,17 +739,19 @@ local function getMedia(with: { universeId: number }): GameMediaItemResponseV2Pa
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Gets games created by the specified group. This will replace V1 after validation. Note that this can only used for public/all universes.
-local function getUniversesByGroup(with: {
-	groupId: number,
-	accessFilter: number?,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-}): GameResponseV2Pages
+local function ofGroup(
+	with: {
+		groupId: number,
+		accessFilter: number?,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+	}
+): GameResponseV2Pages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/groups/{with.groupId}/gamesV2?accessFilter={with.accessFilter or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -775,32 +764,32 @@ local function getUniversesByGroup(with: {
 end
 
 return {
-	getServers = getServers,
-	getTotalFavorites = getTotalFavorites,
-	updatePrivateServer = updatePrivateServer,
-	getPrivateServer = getPrivateServer,
-	getPlayabilityStatuses = getPlayabilityStatuses,
-	listSpotlight = listSpotlight,
+	servers = servers,
+	favorites = favorites,
+	configurePrivate = configurePrivate,
+	private = private,
+	playability = playability,
+	spotlight = spotlight,
 	updatePermissions = updatePermissions,
-	getPrivateServersFor = getPrivateServersFor,
-	arePrivateServersEnabled = arePrivateServersEnabled,
-	getVotes = getVotes,
-	getUniversesBy = getUniversesBy,
-	getVote = getVote,
-	createPrivateServer = createPrivateServer,
-	getProductInfo = getProductInfo,
-	getGamepasses = getGamepasses,
-	getUniverses = getUniverses,
+	privatesIn = privatesIn,
+	arePrivatesEnabled = arePrivatesEnabled,
+	votes = votes,
+	of = of,
 	vote = vote,
-	getPrivateServers = getPrivateServers,
-	getOwnedPrivateServers = getOwnedPrivateServers,
-	getRecommendations = getRecommendations,
-	canInvite = canInvite,
-	getMedia = getMedia,
+	createPrivate = createPrivate,
+	products = products,
+	gamepasses = gamepasses,
+	multiple = multiple,
+	setVote = setVote,
+	privates = privates,
+	ownedPrivates = ownedPrivates,
+	recommendations = recommendations,
+	canInviteToPrivate = canInviteToPrivate,
+	media = media,
 	updateSubscription = updateSubscription,
 	updateVoiceSettings = updateVoiceSettings,
-	getPlaceDetails = getPlaceDetails,
-	getUniversesByGroup = getUniversesByGroup,
+	places = places,
+	ofGroup = ofGroup,
 	favorite = favorite,
-	isFavorited = isFavorited,
+	favorited = favorited,
 }

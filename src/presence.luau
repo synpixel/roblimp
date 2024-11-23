@@ -29,7 +29,7 @@ export type LastOnlineResponse = { lastOnlineTimestamps: { LastOnline } }
 export type LastOnlineRequest = { userIds: { number } }
 
 --- Get Presence for a list of users
-local function getPresences(with: UserPresenceRequest): UserPresencesResponse
+local function get(with: UserPresenceRequest): { UserPresence }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://presence.roblox.com/v1/presence/users`,
@@ -39,21 +39,7 @@ local function getPresences(with: UserPresenceRequest): UserPresencesResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).userPresences
 end
 
---- Get last online timestamps for a list of users.
-local function getLastOnlineTimestamps(with: LastOnlineRequest): LastOnlineResponse
-	local response = requestWithCsrfToken({
-		method = "POST",
-		url = `https://presence.roblox.com/v1/presence/last-online`,
-		headers = { ["Content-Type"] = "application/json" },
-		body = serde.encode("json", with),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
-end
-
-return { getPresences = getPresences, getLastOnlineTimestamps = getLastOnlineTimestamps }
+return { get = get }

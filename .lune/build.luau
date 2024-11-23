@@ -33,62 +33,64 @@ type OpenApiDefinition = {
 	definitions: { [string]: { description: string } },
 }
 
+local FORMAT = true
+
 local mappings: { [string]: EndpointMappings } = {
 	accountsettings = {
-		["/v1/account/settings/metadata"] = { get = "getMetadata" },
-		["/v1/account/settings/account-country"] = { get = "getCountry", post = "setCountry" },
-		["/v1/email"] = { get = "getEmail", post = "setEmail" },
+		["/v1/account/settings/metadata"] = { get = "metadata" },
+		["/v1/account/settings/account-country"] = { get = "country", post = "setCountry" },
+		["/v1/email"] = { get = "email", post = "setEmail" },
 		["/v1/email/verify"] = { post = "verifyEmail" },
-		["/v1/app-chat-privacy"] = { get = "getAppChatPrivacy", post = "setAppChatPrivacy" },
-		["/v1/game-chat-privacy"] = { get = "getGameChatPrivacy", post = "setGameChatPrivacy" },
-		["/v1/inventory-privacy"] = { get = "getInventoryPrivacy", post = "setInventoryPrivacy" },
-		["/v1/private-message-privacy"] = { get = "getMessagePrivacy", post = "setMessagePrivacy" },
+		["/v1/app-chat-privacy"] = { get = "appChatPrivacy", post = "setAppChatPrivacy" },
+		["/v1/game-chat-privacy"] = { get = "gameChatPrivacy", post = "setGameChatPrivacy" },
+		["/v1/inventory-privacy"] = { get = "inventoryPrivacy", post = "setInventoryPrivacy" },
+		["/v1/private-message-privacy"] = { get = "messagePrivacy", post = "setMessagePrivacy" },
 		-- /v1/themes/{consumerType}/{consumerId}
 		-- /v1/themes/types
-		["/v1/trade-privacy"] = { get = "getTradePrivacy", post = "setTradePrivacy" },
-		["/v1/trade-value"] = { get = "getTradeQualityFilter", post = "setTradeQualityFilter" },
-		["/v1/users/get-detailed-blocked-users"] = { get = "getBlockedUsers" },
+		["/v1/trade-privacy"] = { get = "tradePrivacy", post = "setTradePrivacy" },
+		["/v1/trade-value"] = { get = "tradeQualityFilter", post = "setTradeQualityFilter" },
+		["/v1/users/get-detailed-blocked-users"] = { get = "blockedUsers" },
 		["/v1/users/{userId}/block"] = { post = "block" },
 		["/v1/users/{userId}/unblock"] = { post = "unblock" },
 	},
 	avatar = {
-		["/v1/avatar/metadata"] = { get = "getMetadata" },
-		["/v1/avatar-rules"] = { get = "getAvatarRules" },
-		["/v1/recent-items/{recentItemListType}/list"] = { get = "getRecentItems" },
-		["/v1/users/{userId}/currently-wearing"] = { get = "getAssetsWorn" },
+		["/v1/avatar/metadata"] = { get = "metadata" },
+		["/v1/avatar-rules"] = { get = "rules" },
+		["/v1/recent-items/{recentItemListType}/list"] = { get = "recentItems" },
+		["/v1/users/{userId}/currently-wearing"] = { get = "assetsWorn" },
 		["/v1/avatar/redraw-thumbnail"] = { post = "redrawThumbnail" },
 		["/v1/avatar/set-player-avatar-type"] = { post = "setRigType" },
 		["/v1/avatar/set-scales"] = { post = "setScales" },
 		["/v1/outfits/{userOutfitId}/delete"] = { post = "deleteOutfit" },
 		["/v2/avatar/avatar"] = { get = "getAvatar" },
-		["/v2/avatar/users/{userId}/avatar"] = { get = "getAvatarOf" },
-		["/v2/avatar/users/{userId}/outfits"] = { get = "getOutfitsOf" },
+		["/v2/avatar/users/{userId}/avatar"] = { get = "of" },
+		["/v2/avatar/users/{userId}/outfits"] = { get = "outfitsOf" },
 		["/v2/avatar/set-body-colors"] = { post = "setBodyColors" },
 		["/v2/avatar/set-wearing-assets"] = { post = "setAssetsWorn" },
-		["/v3/outfits/{userOutfitId}/details"] = { get = "getOufitDetails" },
+		["/v3/outfits/{userOutfitId}/details"] = { get = "outfitDetails" },
 		["/v3/outfits/create"] = { post = "createOutfit" },
 		["/v3/outfits/{userOutfitId}"] = { patch = "updateOutfit" },
 	},
 	badges = {
-		["/v1/badges/metadata"] = { get = "getMetadata" },
-		["/v1/badges/{badgeId}"] = { get = "getBadge", patch = "updateBadge" },
-		["/v1/universes/{universeId}/badges"] = { get = "getBadgesFor", post = "createBadge" },
-		["/v1/universes/{universeId}/free-badges-quota"] = { get = "getFreeBadgesQuota" },
-		["/v1/users/{userId}/badges"] = { get = "getBadgesOf" },
-		["/v1/users/{userId}/badges/awarded-dates"] = { get = "getBadgeAwardedTimestamps" },
-		["/v1/user/badges/{badgeId}"] = { delete = "removeBadge" },
-		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeBadgeFrom" },
+		["/v1/badges/metadata"] = { get = "metadata" },
+		["/v1/badges/{badgeId}"] = { get = "get", patch = "update" },
+		["/v1/universes/{universeId}/badges"] = { get = "universe", post = "create" },
+		["/v1/universes/{universeId}/free-badges-quota"] = { get = "freeQuota" },
+		["/v1/users/{userId}/badges"] = { get = "of" },
+		["/v1/users/{userId}/badges/awarded-dates"] = { get = "awardedTimestamps" },
+		["/v1/user/badges/{badgeId}"] = { delete = "remove" },
+		["/v1/user/{userId}/badges/{badgeId}"] = { delete = "removeFrom" },
 	},
 	chat = {
-		["/v2/metadata"] = { get = "getMetadata" },
-		["/v2/chat-settings"] = { get = "getSettings" },
-		["/v2/get-conversations"] = { get = "getConversations" },
-		["/v2/get-messages"] = { get = "getMessages" },
-		["/v2/get-rollout-settings"] = { get = "getRolloutSettings" },
-		["/v2/get-unread-conversation-count"] = { get = "getTotalUnreadConversations" },
-		["/v2/get-unread-messages"] = { get = "getUnreadMessages" },
-		["/v2/get-user-conversations"] = { get = "getActiveConversations" },
-		["/v2/multi-get-latest-messages"] = { get = "getLatestMessages" },
+		["/v2/metadata"] = { get = "metadata" },
+		["/v2/chat-settings"] = { get = "settings" },
+		["/v2/get-conversations"] = { get = "conversations" },
+		["/v2/get-messages"] = { get = "messages" },
+		["/v2/get-rollout-settings"] = { get = "rolloutSettings" },
+		["/v2/get-unread-conversation-count"] = { get = "countUnreadConversations" },
+		["/v2/get-unread-messages"] = { get = "unreadMessages" },
+		["/v2/get-user-conversations"] = { get = "conversations" },
+		["/v2/multi-get-latest-messages"] = { get = "latestMessages" },
 		["/v2/add-to-conversation"] = { post = "addToConversation" },
 		["/v2/remove-from-conversation"] = { post = "removeFromConversation" },
 		["/v2/mark-as-read"] = { post = "markAsRead" },
@@ -102,56 +104,56 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v2/update-user-typing-status"] = { post = "setTypingStatus" },
 	},
 	develop = {
-		["/v1/gametemplates"] = { get = "getGameTemplates" },
-		["/v1/groups/{groupId}/universes"] = { get = "getUniversesByGroup" },
+		["/v1/gametemplates"] = { get = "templates" },
+		["/v1/groups/{groupId}/universes"] = { get = "ofGroup" },
 		-- /v1/places/{placeId}/teamcreate/active_session/members
-		["/v1/plugins"] = { get = "getPlugins" },
+		["/v1/plugins"] = { get = "plugins" },
 		-- /v1/universes/{universeId}/configuration/vip-servers
-		["/v1/universes/{universeId}/permissions"] = { get = "getUniversePermissions" },
-		["/v1/universes/{universeId}/places"] = { get = "getUniversePlaces" },
+		["/v1/universes/{universeId}/permissions"] = { get = "permissions" },
+		["/v1/universes/{universeId}/places"] = { get = "places" },
 		-- /v1/universes/{universeId}/teamcreate
 		-- /v1/universes/multiget
 		-- /v1/universes/multiget/permissions
 		-- /v1/universes/multiget/teamcreate
-		["/v1/user/groups/canmanage"] = { get = "getGroups" },
+		-- ["/v1/user/groups/canmanage"] = { get = "x" },
 		-- /v1/user/groups/canmanagegamesoritems
-		["/v1/user/universes"] = { get = "getUniverses" },
-		["/v1/universes/{universeId}/activate"] = { post = "activateUniverse" },
-		["/v1/universes/{universeId}/deactivate"] = { post = "deactivateUniverse" },
-		["/v1/plugins/{pluginId}"] = { patch = "updatePlugin" },
+		["/v1/user/universes"] = { get = "multiple" },
+		["/v1/universes/{universeId}/activate"] = { post = "activate" },
+		["/v1/universes/{universeId}/deactivate"] = { post = "deactivate" },
+		["/v1/plugins/{pluginId}"] = { patch = "configurePlugin" },
 		-- /v1/universes/{universeId}/teamcreate/memberships
 		-- /v2/assets/{id}/versions
-		["/v2/places/{placeId}"] = { get = "getPlaceConfiguration", patch = "updatePlace" },
-		["/v2/universes/{universeId}/configuration"] = { patch = "updateUniverse" },
+		["/v2/places/{placeId}"] = { get = "place", patch = "configurePlace" },
+		["/v2/universes/{universeId}/configuration"] = { patch = "configure" },
 		-- /v2/teamtest/{placeId}
 	},
 	economy = {
-		["/v1/user/currency"] = { get = "getCurrency" },
+		["/v1/user/currency"] = { get = "robux" },
 	},
 	followings = {
-		["/v1/users/{userId}/universes/{universeId}/status"] = { get = "getFollowingStatus" },
+		["/v1/users/{userId}/universes/{universeId}/status"] = { get = "followingStatus" },
 		["/v1/users/{userId}/universes/{universeId}"] = { post = "follow", delete = "unfollow" },
-		["/v2/users/{userId}/universes"] = { get = "getFollowingsOf" },
+		["/v2/users/{userId}/universes"] = { get = "followingsOf" },
 	},
 	friends = {
-		["/v1/metadata"] = { get = "getMetadata" },
-		["/v1/my/friends/count"] = { get = "getTotalFriends" },
-		["/v1/my/friends/requests"] = { get = "getFriendRequests" },
-		["/v1/user/friend-requests/count"] = { get = "getTotalFriendRequests" },
-		["/v1/users/{targetUserId}/followers"] = { get = "getFollowersOf" },
-		["/v1/users/{targetUserId}/followers/count"] = { get = "getTotalFollowersOf" },
-		["/v1/users/{targetUserId}/followings"] = { get = "getFollowingsOf" },
-		["/v1/users/{targetUserId}/followings/count"] = { get = "getTotalFollowingsOf" },
-		["/v1/users/{userId}/friends"] = { get = "getFriendsOf" },
-		["/v1/users/{userId}/friends/count"] = { get = "getTotalFriendsOf" },
-		["/v1/users/{userId}/friends/find"] = { get = "getFriendshipsOf" },
-		["/v1/users/{userId}/friends/inactive"] = { get = "getInactiveFriendsOf" },
-		["/v1/users/{userId}/friends/online"] = { get = "getOnlineFriendsOf" },
-		["/v1/users/{userId}/friends/search"] = { get = "searchFriendsOf" },
+		["/v1/metadata"] = { get = "metadata" },
+		["/v1/my/friends/count"] = { get = "count" },
+		["/v1/my/friends/requests"] = { get = "friendRequests" },
+		["/v1/user/friend-requests/count"] = { get = "countFriendRequests" },
+		["/v1/users/{targetUserId}/followers"] = { get = "followersOf" },
+		["/v1/users/{targetUserId}/followers/count"] = { get = "countFollowersOf" },
+		["/v1/users/{targetUserId}/followings"] = { get = "followingsOf" },
+		["/v1/users/{targetUserId}/followings/count"] = { get = "countFollowingsOf" },
+		["/v1/users/{userId}/friends"] = { get = "friendsOf" },
+		["/v1/users/{userId}/friends/count"] = { get = "countFriendsOf" },
+		["/v1/users/{userId}/friends/find"] = { get = "friendshipsOf" },
+		["/v1/users/{userId}/friends/inactive"] = { get = "inactiveFriendsOf" },
+		["/v1/users/{userId}/friends/online"] = { get = "onlineFriendsOf" },
+		["/v1/users/{userId}/friends/search"] = { get = "search" },
 		-- /v1/users/{userId}/friends/statuses
 		-- /v1/contacts/{targetContactId}/request-friendship
 		["/v1/user/{userId}/multiget-are-friends"] = { post = "areFriends" },
-		["/v1/user/following-exists"] = { post = "isFollowing" },
+		["/v1/user/following-exists"] = { post = "following" },
 		["/v1/user/friend-requests/decline-all"] = { post = "declineAllFriendRequests" },
 		["/v1/users/{requesterUserId}/accept-friend-request"] = { post = "acceptFriendRequest" },
 		["/v1/users/{requesterUserId}/decline-friend-request"] = { post = "declineFriendRequest" },
@@ -162,77 +164,77 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/users/{targetUserId}/unfriend"] = { post = "unfriend" },
 	},
 	games = {
-		["/v1/games"] = { get = "getUniverses" },
-		["/v1/games/{placeId}/private-servers"] = { get = "getPrivateServersFor" },
-		["/v1/games/{placeId}/servers/{serverType}"] = { get = "getServers" },
-		["/v1/games/{universeId}/favorites"] = { get = "isFavorited", post = "favorite" },
-		["/v1/games/{universeId}/favorites/count"] = { get = "getTotalFavorites" },
-		["/v1/games/{universeId}/game-passes"] = { get = "getGamepasses" },
-		["/v1/games/{universeId}/votes/user"] = { get = "getVote" },
-		["/v1/games/games-product-info"] = { get = "getProductInfo" },
-		["/v1/games/list-spotlight"] = { get = "listSpotlight" },
-		["/v1/games/multiget-place-details"] = { get = "getPlaceDetails" },
-		["/v1/games/multiget-playability-status"] = { get = "getPlayabilityStatuses" },
-		["/v1/games/recommendations/game/{universeId}"] = { get = "getRecommendations" },
-		["/v1/games/votes"] = { get = "getVotes" },
-		["/v1/private-servers"] = { get = "getPrivateServers" },
-		["/v1/private-servers/enabled-in-universe/{universeId}"] = { get = "arePrivateServersEnabled" },
-		["/v1/private-servers/my-private-servers"] = { get = "getOwnedPrivateServers" },
-		["/v1/vip-server/can-invite/{userId}"] = { get = "canInvite" },
-		["/v1/vip-servers/{id}"] = { get = "getPrivateServer", patch = "updatePrivateServer" },
-		["/v1/games/vip-servers/{universeId}"] = { post = "createPrivateServer" },
+		["/v1/games"] = { get = "multiple" },
+		["/v1/games/{placeId}/private-servers"] = { get = "privatesIn" },
+		["/v1/games/{placeId}/servers/{serverType}"] = { get = "servers" },
+		["/v1/games/{universeId}/favorites"] = { get = "favorited", post = "favorite" },
+		["/v1/games/{universeId}/favorites/count"] = { get = "favorites" },
+		["/v1/games/{universeId}/game-passes"] = { get = "gamepasses" },
+		["/v1/games/{universeId}/votes/user"] = { get = "vote" },
+		["/v1/games/games-product-info"] = { get = "products" },
+		["/v1/games/list-spotlight"] = { get = "spotlight" },
+		["/v1/games/multiget-place-details"] = { get = "places" },
+		["/v1/games/multiget-playability-status"] = { get = "playability" },
+		["/v1/games/recommendations/game/{universeId}"] = { get = "recommendations" },
+		["/v1/games/votes"] = { get = "votes" },
+		["/v1/private-servers"] = { get = "privates" },
+		["/v1/private-servers/enabled-in-universe/{universeId}"] = { get = "arePrivatesEnabled" },
+		["/v1/private-servers/my-private-servers"] = { get = "ownedPrivates" },
+		["/v1/vip-server/can-invite/{userId}"] = { get = "canInviteToPrivate" },
+		["/v1/vip-servers/{id}"] = { get = "private", patch = "configurePrivate" },
+		["/v1/games/vip-servers/{universeId}"] = { post = "createPrivate" },
 		["/v1/vip-servers/{id}/permissions"] = { patch = "updatePermissions" },
 		["/v1/vip-servers/{id}/subscription"] = { patch = "updateSubscription" },
 		["/v1/vip-servers/{id}/voicesettings"] = { patch = "updateVoiceSettings" },
-		["/v1/games/{universeId}/user-votes"] = { patch = "vote" },
-		["/v2/games/{universeId}/media"] = { get = "getMedia" },
-		["/v2/groups/{groupId}/gamesV2"] = { get = "getUniversesByGroup" },
-		["/v2/users/{userId}/games"] = { get = "getUniversesBy" },
+		["/v1/games/{universeId}/user-votes"] = { patch = "setVote" },
+		["/v2/games/{universeId}/media"] = { get = "media" },
+		["/v2/groups/{groupId}/gamesV2"] = { get = "ofGroup" },
+		["/v2/users/{userId}/games"] = { get = "of" },
 	},
 	groups = {
-		["/v1/groups/metadata"] = { get = "getMetadata" },
-		["/v1/groups/configuration/metadata"] = { get = "getConfigurationMetadata" },
-		["/v1/groups/search/metadata"] = { get = "getSearchMetadata" },
+		["/v1/groups/metadata"] = { get = "metadata" },
+		["/v1/groups/configuration/metadata"] = { get = "configurationMetadata" },
+		["/v1/groups/search/metadata"] = { get = "searchMetadata" },
 		-- /v1/featured-content/event
-		["/v1/groups/{groupId}"] = { get = "getGroup" },
-		["/v1/groups/{groupId}/audit-log"] = { get = "getAuditLog" },
+		["/v1/groups/{groupId}"] = { get = "get" },
+		["/v1/groups/{groupId}/audit-log"] = { get = "auditLog" },
 		["/v1/groups/{groupId}/join-requests"] = {
-			get = "getJoinRequests",
+			get = "joinRequests",
 			post = "acceptJoinRequests",
 			delete = "declineJoinRequests",
 		},
 		["/v1/groups/{groupId}/join-requests/users/{userId}"] = {
-			get = "getJoinRequest",
+			get = "joinRequest",
 			post = "acceptJoinRequest",
 			delete = "declineJoinRequest",
 		},
-		["/v1/groups/{groupId}/membership"] = { get = "getMembership" },
-		["/v1/groups/{groupId}/name-history"] = { get = "getNameHistory" },
-		["/v1/groups/{groupId}/payout-restriction"] = { get = "canUsePayout" },
-		["/v1/groups/{groupId}/payouts"] = { get = "getRecurringPayouts", post = "payout" },
-		["/v1/groups/{groupId}/relationships/{groupRelationshipType}"] = { get = "getRelationships" },
+		["/v1/groups/{groupId}/membership"] = { get = "membership" },
+		["/v1/groups/{groupId}/name-history"] = { get = "nameHistory" },
+		["/v1/groups/{groupId}/payout-restriction"] = { get = "canPayout" },
+		["/v1/groups/{groupId}/payouts"] = { get = "recurringPayouts", post = "payout" },
+		["/v1/groups/{groupId}/relationships/{groupRelationshipType}"] = { get = "relationships" },
 		["/v1/groups/{groupId}/relationships/{groupRelationshipType}/requests"] = {
-			get = "getRelationshipRequests",
+			get = "relationshipRequests",
 			post = "acceptRelationshipRequests",
 			delete = "declineRelationshipRequests",
 		},
 		["/v1/groups/{groupId}/roles/{roleSetId}/permissions"] = {
-			get = "getRolePermissions",
+			get = "permissions",
 			patch = "updateRolePermissions",
 		},
-		["/v1/groups/{groupId}/roles/{roleSetId}/users"] = { get = "getUsersWithRole" },
-		["/v1/groups/{groupId}/roles/guest/permissions"] = { get = "getGuestPermissions" },
-		["/v1/groups/{groupId}/roles/permissions"] = { get = "getAllRolePermissions" },
-		["/v1/groups/{groupId}/settings"] = { get = "getSettings", patch = "updateSettings" },
-		["/v1/groups/{groupId}/social-links"] = { get = "getSocialLinks", post = "addSocialLink" },
-		["/v1/groups/{groupId}/users"] = { get = "getUsers", post = "joinGroup" },
-		["/v1/groups/search"] = { get = "searchGroups" },
-		["/v1/groups/search/lookup"] = { get = "lookupGroups" },
-		["/v1/roles"] = { get = "getRoles" },
-		["/v1/user/groups/pending"] = { get = "getPendingGroups" },
-		["/v1/users/{userId}/friends/groups/roles"] = { get = "getGroupsWithFriends" },
-		["/v1/users/{userId}/groups/primary/role"] = { get = "getPrimaryGroup" },
-		-- ["/v1/users/{userId}/groups/roles"] = { get = "getGroupsWith" },
+		["/v1/groups/{groupId}/roles/{roleSetId}/users"] = { get = "usersWithRole" },
+		["/v1/groups/{groupId}/roles/guest/permissions"] = { get = "guestPermissions" },
+		["/v1/groups/{groupId}/roles/permissions"] = { get = "allPermissions" },
+		["/v1/groups/{groupId}/settings"] = { get = "settings", patch = "updateSettings" },
+		["/v1/groups/{groupId}/social-links"] = { get = "socialLinks", post = "addSocialLink" },
+		["/v1/groups/{groupId}/users"] = { get = "users", post = "join" },
+		["/v1/groups/search"] = { get = "search" },
+		["/v1/groups/search/lookup"] = { get = "lookup" },
+		["/v1/roles"] = { get = "roles" },
+		["/v1/user/groups/pending"] = { get = "pending" },
+		["/v1/users/{userId}/friends/groups/roles"] = { get = "withFriendsOf" },
+		["/v1/users/{userId}/groups/primary/role"] = { get = "primary" },
+		-- ["/v1/users/{userId}/groups/roles"] = { get = "groupsWith" },
 		["/v1/groups/{groupId}/change-owner"] = { post = "giveOwnership" },
 		["/v1/groups/{groupId}/claim-ownership"] = { post = "claimOwnership" },
 		["/v1/groups/{groupId}/payouts/recurring"] = { post = "updateRecurringPayouts" },
@@ -246,8 +248,8 @@ local mappings: { [string]: EndpointMappings } = {
 		},
 		["/v1/groups/{groupId}/rolesets/create"] = { post = "createRole" },
 		-- /v1/groups/{groupId}/wall/subscribe
-		["/v1/groups/create"] = { post = "createGroup" },
-		["/v1/groups/policies"] = { post = "getPolicies" },
+		["/v1/groups/create"] = { post = "create" },
+		["/v1/groups/policies"] = { post = "policies" },
 		["/v1/user/groups/primary"] = { post = "setPrimaryGroup", delete = "removePrimaryGroup" },
 		["/v1/groups/{groupId}/description"] = { patch = "setDescription" },
 		["/v1/groups/{groupId}/name"] = { patch = "setName" },
@@ -262,21 +264,21 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/groups/icon"] = { patch = "setIcon" },
 		["/v1/groups/{groupId}/wall/posts/{postId}"] = { delete = "deleteMessage" },
 		["/v1/groups/{groupId}/wall/users/{userId}/posts"] = { delete = "deleteMessagesOf" },
-		["/v2/groups"] = { get = "getGroups" },
-		["/v2/groups/{groupId}/wall/posts"] = { get = "getMessages", post = "sendMessage" },
-		["/v2/users/{userId}/groups/roles"] = { get = "getRolesOf" },
+		["/v2/groups"] = { get = "multiple" },
+		["/v2/groups/{groupId}/wall/posts"] = { get = "messages", post = "sendMessage" },
+		["/v2/users/{userId}/groups/roles"] = { get = "rolesOf" },
 	},
 	notifications = {
-		["/v2/push-notifications/metadata"] = { get = "getMetadata" },
-		["/v2/stream-notifications/metadata"] = { get = "getStreamMetadata" },
-		["/v2/notifications/settings/realtime"] = { get = "getRealtimeSettings" },
-		["/v2/push-notifications/chrome-manifest"] = { get = "getChromeManifest" },
-		["/v2/push-notifications/get-current-device-destination"] = { get = "getDeviceDestination" },
-		["/v2/push-notifications/get-destinations"] = { get = "getDestinations" },
-		["/v2/push-notifications/notification-ids"] = { get = "getNotificationIds" },
-		["/v2/stream-notifications/get-latest-game-updates"] = { get = "getLatestGameUpdates" },
-		["/v2/stream-notifications/get-recent"] = { get = "getRecent" },
-		["/v2/stream-notifications/unread-count"] = { get = "getTotalUnread" },
+		["/v2/push-notifications/metadata"] = { get = "metadata" },
+		["/v2/stream-notifications/metadata"] = { get = "streamMetadata" },
+		["/v2/notifications/settings/realtime"] = { get = "realtimeSettings" },
+		["/v2/push-notifications/chrome-manifest"] = { get = "chromeManifest" },
+		["/v2/push-notifications/get-current-device-destination"] = { get = "destination" },
+		["/v2/push-notifications/get-destinations"] = { get = "destinations" },
+		["/v2/push-notifications/notification-ids"] = { get = "notifications" },
+		["/v2/stream-notifications/get-latest-game-updates"] = { get = "latestGameUpdates" },
+		["/v2/stream-notifications/get-recent"] = { get = "recent" },
+		["/v2/stream-notifications/unread-count"] = { get = "countUnread" },
 		["/v2/push-notifications/deregister-all-devices"] = { post = "deregisterAllDevices" },
 		["/v2/push-notifications/deregister-current-device"] = { post = "deregisterDevice" },
 		["/v2/push-notifications/deregister-current-device-ios-pushkit"] = { post = "deregisterIOSPushkit" },
@@ -293,47 +295,47 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v2/stream-notifications/game-update-notification-read"] = { post = "acknowledgeGameUpdate" },
 	},
 	presence = {
-		["/v1/presence/last-online"] = { post = "getLastOnlineTimestamps" },
-		["/v1/presence/users"] = { post = "getPresences" },
+		-- ["/v1/presence/last-online"] = { post = "getLastOnlineTimestamps" },
+		["/v1/presence/users"] = { post = "get" },
 	},
 	privatemessages = {
-		["/v1/announcements"] = { get = "getAnnouncements" },
-		["/v1/announcements/metadata"] = { get = "getAnnouncementMetadata" },
-		["/v1/messages"] = { get = "getMessages" },
-		["/v1/messages/{messageId}"] = { get = "getMessage" },
+		["/v1/announcements"] = { get = "announcements" },
+		["/v1/announcements/metadata"] = { get = "announcementMetadata" },
+		["/v1/messages"] = { get = "all" },
+		["/v1/messages/{messageId}"] = { get = "get" },
 		["/v1/messages/{userId}/can-message"] = { get = "canMessage" },
-		["/v1/messages/unread/count"] = { get = "getTotalUnread" },
+		["/v1/messages/unread/count"] = { get = "countUnread" },
 		["/v1/messages/archive"] = { post = "archive" },
 		["/v1/messages/unarchive"] = { post = "unarchive" },
 		["/v1/messages/mark-read"] = { post = "markAsRead" },
 		["/v1/messages/mark-unread"] = { post = "markAsUnread" },
-		["/v1/messages/send"] = { post = "sendMessage" },
+		["/v1/messages/send"] = { post = "send" },
 	},
 	trades = {
-		["/v1/trades/metadata"] = { get = "getMetadata" },
-		["/v1/trades/{tradeId}"] = { get = "getTrade" },
-		["/v1/trades/{tradeStatusType}"] = { get = "getTrades" },
-		["/v1/trades/{tradeStatusType}/count"] = { get = "getTotalTrades" },
+		["/v1/trades/metadata"] = { get = "metadata" },
+		["/v1/trades/{tradeId}"] = { get = "get" },
+		["/v1/trades/{tradeStatusType}"] = { get = "all" },
+		["/v1/trades/{tradeStatusType}/count"] = { get = "count" },
 		["/v1/users/{userId}/can-trade-with"] = { get = "canTradeWith" },
-		["/v1/trades/{tradeId}/accept"] = { post = "acceptTrade" },
-		["/v1/trades/{tradeId}/counter"] = { post = "counterTrade" },
-		["/v1/trades/{tradeId}/decline"] = { post = "declineTrade" },
-		["/v1/trades/send"] = { post = "sendTrade" },
+		["/v1/trades/{tradeId}/accept"] = { post = "accept" },
+		["/v1/trades/{tradeId}/counter"] = { post = "counter" },
+		["/v1/trades/{tradeId}/decline"] = { post = "decline" },
+		["/v1/trades/send"] = { post = "send" },
 	},
 	users = {
-		["/v1/birthdate"] = { get = "getBirthdate", post = "setBirthdate" },
-		["/v1/description"] = { get = "getDescription", post = "setDescription" },
-		["/v1/gender"] = { get = "getGender", post = "setGender" },
+		["/v1/birthdate"] = { get = "birthdate", post = "setBirthdate" },
+		["/v1/description"] = { get = "description", post = "setDescription" },
+		["/v1/gender"] = { get = "gender", post = "setGender" },
 		["/v1/users/{userId}/display-names"] = { patch = "setDisplayName" },
-		["/v1/users/{userId}"] = { get = "getUser" },
-		["/v1/users/authenticated"] = { get = "getAuthenticatedUser" },
-		["/v1/users/authenticated/age-bracket"] = { get = "getAgeBracket" },
-		["/v1/users/authenticated/country-code"] = { get = "getCountryCode" },
-		["/v1/users/authenticated/roles"] = { get = "getPublicRoles" },
-		["/v1/users"] = { post = "getUsersByIds" },
-		["/v1/usernames/users"] = { post = "getUsersByNames" },
-		["/v1/users/{userId}/username-history"] = { get = "getUsernameHistory" },
-		["/v1/users/search"] = { get = "searchUsers" },
+		["/v1/users/{userId}"] = { get = "get" },
+		["/v1/users/authenticated"] = { get = "authenticated" },
+		["/v1/users/authenticated/age-bracket"] = { get = "ageBracket" },
+		["/v1/users/authenticated/country-code"] = { get = "countryCode" },
+		["/v1/users/authenticated/roles"] = { get = "publicRoles" },
+		["/v1/users"] = { post = "fromIds" },
+		["/v1/usernames/users"] = { post = "fromNames" },
+		["/v1/users/{userId}/username-history"] = { get = "usernameHistory" },
+		["/v1/users/search"] = { get = "search" },
 	},
 }
 
@@ -424,7 +426,7 @@ local function translateOpenApiType(openapiType: { type: string, [string]: any }
 	return openapiType.type
 end
 
-local function formatWithStylua(file: string): string
+local function stylua(file: string): string
 	local formatted = process.spawn("stylua", { "-" }, { shell = true, stdin = file })
 	assert(formatted.ok, formatted.stderr)
 	return formatted.stdout
@@ -482,6 +484,33 @@ for namespace, definitions in mappings do
 
 				local okResponse = route.responses["200"]
 				local patchModelName = translateOpenApiType(okResponse.schema)
+				local accessKey: string? = nil
+
+				if okResponse.schema ~= nil then
+					local schema = okResponse.schema
+					if schema["$ref"] ~= nil then
+						local ref = schema["$ref"]:gsub("#/definitions/", "")
+						for name, definition in openapi.definitions do
+							if name == ref then
+								schema = definition
+								break
+							end
+						end
+					end
+
+					local count, lastKey = 0, nil
+					if schema.type == "object" and schema.properties ~= nil then
+						for key in schema.properties do
+							count += 1
+							lastKey = key
+						end
+					end
+
+					if count == 1 then
+						patchModelName = translateOpenApiType(schema.properties[lastKey])
+						accessKey = lastKey
+					end
+				end
 
 				local needsCookie = route.responses["401"] ~= nil
 
@@ -594,7 +623,13 @@ for namespace, definitions in mappings do
 				file ..= "assert(response.ok, `{response.statusCode} {response.statusMessage}`)\n\n"
 
 				if producesJson then
-					file ..= 'return serde.decode("json", response.body)\n'
+					file ..= 'return serde.decode("json", response.body)'
+
+					if accessKey ~= nil then
+						file ..= `.{accessKey}`
+					end
+
+					file ..= "\n"
 				else
 					file ..= "return response.body\n"
 				end
@@ -614,7 +649,7 @@ for namespace, definitions in mappings do
 
 	file ..= "}\n\n"
 
-	fs.writeFile(`src/{namespace}.luau`, formatWithStylua(file))
+	fs.writeFile(`src/{namespace}.luau`, if FORMAT then stylua(file) else file)
 end
 
 local file = ""
@@ -631,4 +666,4 @@ end
 
 file ..= "}"
 
-fs.writeFile("src/init.luau", formatWithStylua(file))
+fs.writeFile("src/init.luau", if FORMAT then stylua(file) else file)

@@ -550,7 +550,7 @@ export type GroupWallPostV2Model = {
 }
 
 --- Gets Group configuration contextual information
-local function getConfigurationMetadata(): GroupConfigurationDisplayOptionsResponse
+local function configurationMetadata(): GroupConfigurationDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/configuration/metadata`,
@@ -566,7 +566,7 @@ end
 --- Max number of groups a user can be part of.
 --- Current number of groups a user is a member of.
 --- Whether to show/hide certain features based on device type.
-local function getMetadata(): GroupsDisplayOptionsResponse
+local function metadata(): GroupsDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/metadata`,
@@ -621,14 +621,8 @@ local function declineJoinRequests(with: MembersRequest & { groupId: number, coo
 end
 
 --- Gets a page of Group Join Requests for a group.
-local function getJoinRequests(
-	with: {
-		groupId: number,
-		limit: number?,
-		cursor: string?,
-		sortOrder: "Asc" | "Desc"?,
-		cookie: string,
-	}
+local function joinRequests(
+	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): GroupJoinRequestResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -642,13 +636,15 @@ local function getJoinRequests(
 end
 
 --- Gets a list of users in a group for a specific roleset.
-local function getUsersWithRole(with: {
-	groupId: number,
-	roleSetId: number,
-	limit: number?,
-	cursor: string?,
-	sortOrder: "Asc" | "Desc"?,
-}): UserModelPages
+local function usersWithRole(
+	with: {
+		groupId: number,
+		roleSetId: number,
+		limit: number?,
+		cursor: string?,
+		sortOrder: "Asc" | "Desc"?,
+	}
+): UserModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/roles/{with.roleSetId}/users?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
@@ -690,7 +686,7 @@ local function deleteSocialLink(with: { groupId: number, socialLinkId: number, c
 end
 
 --- Gets groups that the authenticated user has requested to join
-local function getPendingGroups(with: { cookie: string }): GroupDetailResponsePages
+local function pending(with: { cookie: string }): { GroupDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/user/groups/pending`,
@@ -699,11 +695,11 @@ local function getPendingGroups(with: { cookie: string }): GroupDetailResponsePa
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Gets the Group's audit log
-local function getAuditLog(with: {
+local function auditLog(with: {
 	groupId: number,
 	actionType: "DeletePost"
 		| "RemoveMember"
@@ -770,7 +766,7 @@ local function getAuditLog(with: {
 end
 
 --- Joins a group
-local function joinGroup(with: JoinGroupRequest & { groupId: number, cookie: string }): ApiEmptyResponseModel
+local function join(with: JoinGroupRequest & { groupId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/users`,
@@ -784,7 +780,7 @@ local function joinGroup(with: JoinGroupRequest & { groupId: number, cookie: str
 end
 
 --- Gets a list of users in a group.
-local function getUsers(
+local function users(
 	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): UserGroupRoleResponsePages
 	local response = requestWithCsrfToken({
@@ -813,7 +809,7 @@ local function setStatus(with: PostGroupStatusRequest & { groupId: number, cooki
 end
 
 --- Updates the group's name.
-local function setName(with: UpdateGroupNameRequest & { groupId: number, cookie: string }): UpdateGroupNameResponse
+local function setName(with: UpdateGroupNameRequest & { groupId: number, cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/name`,
@@ -823,11 +819,11 @@ local function setName(with: UpdateGroupNameRequest & { groupId: number, cookie:
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).newName
 end
 
 --- Gets a list of all groups the specified users' friends are in.
-local function getGroupsWithFriends(with: { userId: number }): UserGroupMembershipResponsePages
+local function withFriendsOf(with: { userId: number }): { UserGroupMembershipResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/users/{with.userId}/friends/groups/roles`,
@@ -836,11 +832,11 @@ local function getGroupsWithFriends(with: { userId: number }): UserGroupMembersh
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Gets a value indicating whether the group can use payout feature
-local function canUsePayout(with: { groupId: number, cookie: string }): GroupPayoutRestrictionResponse
+local function canPayout(with: { groupId: number, cookie: string }): GroupPayoutRestrictionResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/payout-restriction`,
@@ -853,13 +849,8 @@ local function canUsePayout(with: { groupId: number, cookie: string }): GroupPay
 end
 
 --- Gets a group's relationships
-local function getRelationships(
-	with: {
-		groupId: number,
-		groupRelationshipType: string,
-		StartRowIndex: number,
-		MaxRows: number,
-	}
+local function relationships(
+	with: { groupId: number, groupRelationshipType: string, StartRowIndex: number, MaxRows: number }
 ): GroupRelationshipsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -873,7 +864,7 @@ local function getRelationships(
 end
 
 --- Gets the Group's name change history.
-local function getNameHistory(
+local function nameHistory(
 	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): GroupNameHistoryResponseItemPages
 	local response = requestWithCsrfToken({
@@ -888,7 +879,7 @@ local function getNameHistory(
 end
 
 --- Get suggested groups and other miscellaneous information needed for the group/join page like flags
-local function getSearchMetadata(): GroupSearchMetadataResponse
+local function searchMetadata(): GroupSearchMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/metadata`,
@@ -1008,7 +999,7 @@ local function exileUser(with: { groupId: number, userId: number, cookie: string
 end
 
 --- Gets all permissions for each role
-local function getAllRolePermissions(with: { groupId: number, cookie: string }): GroupPermissionsResponsePages
+local function allPermissions(with: { groupId: number, cookie: string }): { GroupPermissionsResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/roles/permissions`,
@@ -1017,7 +1008,7 @@ local function getAllRolePermissions(with: { groupId: number, cookie: string }):
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Updates existing group roleset.
@@ -1064,7 +1055,7 @@ local function createRole(with: CreateRoleSetRequest & { groupId: number, cookie
 end
 
 --- Gets the permissions for a group's guest roleset. These can be viewed by all (members and guests) users.
-local function getGuestPermissions(with: { groupId: number }): GroupPermissionsResponse
+local function guestPermissions(with: { groupId: number }): GroupPermissionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/roles/guest/permissions`,
@@ -1090,7 +1081,7 @@ local function deleteMessagesOf(with: { groupId: number, userId: number, cookie:
 end
 
 --- Gets group membership information in the context of the authenticated user
-local function getMembership(
+local function membership(
 	with: { groupId: number, includeNotificationPreferences: boolean }
 ): GroupMembershipMetadataResponse
 	local response = requestWithCsrfToken({
@@ -1119,7 +1110,7 @@ local function payout(with: PayoutRequest & { groupId: number, cookie: string })
 end
 
 --- Gets a list of the group payout percentages
-local function getRecurringPayouts(with: { groupId: number, cookie: string }): GroupPayoutResponsePages
+local function recurringPayouts(with: { groupId: number, cookie: string }): { GroupPayoutResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/payouts`,
@@ -1128,7 +1119,7 @@ local function getRecurringPayouts(with: { groupId: number, cookie: string }): G
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Updates the group's settings
@@ -1148,7 +1139,7 @@ local function updateSettings(
 end
 
 --- Gets the Group's settings
-local function getSettings(with: { groupId: number, cookie: string }): GroupSettingsResponse
+local function settings(with: { groupId: number, cookie: string }): GroupSettingsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/settings`,
@@ -1161,9 +1152,7 @@ local function getSettings(with: { groupId: number, cookie: string }): GroupSett
 end
 
 --- Updates the groups description
-local function setDescription(
-	with: UpdateGroupDescriptionRequest & { groupId: number, cookie: string }
-): GroupDescriptionResponse
+local function setDescription(with: UpdateGroupDescriptionRequest & { groupId: number, cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/description`,
@@ -1173,7 +1162,7 @@ local function setDescription(
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).newDescription
 end
 
 --- Sets the authenticated user's primary group
@@ -1204,7 +1193,7 @@ local function removePrimaryGroup(with: { cookie: string }): ApiEmptyResponseMod
 end
 
 --- Looks up groups by a name. Prioritizes an exact match as the first result.
-local function lookupGroups(with: { groupName: string }): GroupBasicResponsePages
+local function lookup(with: { groupName: string }): { GroupBasicResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/lookup?groupName={with.groupName}`,
@@ -1213,11 +1202,11 @@ local function lookupGroups(with: { groupName: string }): GroupBasicResponsePage
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Gets group information
-local function getGroup(with: { groupId: number }): GroupDetailResponse
+local function get(with: { groupId: number }): GroupDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}`,
@@ -1256,7 +1245,7 @@ local function declineJoinRequest(with: { groupId: number, userId: number, cooki
 end
 
 --- Gets a group join request by userId.
-local function getJoinRequest(with: { groupId: number, userId: number, cookie: string }): GroupJoinRequestResponse
+local function joinRequest(with: { groupId: number, userId: number, cookie: string }): GroupJoinRequestResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/join-requests/users/{with.userId}`,
@@ -1269,7 +1258,7 @@ local function getJoinRequest(with: { groupId: number, userId: number, cookie: s
 end
 
 --- Gets group policy info used for compliance.
-local function getPolicies(with: GroupPolicyRequest & { cookie: string }): GroupPoliciesResponse
+local function policies(with: GroupPolicyRequest & { cookie: string }): { GroupPolicyResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/policies`,
@@ -1279,11 +1268,11 @@ local function getPolicies(with: GroupPolicyRequest & { cookie: string }): Group
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).groups
 end
 
 --- Creates a new group.
-local function createGroup(with: {
+local function create(with: {
 	name: string?,
 	description: string?,
 	publicGroup: boolean?,
@@ -1343,7 +1332,7 @@ local function deleteRelationship(
 end
 
 --- Search for groups by keyword.
-local function searchGroups(
+local function search(
 	with: { keyword: string, prioritizeExactMatch: boolean?, limit: number?, cursor: string? }
 ): GroupSearchPageResponse
 	local response = requestWithCsrfToken({
@@ -1390,7 +1379,7 @@ local function declineRelationshipRequests(
 end
 
 --- Gets a group's relationship requests
-local function getRelationshipRequests(with: {
+local function relationshipRequests(with: {
 	groupId: number,
 	groupRelationshipType: string,
 	StartRowIndex: number,
@@ -1439,9 +1428,7 @@ local function updateRolePermissions(
 end
 
 --- Gets the permissions for a group's roleset. The authorized user must either be the group owner or the roleset being requested, except for guest roles, which can be viewed by all (members and guests).
-local function getRolePermissions(
-	with: { groupId: number, roleSetId: number, cookie: string }
-): GroupPermissionsResponse
+local function permissions(with: { groupId: number, roleSetId: number, cookie: string }): GroupPermissionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/roles/{with.roleSetId}/permissions`,
@@ -1467,7 +1454,7 @@ local function claimOwnership(with: { groupId: number, cookie: string }): ApiEmp
 end
 
 --- Gets a user's primary group.
-local function getPrimaryGroup(with: { userId: number }): GroupMembershipDetailResponse
+local function primary(with: { userId: number }): GroupMembershipDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/users/{with.userId}/groups/primary/role`,
@@ -1480,7 +1467,7 @@ local function getPrimaryGroup(with: { userId: number }): GroupMembershipDetailR
 end
 
 --- Gets the Roles by their ids.
-local function getRoles(with: { ids: { number } }): GroupRoleDetailResponsePages
+local function roles(with: { ids: { number } }): { GroupRoleDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/roles?ids={table.concat(with.ids, "&ids=")}`,
@@ -1489,7 +1476,7 @@ local function getRoles(with: { ids: { number } }): GroupRoleDetailResponsePages
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Posts a social links
@@ -1507,7 +1494,7 @@ local function addSocialLink(with: SocialLinkRequest & { groupId: number, cookie
 end
 
 --- Get social link data associated with a group
-local function getSocialLinks(with: { groupId: number, cookie: string }): SocialLinkResponsePages
+local function socialLinks(with: { groupId: number, cookie: string }): { SocialLinkResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{with.groupId}/social-links`,
@@ -1516,7 +1503,7 @@ local function getSocialLinks(with: { groupId: number, cookie: string }): Social
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Creates a post on a group wall
@@ -1534,7 +1521,7 @@ local function sendMessage(with: CreateWallPostRequest & { groupId: number, cook
 end
 
 --- Gets a list of group wall posts.
-local function getMessages(
+local function messages(
 	with: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): GroupWallPostV2ModelPages
 	local response = requestWithCsrfToken({
@@ -1549,7 +1536,7 @@ local function getMessages(
 end
 
 --- Multi-get groups information by Ids.
-local function getGroups(with: { groupIds: { number } }): GroupResponseV2Pages
+local function multiple(with: { groupIds: { number } }): { GroupResponseV2 }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/groups?groupIds={table.concat(with.groupIds, "&groupIds=")}`,
@@ -1558,13 +1545,13 @@ local function getGroups(with: { groupIds: { number } }): GroupResponseV2Pages
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Gets a list of all group roles for groups the specified user is in.
-local function getRolesOf(
+local function rolesOf(
 	with: { userId: number, includeLocked: boolean, includeNotificationPreferences: boolean }
-): GroupMembershipResponsePages
+): { GroupMembershipResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/users/{with.userId}/groups/roles?includeLocked={with.includeLocked}&includeNotificationPreferences={with.includeNotificationPreferences}`,
@@ -1573,33 +1560,33 @@ local function getRolesOf(
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 return {
-	getConfigurationMetadata = getConfigurationMetadata,
-	getMetadata = getMetadata,
+	configurationMetadata = configurationMetadata,
+	metadata = metadata,
 	giveOwnership = giveOwnership,
 	acceptJoinRequests = acceptJoinRequests,
 	declineJoinRequests = declineJoinRequests,
-	getJoinRequests = getJoinRequests,
-	getUsersWithRole = getUsersWithRole,
+	joinRequests = joinRequests,
+	usersWithRole = usersWithRole,
 	updateSocialLink = updateSocialLink,
 	deleteSocialLink = deleteSocialLink,
-	getPendingGroups = getPendingGroups,
-	getAuditLog = getAuditLog,
-	joinGroup = joinGroup,
-	getUsers = getUsers,
+	pending = pending,
+	auditLog = auditLog,
+	join = join,
+	users = users,
 	setStatus = setStatus,
 	setName = setName,
 	sendMessage = sendMessage,
-	getMessages = getMessages,
-	getGroupsWithFriends = getGroupsWithFriends,
-	canUsePayout = canUsePayout,
-	getRelationships = getRelationships,
-	getNameHistory = getNameHistory,
-	getSearchMetadata = getSearchMetadata,
-	getGroups = getGroups,
+	messages = messages,
+	withFriendsOf = withFriendsOf,
+	canPayout = canPayout,
+	relationships = relationships,
+	nameHistory = nameHistory,
+	searchMetadata = searchMetadata,
+	multiple = multiple,
 	toggleNotifications = toggleNotifications,
 	acceptRelationshipRequest = acceptRelationshipRequest,
 	declineRelationshipRequest = declineRelationshipRequest,
@@ -1607,40 +1594,40 @@ return {
 	setIcon = setIcon,
 	changeRole = changeRole,
 	exileUser = exileUser,
-	getAllRolePermissions = getAllRolePermissions,
+	allPermissions = allPermissions,
 	updateRole = updateRole,
 	deleteRole = deleteRole,
 	createRole = createRole,
-	getGuestPermissions = getGuestPermissions,
+	guestPermissions = guestPermissions,
 	deleteMessagesOf = deleteMessagesOf,
-	getMembership = getMembership,
+	membership = membership,
 	payout = payout,
-	getRecurringPayouts = getRecurringPayouts,
-	getRolesOf = getRolesOf,
+	recurringPayouts = recurringPayouts,
+	rolesOf = rolesOf,
 	updateSettings = updateSettings,
-	getSettings = getSettings,
+	settings = settings,
 	setDescription = setDescription,
 	setPrimaryGroup = setPrimaryGroup,
 	removePrimaryGroup = removePrimaryGroup,
-	lookupGroups = lookupGroups,
-	getGroup = getGroup,
+	lookup = lookup,
+	get = get,
 	acceptJoinRequest = acceptJoinRequest,
 	declineJoinRequest = declineJoinRequest,
-	getJoinRequest = getJoinRequest,
-	getPolicies = getPolicies,
-	createGroup = createGroup,
+	joinRequest = joinRequest,
+	policies = policies,
+	create = create,
 	requestRelationship = requestRelationship,
 	deleteRelationship = deleteRelationship,
-	searchGroups = searchGroups,
+	search = search,
 	acceptRelationshipRequests = acceptRelationshipRequests,
 	declineRelationshipRequests = declineRelationshipRequests,
-	getRelationshipRequests = getRelationshipRequests,
+	relationshipRequests = relationshipRequests,
 	updateRecurringPayouts = updateRecurringPayouts,
 	updateRolePermissions = updateRolePermissions,
-	getRolePermissions = getRolePermissions,
+	permissions = permissions,
 	claimOwnership = claimOwnership,
-	getPrimaryGroup = getPrimaryGroup,
-	getRoles = getRoles,
+	primary = primary,
+	roles = roles,
 	addSocialLink = addSocialLink,
-	getSocialLinks = getSocialLinks,
+	socialLinks = socialLinks,
 }

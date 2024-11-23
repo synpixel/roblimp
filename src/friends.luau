@@ -172,7 +172,7 @@ export type FriendResponsePages = {
 export type DeclineAllFriendRequestsResponse = { backgrounded: boolean }
 
 --- Returns whether or not the current user is following each userId in a list of userIds
-local function isFollowing(with: FollowingExistsRequestModel & { cookie: string }): FollowingExistsResponseModel
+local function following(with: FollowingExistsRequestModel & { cookie: string }): { FollowingExistsResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/following-exists`,
@@ -182,7 +182,7 @@ local function isFollowing(with: FollowingExistsRequestModel & { cookie: string 
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).followings
 end
 
 --- Creates the following between a user and user with targetUserId
@@ -200,7 +200,7 @@ local function follow(with: CaptchaTokenRequest & { targetUserId: number, cookie
 end
 
 --- Get the number of friends a user has
-local function getTotalFriendsOf(with: { userId: number }): FriendsCountResponse
+local function countFriendsOf(with: { userId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/count`,
@@ -209,11 +209,11 @@ local function getTotalFriendsOf(with: { userId: number }): FriendsCountResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 --- <no description>
-local function getMetadata(with: { targetUserId: number? }): FriendsPageMetadataResponse
+local function metadata(with: { targetUserId: number? }): FriendsPageMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/metadata?targetUserId={with.targetUserId or ""}`,
@@ -226,7 +226,7 @@ local function getMetadata(with: { targetUserId: number? }): FriendsPageMetadata
 end
 
 --- Get the number of friends a user has
-local function getTotalFriends(with: { cookie: string }): FriendsCountResponse
+local function count(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/my/friends/count`,
@@ -235,7 +235,7 @@ local function getTotalFriends(with: { cookie: string }): FriendsCountResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 --- Accept a friend request.
@@ -252,7 +252,7 @@ local function acceptFriendRequest(with: { requesterUserId: number, cookie: stri
 end
 
 --- Search for friends by name using a text query.
-local function searchFriendsOf(
+local function search(
 	with: { userId: number, query: string?, cursor: string?, limit: number?, cookie: string }
 ): FriendResponsePages
 	local response = requestWithCsrfToken({
@@ -267,9 +267,7 @@ local function searchFriendsOf(
 end
 
 --- Get list of all online friends for the specified user.
-local function getOnlineFriendsOf(
-	with: { userId: number, userSort: number?, cookie: string }
-): UserPresenceResponsePages
+local function onlineFriendsOf(with: { userId: number, userSort: number?, cookie: string }): { UserPresenceResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/online?userSort={with.userSort or ""}`,
@@ -278,11 +276,11 @@ local function getOnlineFriendsOf(
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Decline all pending friend requests for the authenticated user.
-local function declineAllFriendRequests(with: { cookie: string }): DeclineAllFriendRequestsResponse
+local function declineAllFriendRequests(with: { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/friend-requests/decline-all`,
@@ -291,11 +289,11 @@ local function declineAllFriendRequests(with: { cookie: string }): DeclineAllFri
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).backgrounded
 end
 
 --- Get all users that user with targetUserId is following in page response format
-local function getFollowingsOf(
+local function followingsOf(
 	with: { targetUserId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): UserResponsePages
 	local response = requestWithCsrfToken({
@@ -310,7 +308,7 @@ local function getFollowingsOf(
 end
 
 --- Check if the requesting user is friends with the specified users.
-local function areFriends(with: MultigetAreFriendsRequestModel & { userId: number }): MultigetAreFriendsResponse
+local function areFriends(with: MultigetAreFriendsRequestModel & { userId: number }): { number }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/{with.userId}/multiget-are-friends`,
@@ -320,11 +318,11 @@ local function areFriends(with: MultigetAreFriendsRequestModel & { userId: numbe
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).friendsId
 end
 
 --- Get all users that follow user with targetUserId in page response format
-local function getFollowersOf(
+local function followersOf(
 	with: { targetUserId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): UserResponsePages
 	local response = requestWithCsrfToken({
@@ -368,7 +366,7 @@ local function sendFriendRequest(
 end
 
 --- Get the number of following a user has
-local function getTotalFollowingsOf(with: { targetUserId: number }): FollowCountResponse
+local function countFollowingsOf(with: { targetUserId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followings/count`,
@@ -377,7 +375,7 @@ local function getTotalFollowingsOf(with: { targetUserId: number }): FollowCount
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 --- Deletes the following between a user and user with targetUserId
@@ -394,7 +392,7 @@ local function unfollow(with: { targetUserId: number, cookie: string }): ApiEmpt
 end
 
 --- Get list of inactive friends for the specified user.
-local function getInactiveFriendsOf(with: { userId: number, cookie: string }): UserResponsePages
+local function inactiveFriendsOf(with: { userId: number, cookie: string }): { UserResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/inactive`,
@@ -403,11 +401,11 @@ local function getInactiveFriendsOf(with: { userId: number, cookie: string }): U
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Get all users that friend requests with targetUserId using exclusive start paging
-local function getFriendRequests(
+local function friendRequests(
 	with: { limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): FriendRequestResponsePages
 	local response = requestWithCsrfToken({
@@ -435,7 +433,7 @@ local function declineFriendRequest(with: { requesterUserId: number, cookie: str
 end
 
 --- Get list of all friends for the specified user.
-local function getFriendsOf(with: { userId: number, userSort: number? }): UserResponsePages
+local function friendsOf(with: { userId: number, userSort: number? }): { UserResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.userId}/friends?userSort={with.userSort or ""}`,
@@ -444,11 +442,11 @@ local function getFriendsOf(with: { userId: number, userSort: number? }): UserRe
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Get a paginated list of all friends for the specified user.
-local function getFriendshipsOf(
+local function friendshipsOf(
 	with: { userId: number, userSort: number?, cursor: string?, limit: number?, cookie: string }
 ): FriendResponsePages
 	local response = requestWithCsrfToken({
@@ -463,7 +461,7 @@ local function getFriendshipsOf(
 end
 
 --- Return the number of pending friend requests.
-local function getTotalFriendRequests(with: { cookie: string }): PendingFriendRequestCountModel
+local function countFriendRequests(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/user/friend-requests/count`,
@@ -472,11 +470,11 @@ local function getTotalFriendRequests(with: { cookie: string }): PendingFriendRe
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 --- Get the number of following a user has
-local function getTotalFollowersOf(with: { targetUserId: number }): FollowCountResponse
+local function countFollowersOf(with: { targetUserId: number }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followers/count`,
@@ -485,31 +483,31 @@ local function getTotalFollowersOf(with: { targetUserId: number }): FollowCountR
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).count
 end
 
 return {
-	isFollowing = isFollowing,
+	following = following,
 	follow = follow,
-	getTotalFriendsOf = getTotalFriendsOf,
-	getMetadata = getMetadata,
-	getTotalFriends = getTotalFriends,
+	countFriendsOf = countFriendsOf,
+	metadata = metadata,
+	count = count,
 	acceptFriendRequest = acceptFriendRequest,
-	searchFriendsOf = searchFriendsOf,
-	getOnlineFriendsOf = getOnlineFriendsOf,
+	search = search,
+	onlineFriendsOf = onlineFriendsOf,
 	declineAllFriendRequests = declineAllFriendRequests,
-	getFollowingsOf = getFollowingsOf,
+	followingsOf = followingsOf,
 	areFriends = areFriends,
-	getFollowersOf = getFollowersOf,
+	followersOf = followersOf,
 	unfriend = unfriend,
 	sendFriendRequest = sendFriendRequest,
-	getTotalFollowingsOf = getTotalFollowingsOf,
+	countFollowingsOf = countFollowingsOf,
 	unfollow = unfollow,
-	getInactiveFriendsOf = getInactiveFriendsOf,
-	getFriendRequests = getFriendRequests,
+	inactiveFriendsOf = inactiveFriendsOf,
+	friendRequests = friendRequests,
 	declineFriendRequest = declineFriendRequest,
-	getFriendsOf = getFriendsOf,
-	getFriendshipsOf = getFriendshipsOf,
-	getTotalFriendRequests = getTotalFriendRequests,
-	getTotalFollowersOf = getTotalFollowersOf,
+	friendsOf = friendsOf,
+	friendshipsOf = friendshipsOf,
+	countFriendRequests = countFriendRequests,
+	countFollowersOf = countFollowersOf,
 }

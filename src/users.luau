@@ -118,7 +118,7 @@ export type SearchGetUserResponse = {
 export type GenderRequest = { gender: string }
 
 --- Searches for users by keyword.
-local function searchUsers(
+local function search(
 	with: { keyword: string, sessionId: string?, limit: number?, cursor: string? }
 ): SearchGetUserResponsePages
 	local response = requestWithCsrfToken({
@@ -133,7 +133,7 @@ local function searchUsers(
 end
 
 --- Gets detailed user information by id.
-local function getUser(with: { userId: number }): GetUserResponse
+local function get(with: { userId: number }): GetUserResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/{with.userId}`,
@@ -160,7 +160,7 @@ local function setBirthdate(with: BirthdateRequest & { cookie: string }): ApiEmp
 end
 
 --- Get the user's birthdate
-local function getBirthdate(with: { cookie: string }): BirthdateResponse
+local function birthdate(with: { cookie: string }): BirthdateResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/birthdate`,
@@ -173,7 +173,7 @@ local function getBirthdate(with: { cookie: string }): BirthdateResponse
 end
 
 --- Update the user's description
-local function setDescription(with: DescriptionRequest & { cookie: string }): DescriptionResponse
+local function setDescription(with: DescriptionRequest & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://users.roblox.com/v1/description`,
@@ -183,11 +183,11 @@ local function setDescription(with: DescriptionRequest & { cookie: string }): De
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).description
 end
 
 --- Get the user's description
-local function getDescription(with: { cookie: string }): DescriptionResponse
+local function description(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/description`,
@@ -196,11 +196,11 @@ local function getDescription(with: { cookie: string }): DescriptionResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).description
 end
 
 --- Retrieves the username history for a particular user.
-local function getUsernameHistory(
+local function usernameHistory(
 	with: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? }
 ): UsernameHistoryResponsePages
 	local response = requestWithCsrfToken({
@@ -215,7 +215,7 @@ local function getUsernameHistory(
 end
 
 --- Get users by usernames.
-local function getUsersByNames(with: MultiGetByUsernameRequest): MultiGetUserByNameResponsePages
+local function fromNames(with: MultiGetByUsernameRequest): { MultiGetUserByNameResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://users.roblox.com/v1/usernames/users`,
@@ -225,7 +225,7 @@ local function getUsersByNames(with: MultiGetByUsernameRequest): MultiGetUserByN
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Update the user's gender
@@ -243,7 +243,7 @@ local function setGender(with: GenderRequest & { cookie: string }): ApiEmptyResp
 end
 
 --- Get the user's gender
-local function getGender(with: { cookie: string }): GenderResponse
+local function gender(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/gender`,
@@ -252,11 +252,11 @@ local function getGender(with: { cookie: string }): GenderResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).gender
 end
 
 --- Gets the country code of the authenticated user.
-local function getCountryCode(with: { cookie: string }): UserCountryCodeResponse
+local function countryCode(with: { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated/country-code`,
@@ -265,11 +265,11 @@ local function getCountryCode(with: { cookie: string }): UserCountryCodeResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).countryCode
 end
 
 --- Gets the (public) roles of the authenticated user, such as `"Soothsayer"` and `"BetaTester"`.
-local function getPublicRoles(with: { cookie: string }): UserRolesResponse
+local function publicRoles(with: { cookie: string }): { string }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated/roles`,
@@ -278,11 +278,11 @@ local function getPublicRoles(with: { cookie: string }): UserRolesResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).roles
 end
 
 --- Get users by ids.
-local function getUsersByIds(with: MultiGetByUserIdRequest): MultiGetUserResponsePages
+local function fromIds(with: MultiGetByUserIdRequest): { MultiGetUserResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://users.roblox.com/v1/users`,
@@ -292,7 +292,7 @@ local function getUsersByIds(with: MultiGetByUserIdRequest): MultiGetUserRespons
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).data
 end
 
 --- Set the display name for the authorized user.
@@ -310,7 +310,7 @@ local function setDisplayName(with: SetDisplayNameRequest & { userId: number, co
 end
 
 --- Gets the age bracket of the authenticated user.
-local function getAgeBracket(with: { cookie: string }): UserAgeBracketResponse
+local function ageBracket(with: { cookie: string }): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated/age-bracket`,
@@ -319,11 +319,11 @@ local function getAgeBracket(with: { cookie: string }): UserAgeBracketResponse
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	return serde.decode("json", response.body)
+	return serde.decode("json", response.body).ageBracket
 end
 
 --- Gets the minimal authenticated user.
-local function getAuthenticatedUser(with: { cookie: string }): AuthenticatedGetUserResponse
+local function authenticated(with: { cookie: string }): AuthenticatedGetUserResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated`,
@@ -336,20 +336,20 @@ local function getAuthenticatedUser(with: { cookie: string }): AuthenticatedGetU
 end
 
 return {
-	searchUsers = searchUsers,
-	getUser = getUser,
+	search = search,
+	get = get,
 	setBirthdate = setBirthdate,
-	getBirthdate = getBirthdate,
+	birthdate = birthdate,
 	setDescription = setDescription,
-	getDescription = getDescription,
-	getUsernameHistory = getUsernameHistory,
-	getUsersByNames = getUsersByNames,
+	description = description,
+	usernameHistory = usernameHistory,
+	fromNames = fromNames,
 	setGender = setGender,
-	getGender = getGender,
-	getCountryCode = getCountryCode,
-	getPublicRoles = getPublicRoles,
-	getUsersByIds = getUsersByIds,
+	gender = gender,
+	countryCode = countryCode,
+	publicRoles = publicRoles,
+	fromIds = fromIds,
 	setDisplayName = setDisplayName,
-	getAgeBracket = getAgeBracket,
-	getAuthenticatedUser = getAuthenticatedUser,
+	ageBracket = ageBracket,
+	authenticated = authenticated,
 }
