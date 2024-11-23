@@ -41,12 +41,12 @@ export type FollowsByTypeResponse = { followedSources: {}, followerId: number, f
 --- Gets the status of a following relationship between a user and a universe.
 --- @within followings
 local function followingStatus(
-	with: { userId: number, universeId: number, cookie: string }
+	request: { userId: number, universeId: number, cookie: string }
 ): UserFollowingUniverseStatusResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://followings.roblox.com/v1/users/{with.userId}/universes/{with.universeId}/status`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://followings.roblox.com/v1/users/{request.userId}/universes/{request.universeId}/status`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -56,11 +56,11 @@ end
 
 --- Creates the following between a user with userId and universe with universeId
 --- @within followings
-local function follow(with: { userId: number, universeId: number, cookie: string }): UserFollowingUniverseResponse
+local function follow(request: { userId: number, universeId: number, cookie: string }): UserFollowingUniverseResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://followings.roblox.com/v1/users/{with.userId}/universes/{with.universeId}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://followings.roblox.com/v1/users/{request.userId}/universes/{request.universeId}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -70,11 +70,11 @@ end
 
 --- Deletes the following between a user with userId and universe with universeId
 --- @within followings
-local function unfollow(with: { userId: number, universeId: number, cookie: string }): UserFollowingUniverseResponse
+local function unfollow(request: { userId: number, universeId: number, cookie: string }): UserFollowingUniverseResponse
 	local response = requestWithCsrfToken({
 		method = "DELETE",
-		url = `https://followings.roblox.com/v1/users/{with.userId}/universes/{with.universeId}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://followings.roblox.com/v1/users/{request.userId}/universes/{request.universeId}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -84,11 +84,11 @@ end
 
 --- Gets all universes followed by a user.
 --- @within followings
-local function followingsOf(with: { userId: number, cookie: string }): FollowsByTypeResponse
+local function followingsOf(request: { userId: number, cookie: string }): FollowsByTypeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://followings.roblox.com/v2/users/{with.userId}/universes`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://followings.roblox.com/v2/users/{request.userId}/universes`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

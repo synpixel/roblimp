@@ -331,10 +331,10 @@ export type ElasticsearchDebugInfo = {
 
 --- Returns details about the given bundleId.
 --- @within catalog
-local function bundle(with: { bundleId: number }): BundleDetailsModel
+local function bundle(bundleId: number): BundleDetailsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://catalog.roblox.com/v1/bundles/{with.bundleId}/details`,
+		url = `https://catalog.roblox.com/v1/bundles/{bundleId}/details`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -344,12 +344,14 @@ end
 
 --- Returns list of item details.
 --- @within catalog
-local function items(with: MultigetItemDetailsRequestModel & { cookie: string }): { CatalogSearchDetailedResponseItem }
+local function items(
+	request: MultigetItemDetailsRequestModel & { cookie: string }
+): { CatalogSearchDetailedResponseItem }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://catalog.roblox.com/v1/catalog/items/details`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -359,10 +361,10 @@ end
 
 --- Returns details about the given bundleIds.
 --- @within catalog
-local function bundles(with: { bundleIds: { number } }): { BundleDetailsModel }
+local function bundles(bundleIds: { number }): { BundleDetailsModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://catalog.roblox.com/v1/bundles/details?bundleIds={table.concat(with.bundleIds, "&bundleIds=")}`,
+		url = `https://catalog.roblox.com/v1/bundles/details?bundleIds={table.concat(bundleIds, "&bundleIds=")}`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -373,12 +375,12 @@ end
 --- Lists the bundles owned by a given user.
 --- @within catalog
 local function bundlesOf(
-	with: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
+	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): OwnedBundleModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://catalog.roblox.com/v1/users/{with.userId}/bundles?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://catalog.roblox.com/v1/users/{request.userId}/bundles?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -388,7 +390,7 @@ end
 
 --- Search for catalog items.
 --- @within catalog
-local function search(with: {
+local function search(request: {
 	assetTypeIds: { number }?,
 	bundleTypeIds: { number }?,
 	sortAggregation: number?,
@@ -411,10 +413,10 @@ local function search(with: {
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v2/search/items/details?assetTypeIds={table.concat(
-			with.assetTypeIds or {},
+			request.assetTypeIds or {},
 			"&assetTypeIds="
-		)}&bundleTypeIds={table.concat(with.bundleTypeIds or {}, "&bundleTypeIds=")}&sortAggregation={with.sortAggregation or ""}&sortType={with.sortType or ""}&creatorType={with.creatorType or ""}&creatorTargetId={with.creatorTargetId or ""}&creatorName={with.creatorName or ""}&maxPrice={with.maxPrice or ""}&minPrice={with.minPrice or ""}&keyword={with.keyword or ""}&includeNotForSale={with.includeNotForSale or ""}&triggeredByTopicDiscovery={with.triggeredByTopicDiscovery or ""}&salesTypeFilter={with.salesTypeFilter or ""}&topics={with.topics or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		)}&bundleTypeIds={table.concat(request.bundleTypeIds or {}, "&bundleTypeIds=")}&sortAggregation={request.sortAggregation or ""}&sortType={request.sortType or ""}&creatorType={request.creatorType or ""}&creatorTargetId={request.creatorTargetId or ""}&creatorName={request.creatorName or ""}&maxPrice={request.maxPrice or ""}&minPrice={request.minPrice or ""}&keyword={request.keyword or ""}&includeNotForSale={request.includeNotForSale or ""}&triggeredByTopicDiscovery={request.triggeredByTopicDiscovery or ""}&salesTypeFilter={request.salesTypeFilter or ""}&topics={request.topics or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

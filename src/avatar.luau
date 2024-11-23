@@ -674,7 +674,7 @@ export type OutfitUpdateModelV3 = {
 
 --- Returns the business rules related to avatars
 --- @within avatar
-local function rules(): AvatarRulesModel
+local function rules(request: {}): AvatarRulesModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar-rules`,
@@ -687,12 +687,12 @@ end
 
 --- Sets the authenticated user's scales
 --- @within avatar
-local function setScales(with: ScaleModel & { cookie: string }): boolean
+local function setScales(request: ScaleModel & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/avatar/set-scales`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -702,11 +702,11 @@ end
 
 --- Requests the authenticated user's thumbnail be redrawn
 --- @within avatar
-local function redrawThumbnail(with: { cookie: string }): EmptyResponse
+local function redrawThumbnail(cookie: string): EmptyResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/avatar/redraw-thumbnail`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -716,12 +716,12 @@ end
 
 --- Sets the authenticated user's player avatar type (e.g. R6 or R15).
 --- @within avatar
-local function setRigType(with: PlayerAvatarTypeModel & { cookie: string }): boolean
+local function setRigType(request: PlayerAvatarTypeModel & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/avatar/set-player-avatar-type`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -732,11 +732,11 @@ end
 --- Returns a list of recent items
 --- Recent items can be Assets or Outfits
 --- @within avatar
-local function recentItems(with: { recentItemListType: number, cookie: string }): RecentItemModelPages
+local function recentItems(request: { recentItemListType: number, cookie: string }): RecentItemModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://avatar.roblox.com/v1/recent-items/{with.recentItemListType}/list`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://avatar.roblox.com/v1/recent-items/{request.recentItemListType}/list`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -746,7 +746,7 @@ end
 
 --- Returns metadata used by the avatar page of the website
 --- @within avatar
-local function metadata(): AvatarMetadataModel
+local function metadata(request: {}): AvatarMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar/metadata`,
@@ -759,10 +759,10 @@ end
 
 --- Gets a list of asset ids that the user is currently wearing
 --- @within avatar
-local function assetsWorn(with: { userId: number }): { number }
+local function assetsWorn(userId: number): { number }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://avatar.roblox.com/v1/users/{with.userId}/currently-wearing`,
+		url = `https://avatar.roblox.com/v1/users/{userId}/currently-wearing`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -772,11 +772,11 @@ end
 
 --- Deletes the outfit
 --- @within avatar
-local function deleteOutfit(with: { userOutfitId: number, cookie: string }): boolean
+local function deleteOutfit(request: { userOutfitId: number, cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://avatar.roblox.com/v1/outfits/{with.userOutfitId}/delete`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://avatar.roblox.com/v1/outfits/{request.userOutfitId}/delete`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -786,11 +786,11 @@ end
 
 --- Returns details about the authenticated user's avatar
 --- @within avatar
-local function getAvatar(with: { cookie: string }): AvatarModelV3
+local function get(cookie: string): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v2/avatar/avatar`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -800,10 +800,10 @@ end
 
 --- Returns details about a specified user's avatar
 --- @within avatar
-local function of(with: { userId: number }): AvatarModelV3
+local function of(userId: number): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://avatar.roblox.com/v2/avatar/users/{with.userId}/avatar`,
+		url = `https://avatar.roblox.com/v2/avatar/users/{userId}/avatar`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -813,12 +813,12 @@ end
 
 --- Sets the authenticated user's body colors
 --- @within avatar
-local function setBodyColors(with: BodyColorsModelV2 & { cookie: string }): boolean
+local function setBodyColors(request: BodyColorsModelV2 & { cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v2/avatar/set-body-colors`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -828,12 +828,12 @@ end
 
 --- Sets the avatar's current assets to the list
 --- @within avatar
-local function setAssetsWorn(with: WearRequestModel & { cookie: string }): WearResponseModel
+local function setAssetsWorn(request: WearRequestModel & { cookie: string }): WearResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v2/avatar/set-wearing-assets`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -843,7 +843,7 @@ end
 
 --- Gets a list of outfits for the specified user.
 --- @within avatar
-local function outfitsOf(with: {
+local function outfitsOf(request: {
 	userId: number,
 	paginationToken: string?,
 	outfitType: string?,
@@ -853,7 +853,7 @@ local function outfitsOf(with: {
 }): OutfitModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://avatar.roblox.com/v2/avatar/users/{with.userId}/outfits?paginationToken={with.paginationToken or ""}&outfitType={with.outfitType or ""}&page={with.page or ""}&itemsPerPage={with.itemsPerPage or ""}&isEditable={with.isEditable or ""}`,
+		url = `https://avatar.roblox.com/v2/avatar/users/{request.userId}/outfits?paginationToken={request.paginationToken or ""}&outfitType={request.outfitType or ""}&page={request.page or ""}&itemsPerPage={request.itemsPerPage or ""}&isEditable={request.isEditable or ""}`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -863,12 +863,12 @@ end
 
 --- Updates the contents of an outfit.
 --- @within avatar
-local function updateOutfit(with: OutfitUpdateModelV3 & { userOutfitId: number, cookie: string }): OutfitModel
+local function updateOutfit(request: OutfitUpdateModelV3 & { userOutfitId: number, cookie: string }): OutfitModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
-		url = `https://avatar.roblox.com/v3/outfits/{with.userOutfitId}`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		url = `https://avatar.roblox.com/v3/outfits/{request.userOutfitId}`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -878,12 +878,12 @@ end
 
 --- Creates a new outfit.
 --- @within avatar
-local function createOutfit(with: OutfitUpdateModelV3 & { cookie: string }): OutfitModel
+local function createOutfit(request: OutfitUpdateModelV3 & { cookie: string }): OutfitModel
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v3/outfits/create`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -893,11 +893,11 @@ end
 
 --- Gets details about the contents of an outfit.
 --- @within avatar
-local function outfit(with: { userOutfitId: number, cookie: string }): OutfitDetailsModelV2
+local function outfit(request: { userOutfitId: number, cookie: string }): OutfitDetailsModelV2
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://avatar.roblox.com/v3/outfits/{with.userOutfitId}/details`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://avatar.roblox.com/v3/outfits/{request.userOutfitId}/details`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -908,7 +908,7 @@ end
 return {
 	updateOutfit = updateOutfit,
 	createOutfit = createOutfit,
-	getAvatar = getAvatar,
+	get = get,
 	of = of,
 	rules = rules,
 	setBodyColors = setBodyColors,

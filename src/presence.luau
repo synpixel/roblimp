@@ -60,12 +60,12 @@ export type LastOnlineRequest = { userIds: { number } }
 
 --- Get Presence for a list of users
 --- @within presence
-local function get(with: UserPresenceRequest): { UserPresence }
+local function get(userIds: { number }): { UserPresence }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://presence.roblox.com/v1/presence/users`,
 		headers = { ["Content-Type"] = "application/json" },
-		body = serde.encode("json", with),
+		body = serde.encode("json", { userIds = userIds }),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

@@ -63,7 +63,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/avatar/set-player-avatar-type"] = { post = "setRigType" },
 		["/v1/avatar/set-scales"] = { post = "setScales" },
 		["/v1/outfits/{userOutfitId}/delete"] = { post = "deleteOutfit" },
-		["/v2/avatar/avatar"] = { get = "getAvatar" },
+		["/v2/avatar/avatar"] = { get = "get" },
 		["/v2/avatar/users/{userId}/avatar"] = { get = "of" },
 		["/v2/avatar/users/{userId}/outfits"] = { get = "outfitsOf" },
 		["/v2/avatar/set-body-colors"] = { post = "setBodyColors" },
@@ -608,16 +608,47 @@ for namespace, definitions in mappings do
 
 				file ..= `--- @within {namespace}\n`
 
-				if next(parameters) == nil then
+				local firstKey = next(parameters)
+
+				local onlyParameter = nil
+				if firstKey ~= nil and next(parameters, firstKey) == nil and bodyParameter == nil then
+					onlyParameter = parameters[firstKey]
+				elseif firstKey == nil and bodyParameter ~= nil then
+					local schema = bodyParameter.schema
+					if schema["$ref"] ~= nil then
+						local ref = schema["$ref"]:gsub("#/definitions/", "")
+						for name, definition in openapi.definitions do
+							if name == ref then
+								schema = definition
+								break
+							end
+						end
+					end
+
+					if schema.type == "object" then
+						local firstKey = if schema.properties ~= nil then next(schema.properties) else nil
+						if firstKey ~= nil and next(schema.properties, firstKey) == nil then
+							onlyParameter = table.clone(schema.properties[firstKey])
+							onlyParameter.name = firstKey
+						end
+					else
+						onlyParameter = bodyParameter
+					end
+				end
+
+				if onlyParameter ~= nil then
+					local parameterName = onlyParameter.name:sub(1, 1):lower() .. onlyParameter.name:sub(2)
+					file ..= `local function {name}({parameterName}: {translateOpenApiType(onlyParameter)}): {patchModelName}\n`
+				elseif firstKey == nil and bodyParameter ~= nil then
 					file ..= `local function {name}(`
 
 					if consumesJson then
-						file ..= `with: {translateOpenApiType(bodyParameter.schema)}`
+						file ..= `request: {translateOpenApiType(bodyParameter.schema)}`
 					end
 
 					file ..= `): {patchModelName}\n`
 				else
-					file ..= `local function {name}(with:`
+					file ..= `local function {name}(request:`
 
 					if consumesJson then
 						file ..= `{translateOpenApiType(bodyParameter.schema)} &`
@@ -632,11 +663,15 @@ for namespace, definitions in mappings do
 					file ..= `}): {patchModelName}\n`
 				end
 
+				local function readRequest(field: string): string
+					return if onlyParameter ~= nil then field else `request.{field}`
+				end
+
 				file ..= "local response = requestWithCsrfToken({\n"
 
 				file ..= `method = "{method:upper()}",\n`
 
-				local patchEndpoint = endpoint:gsub("{(.-)}", "{with.%1}")
+				local patchEndpoint = endpoint:gsub("{(.-)}", `\{{readRequest("%1")}\}`)
 
 				if route.parameters ~= nil then
 					local isFirstPathParameter = true
@@ -655,8 +690,8 @@ for namespace, definitions in mappings do
 						end
 
 						local value = if parameter.type == "array"
-							then `table.concat(with.{name} {if parameter.required then "" else "or {}"}, "&{name}=")`
-							else `with.{name} {if parameter.required then "" else 'or ""'}`
+							then `table.concat({readRequest(name)} {if parameter.required then "" else "or {}"}, "&{name}=")`
+							else `{readRequest(name)} {if parameter.required then "" else 'or ""'}`
 
 						patchEndpoint ..= `{symbol}{name}=\{{value}\}`
 					end
@@ -672,14 +707,19 @@ for namespace, definitions in mappings do
 					end
 
 					if needsCookie then
-						file ..= "Cookie = `.ROBLOSECURITY={with.cookie}`,"
+						file ..= `Cookie = \`.ROBLOSECURITY=\{{readRequest("cookie")}\}\`,`
 					end
 
 					file ..= "},\n"
 				end
 
 				if consumesJson then
-					file ..= 'body = serde.encode("json", with),\n'
+					if onlyParameter == nil then
+						file ..= 'body = serde.encode("json", request),\n'
+					else
+						local name = onlyParameter.name:sub(1, 1):lower() .. onlyParameter.name:sub(2)
+						file ..= `body = serde.encode("json", \{ {name} = {onlyParameter.name} \})`
+					end
 				end
 
 				file ..= "})\n\n"

@@ -11,11 +11,11 @@ export type CurrencyResponse = { robux: number }
 
 --- Gets currency for the authenticated user.
 --- @within economy
-local function robux(with: { cookie: string }): number
+local function robux(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://economy.roblox.com/v1/user/currency`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

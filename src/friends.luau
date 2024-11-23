@@ -302,12 +302,12 @@ export type DeclineAllFriendRequestsResponse = { backgrounded: boolean }
 
 --- Returns whether or not the current user is following each userId in a list of userIds
 --- @within friends
-local function following(with: FollowingExistsRequestModel & { cookie: string }): { FollowingExistsResponse }
+local function following(request: FollowingExistsRequestModel & { cookie: string }): { FollowingExistsResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/following-exists`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -317,12 +317,14 @@ end
 
 --- Creates the following between a user and user with targetUserId
 --- @within friends
-local function follow(with: CaptchaTokenRequest & { targetUserId: number, cookie: string }): CaptchaStatusResponseModel
+local function follow(
+	request: CaptchaTokenRequest & { targetUserId: number, cookie: string }
+): CaptchaStatusResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/follow`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/follow`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -332,10 +334,10 @@ end
 
 --- Get the number of friends a user has
 --- @within friends
-local function countFriendsOf(with: { userId: number }): number
+local function countFriendsOf(userId: number): number
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/count`,
+		url = `https://friends.roblox.com/v1/users/{userId}/friends/count`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -344,10 +346,10 @@ local function countFriendsOf(with: { userId: number }): number
 end
 
 --- @within friends
-local function metadata(with: { targetUserId: number? }): FriendsPageMetadataResponse
+local function metadata(targetUserId: number?): FriendsPageMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/metadata?targetUserId={with.targetUserId or ""}`,
+		url = `https://friends.roblox.com/v1/metadata?targetUserId={targetUserId or ""}`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -357,11 +359,11 @@ end
 
 --- Get the number of friends a user has
 --- @within friends
-local function count(with: { cookie: string }): number
+local function count(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/my/friends/count`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -371,11 +373,11 @@ end
 
 --- Accept a friend request.
 --- @within friends
-local function acceptFriendRequest(with: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
+local function acceptFriendRequest(request: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.requesterUserId}/accept-friend-request`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.requesterUserId}/accept-friend-request`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -386,12 +388,12 @@ end
 --- Search for friends by name using a text query.
 --- @within friends
 local function search(
-	with: { userId: number, query: string?, cursor: string?, limit: number?, cookie: string }
+	request: { userId: number, query: string?, cursor: string?, limit: number?, cookie: string }
 ): FriendResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/search?query={with.query or ""}&cursor={with.cursor or ""}&limit={with.limit or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/search?query={request.query or ""}&cursor={request.cursor or ""}&limit={request.limit or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -401,11 +403,11 @@ end
 
 --- Get list of all online friends for the specified user.
 --- @within friends
-local function onlineFriendsOf(with: { userId: number, userSort: number?, cookie: string }): { UserPresenceResponse }
+local function onlineFriendsOf(request: { userId: number, userSort: number?, cookie: string }): { UserPresenceResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/online?userSort={with.userSort or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/online?userSort={request.userSort or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -415,11 +417,11 @@ end
 
 --- Decline all pending friend requests for the authenticated user.
 --- @within friends
-local function declineAllFriendRequests(with: { cookie: string }): boolean
+local function declineAllFriendRequests(cookie: string): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/friend-requests/decline-all`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -429,7 +431,7 @@ end
 
 --- Get all users that user with targetUserId is following in page response format
 --- @within friends
-local function followingsOf(with: {
+local function followingsOf(request: {
 	targetUserId: number,
 	limit: number?,
 	cursor: string?,
@@ -438,8 +440,8 @@ local function followingsOf(with: {
 }): UserResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followings?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/followings?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -449,12 +451,12 @@ end
 
 --- Check if the requesting user is friends with the specified users.
 --- @within friends
-local function areFriends(with: MultigetAreFriendsRequestModel & { userId: number, cookie: string }): { number }
+local function areFriends(request: MultigetAreFriendsRequestModel & { userId: number, cookie: string }): { number }
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/user/{with.userId}/multiget-are-friends`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		url = `https://friends.roblox.com/v1/user/{request.userId}/multiget-are-friends`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -464,7 +466,7 @@ end
 
 --- Get all users that follow user with targetUserId in page response format
 --- @within friends
-local function followersOf(with: {
+local function followersOf(request: {
 	targetUserId: number,
 	limit: number?,
 	cursor: string?,
@@ -473,8 +475,8 @@ local function followersOf(with: {
 }): UserResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followers?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/followers?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -484,11 +486,11 @@ end
 
 --- Unfriend a user
 --- @within friends
-local function unfriend(with: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
+local function unfriend(request: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/unfriend`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/unfriend`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -499,13 +501,13 @@ end
 --- Send a friend request to target user
 --- @within friends
 local function sendFriendRequest(
-	with: FriendshipRequestModel & { targetUserId: number, cookie: string }
+	request: FriendshipRequestModel & { targetUserId: number, cookie: string }
 ): CaptchaStatusResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/request-friendship`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/request-friendship`,
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -515,10 +517,10 @@ end
 
 --- Get the number of following a user has
 --- @within friends
-local function countFollowingsOf(with: { targetUserId: number }): number
+local function countFollowingsOf(targetUserId: number): number
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followings/count`,
+		url = `https://friends.roblox.com/v1/users/{targetUserId}/followings/count`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -528,11 +530,11 @@ end
 
 --- Deletes the following between a user and user with targetUserId
 --- @within friends
-local function unfollow(with: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
+local function unfollow(request: { targetUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/unfollow`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/unfollow`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -542,11 +544,11 @@ end
 
 --- Get list of inactive friends for the specified user.
 --- @within friends
-local function inactiveFriendsOf(with: { userId: number, cookie: string }): { UserResponse }
+local function inactiveFriendsOf(request: { userId: number, cookie: string }): { UserResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/inactive`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/inactive`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -557,12 +559,12 @@ end
 --- Get all users that friend requests with targetUserId using exclusive start paging
 --- @within friends
 local function friendRequests(
-	with: { limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
+	request: { limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): FriendRequestResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/my/friends/requests?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/my/friends/requests?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -572,11 +574,11 @@ end
 
 --- Decline a friend request.
 --- @within friends
-local function declineFriendRequest(with: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
+local function declineFriendRequest(request: { requesterUserId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://friends.roblox.com/v1/users/{with.requesterUserId}/decline-friend-request`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://friends.roblox.com/v1/users/{request.requesterUserId}/decline-friend-request`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -586,10 +588,10 @@ end
 
 --- Get list of all friends for the specified user.
 --- @within friends
-local function friendsOf(with: { userId: number, userSort: number? }): { UserResponse }
+local function friendsOf(request: { userId: number, userSort: number? }): { UserResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.userId}/friends?userSort={with.userSort or ""}`,
+		url = `https://friends.roblox.com/v1/users/{request.userId}/friends?userSort={request.userSort or ""}`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -600,11 +602,11 @@ end
 --- Get a paginated list of all friends for the specified user.
 --- @within friends
 local function friendshipsOf(
-	with: { userId: number, userSort: number?, cursor: string?, limit: number? }
+	request: { userId: number, userSort: number?, cursor: string?, limit: number? }
 ): FriendResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.userId}/friends/find?userSort={with.userSort or ""}&cursor={with.cursor or ""}&limit={with.limit or ""}`,
+		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/find?userSort={request.userSort or ""}&cursor={request.cursor or ""}&limit={request.limit or ""}`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -614,11 +616,11 @@ end
 
 --- Return the number of pending friend requests.
 --- @within friends
-local function countFriendRequests(with: { cookie: string }): number
+local function countFriendRequests(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/user/friend-requests/count`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -628,10 +630,10 @@ end
 
 --- Get the number of following a user has
 --- @within friends
-local function countFollowersOf(with: { targetUserId: number }): number
+local function countFollowersOf(targetUserId: number): number
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://friends.roblox.com/v1/users/{with.targetUserId}/followers/count`,
+		url = `https://friends.roblox.com/v1/users/{targetUserId}/followers/count`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

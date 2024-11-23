@@ -385,14 +385,14 @@ export type ConversationUniverse = { rootPlaceId: number, universeId: number }
 
 --- Gets the rollout settings for requested feature
 --- @within chat
-local function rolloutSettings(with: { featureNames: { string }, cookie: string }): { RolloutSettingModel }
+local function rolloutSettings(request: { featureNames: { string }, cookie: string }): { RolloutSettingModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-rollout-settings?featureNames={table.concat(
-			with.featureNames,
+			request.featureNames,
 			"&featureNames="
 		)}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -403,13 +403,13 @@ end
 --- Creates a new one-on-one conversation
 --- @within chat
 local function createConversation(
-	with: CreateOneToOneConversationRequest & { cookie: string }
+	request: CreateOneToOneConversationRequest & { cookie: string }
 ): StartNewConversationResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/start-one-to-one-conversation`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -419,12 +419,12 @@ end
 
 --- Mark the specified conversation messages as seen
 --- @within chat
-local function markAsSeen(with: MarkAsSeenRequest & { cookie: string }): "Success"
+local function markAsSeen(request: MarkAsSeenRequest & { cookie: string }): "Success"
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/mark-as-seen`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -433,12 +433,12 @@ local function markAsSeen(with: MarkAsSeenRequest & { cookie: string }): "Succes
 end
 
 --- @within chat
-local function sendGameLink(with: SendGameLinkChatMessageRequest & { cookie: string }): SendLinkChatResponse
+local function sendGameLink(request: SendGameLinkChatMessageRequest & { cookie: string }): SendLinkChatResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/send-game-link-message`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -449,15 +449,15 @@ end
 --- Gets the unread messages for the conversationIds specified in the parameters
 --- @within chat
 local function unreadMessages(
-	with: { conversationIds: { number }, pageSize: number, cookie: string }
+	request: { conversationIds: { number }, pageSize: number, cookie: string }
 ): { MultigetConversationMessagesResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-unread-messages?conversationIds={table.concat(
-			with.conversationIds,
+			request.conversationIds,
 			"&conversationIds="
-		)}&pageSize={with.pageSize}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		)}&pageSize={request.pageSize}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -467,11 +467,11 @@ end
 
 --- Get Chat metadata.
 --- @within chat
-local function metadata(with: { cookie: string }): ChatMetadataResponse
+local function metadata(cookie: string): ChatMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/metadata`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -482,15 +482,15 @@ end
 --- Gets latest messages corresponding to the given list of conversation Ids
 --- @within chat
 local function latestMessages(
-	with: { conversationIds: { number }, pageSize: number, cookie: string }
+	request: { conversationIds: { number }, pageSize: number, cookie: string }
 ): { MultigetConversationMessagesResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/multi-get-latest-messages?conversationIds={table.concat(
-			with.conversationIds,
+			request.conversationIds,
 			"&conversationIds="
-		)}&pageSize={with.pageSize}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		)}&pageSize={request.pageSize}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -500,12 +500,12 @@ end
 
 --- Updates the status for whether a user is typing currently
 --- @within chat
-local function setTypingStatus(with: UpdateUserTypingStatusRequest & { cookie: string }): string
+local function setTypingStatus(request: UpdateUserTypingStatusRequest & { cookie: string }): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/update-user-typing-status`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -515,14 +515,14 @@ end
 
 --- Gets conversations for the conversationIds specified in the parameters
 --- @within chat
-local function conversations(with: { conversationIds: { number }, cookie: string }): { Conversation }
+local function conversations(request: { conversationIds: { number }, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-conversations?conversationIds={table.concat(
-			with.conversationIds,
+			request.conversationIds,
 			"&conversationIds="
 		)}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -533,12 +533,12 @@ end
 --- Gets messages corresponding to the given conversationId
 --- @within chat
 local function messages(
-	with: { conversationId: number, pageSize: number, exclusiveStartMessageId: string?, cookie: string }
+	request: { conversationId: number, pageSize: number, exclusiveStartMessageId: string?, cookie: string }
 ): { ChatMessage }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://chat.roblox.com/v2/get-messages?conversationId={with.conversationId}&pageSize={with.pageSize}&exclusiveStartMessageId={with.exclusiveStartMessageId or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://chat.roblox.com/v2/get-messages?conversationId={request.conversationId}&pageSize={request.pageSize}&exclusiveStartMessageId={request.exclusiveStartMessageId or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -548,12 +548,14 @@ end
 
 --- Sends a chat message
 --- @within chat
-local function sendMessage(with: SendPlainTextChatMessageRequest & { cookie: string }): SendPlainTextChatMessageResponse
+local function sendMessage(
+	request: SendPlainTextChatMessageRequest & { cookie: string }
+): SendPlainTextChatMessageResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/send-message`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -564,13 +566,13 @@ end
 --- Creates a new group conversation
 --- @within chat
 local function createGroupConversation(
-	with: CreateGroupConversationRequest & { cookie: string }
+	request: CreateGroupConversationRequest & { cookie: string }
 ): StartNewConversationResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/start-group-conversation`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -580,11 +582,11 @@ end
 
 --- Gets all conversations associated with the logged-in User
 --- @within chat
-local function allConversations(with: { pageNumber: number, pageSize: number, cookie: string }): { Conversation }
+local function allConversations(request: { pageNumber: number, pageSize: number, cookie: string }): { Conversation }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://chat.roblox.com/v2/get-user-conversations?pageNumber={with.pageNumber}&pageSize={with.pageSize}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://chat.roblox.com/v2/get-user-conversations?pageNumber={request.pageNumber}&pageSize={request.pageSize}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -594,12 +596,12 @@ end
 
 --- Mark the specified conversation messages as read
 --- @within chat
-local function markAsRead(with: MarkAsReadRequest & { cookie: string }): "Success"
+local function markAsRead(request: MarkAsReadRequest & { cookie: string }): "Success"
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/mark-as-read`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -610,13 +612,13 @@ end
 --- Removes a user from an existing conversation
 --- @within chat
 local function removeFromConversation(
-	with: RemoveUserFromConversationRequest & { cookie: string }
+	request: RemoveUserFromConversationRequest & { cookie: string }
 ): RemoveUserFromConversationResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/remove-from-conversation`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -626,12 +628,14 @@ end
 
 --- Renames the title of an existing conversation
 --- @within chat
-local function renameConversation(with: RenameGroupConversationRequest & { cookie: string }): RenameConversationResponse
+local function renameConversation(
+	request: RenameGroupConversationRequest & { cookie: string }
+): RenameConversationResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/rename-group-conversation`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -642,13 +646,13 @@ end
 --- Adds users to an existing conversation
 --- @within chat
 local function addToConversation(
-	with: AddUsersToConversationRequest & { cookie: string }
+	request: AddUsersToConversationRequest & { cookie: string }
 ): AddUserToConversationResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://chat.roblox.com/v2/add-to-conversation`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -658,11 +662,11 @@ end
 
 --- For every authenticated user, the clients hit this endpoint to get the chat related settings. Example : Chat is enabled or not
 --- @within chat
-local function settings(with: { cookie: string }): ChatSettingsResponse
+local function settings(cookie: string): ChatSettingsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/chat-settings`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -672,11 +676,11 @@ end
 
 --- Gets the count of unread conversations
 --- @within chat
-local function countUnreadConversations(with: { cookie: string }): number
+local function countUnreadConversations(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-unread-conversation-count`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

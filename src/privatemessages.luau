@@ -134,12 +134,12 @@ export type GetAnnouncementsResponse = { collection: { AnnouncementsDetailsRespo
 
 --- Marks a batch of messages as read.
 --- @within privatemessages
-local function markAsRead(with: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
+local function markAsRead(request: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/mark-read`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -149,11 +149,11 @@ end
 
 --- Gets unread messages for the authenticated user.
 --- @within privatemessages
-local function countUnread(with: { cookie: string }): number
+local function countUnread(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/messages/unread/count`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -162,11 +162,11 @@ local function countUnread(with: { cookie: string }): number
 end
 
 --- @within privatemessages
-local function announcementMetadata(with: { cookie: string }): number
+local function announcementMetadata(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/announcements/metadata`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -176,11 +176,11 @@ end
 
 --- Gets whether the sender can send a message to the specified user.
 --- @within privatemessages
-local function canMessage(with: { userId: number, cookie: string }): boolean
+local function canMessage(request: { userId: number, cookie: string }): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://privatemessages.roblox.com/v1/messages/{with.userId}/can-message`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://privatemessages.roblox.com/v1/messages/{request.userId}/can-message`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -191,12 +191,12 @@ end
 --- Gets a user's messages.
 --- @within privatemessages
 local function all(
-	with: { pageNumber: number?, pageSize: number?, messageTab: "Inbox" | "Sent" | "Archive"?, cookie: string }
+	request: { pageNumber: number?, pageSize: number?, messageTab: "Inbox" | "Sent" | "Archive"?, cookie: string }
 ): GetMessagesResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://privatemessages.roblox.com/v1/messages?pageNumber={with.pageNumber or ""}&pageSize={with.pageSize or ""}&messageTab={with.messageTab or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://privatemessages.roblox.com/v1/messages?pageNumber={request.pageNumber or ""}&pageSize={request.pageSize or ""}&messageTab={request.messageTab or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -206,11 +206,11 @@ end
 
 --- Migrate from RobloxWebsite project, return news notification for Private Message page
 --- @within privatemessages
-local function announcements(with: { cookie: string }): GetAnnouncementsResponse
+local function announcements(cookie: string): GetAnnouncementsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/announcements`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -220,12 +220,12 @@ end
 
 --- Marks a batch of messages as unread.
 --- @within privatemessages
-local function markAsUnread(with: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
+local function markAsUnread(request: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/mark-unread`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -235,12 +235,12 @@ end
 
 --- Unarchives a batch of messages.
 --- @within privatemessages
-local function unarchive(with: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
+local function unarchive(request: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/unarchive`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -250,12 +250,12 @@ end
 
 --- Sends a message to a specified user.
 --- @within privatemessages
-local function send(with: SendMessageRequest & { cookie: string }): SendMessageResponse
+local function send(request: SendMessageRequest & { cookie: string }): SendMessageResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/send`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -265,11 +265,11 @@ end
 
 --- Gets a message's details.
 --- @within privatemessages
-local function get(with: { messageId: number, cookie: string }): MessageDetailsResponse
+local function get(request: { messageId: number, cookie: string }): MessageDetailsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://privatemessages.roblox.com/v1/messages/{with.messageId}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://privatemessages.roblox.com/v1/messages/{request.messageId}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -279,12 +279,12 @@ end
 
 --- Archives a batch of messages.
 --- @within privatemessages
-local function archive(with: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
+local function archive(request: BatchMessagesRequest & { cookie: string }): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://privatemessages.roblox.com/v1/messages/archive`,
-		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={with.cookie}` },
-		body = serde.encode("json", with),
+		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={request.cookie}` },
+		body = serde.encode("json", request),
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

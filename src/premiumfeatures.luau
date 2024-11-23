@@ -6,11 +6,11 @@ local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
 --- Get if a user has a Premium membership
 --- @within premiumfeatures
-local function has(with: { userId: number, cookie: string }): nil
+local function has(request: { userId: number, cookie: string }): nil
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://premiumfeatures.roblox.com/v1/users/{with.userId}/validate-membership`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://premiumfeatures.roblox.com/v1/users/{request.userId}/validate-membership`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)

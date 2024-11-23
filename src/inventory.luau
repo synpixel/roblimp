@@ -228,10 +228,10 @@ export type AssetOwnerResponse =
 
 --- Return favorites categories for a user
 --- @within inventory
-local function favorites(with: { userId: number }): { AssetsExplorerCategoryModel }
+local function favorites(userId: number): { AssetsExplorerCategoryModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v1/users/{with.userId}/categories/favorites`,
+		url = `https://inventory.roblox.com/v1/users/{userId}/categories/favorites`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -241,10 +241,10 @@ end
 
 --- Gets whether the specified user's inventory can be viewed.
 --- @within inventory
-local function canView(with: { userId: number }): boolean
+local function canView(userId: number): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v1/users/{with.userId}/can-view-inventory`,
+		url = `https://inventory.roblox.com/v1/users/{userId}/can-view-inventory`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -254,7 +254,7 @@ end
 
 --- Gets all collectible assets owned by the specified user.
 --- @within inventory
-local function collectibles(with: {
+local function collectibles(request: {
 	userId: number,
 	assetType: number?,
 	limit: number?,
@@ -264,8 +264,8 @@ local function collectibles(with: {
 }): CollectibleUserAssetModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v1/users/{with.userId}/assets/collectibles?assetType={with.assetType or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://inventory.roblox.com/v1/users/{request.userId}/assets/collectibles?assetType={request.assetType or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -276,12 +276,12 @@ end
 --- Gets Created, MyGames, or OtherGames places inventory for a user
 --- @within inventory
 local function games(
-	with: { userId: number, placesTab: number, itemsPerPage: number, cursor: number, cookie: string }
+	request: { userId: number, placesTab: number, itemsPerPage: number, cursor: number, cookie: string }
 ): PlaceModelPages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v1/users/{with.userId}/places/inventory?placesTab={with.placesTab}&itemsPerPage={with.itemsPerPage}&cursor={with.cursor}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://inventory.roblox.com/v1/users/{request.userId}/places/inventory?placesTab={request.placesTab}&itemsPerPage={request.itemsPerPage}&cursor={request.cursor}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -291,10 +291,10 @@ end
 
 --- Return inventory categories for a user
 --- @within inventory
-local function categories(with: { userId: number }): { AssetsExplorerCategoryModel }
+local function categories(userId: number): { AssetsExplorerCategoryModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v1/users/{with.userId}/categories`,
+		url = `https://inventory.roblox.com/v1/users/{userId}/categories`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -304,10 +304,10 @@ end
 
 --- Gets whether a user owns an item of type itemType with id itemTargetId.
 --- @within inventory
-local function owns(with: { userId: number, itemType: number, itemTargetId: number }): boolean
+local function owns(request: { userId: number, itemType: number, itemTargetId: number }): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v1/users/{with.userId}/items/{with.itemType}/{with.itemTargetId}/is-owned`,
+		url = `https://inventory.roblox.com/v1/users/{request.userId}/items/{request.itemType}/{request.itemTargetId}/is-owned`,
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -317,7 +317,7 @@ end
 
 --- Get user's inventory by multiple Roblox.Platform.Assets.AssetType.
 --- @within inventory
-local function of(with: {
+local function of(request: {
 	userId: number,
 	assetTypes: {
 		"Image"
@@ -405,11 +405,11 @@ local function of(with: {
 }): UserAssetItemModelV2Pages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v2/users/{with.userId}/inventory?assetTypes={table.concat(
-			with.assetTypes,
+		url = `https://inventory.roblox.com/v2/users/{request.userId}/inventory?assetTypes={table.concat(
+			request.assetTypes,
 			"&assetTypes="
-		)}&filterDisapprovedAssets={with.filterDisapprovedAssets or ""}&showApprovedOnly={with.showApprovedOnly or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		)}&filterDisapprovedAssets={request.filterDisapprovedAssets or ""}&showApprovedOnly={request.showApprovedOnly or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -420,12 +420,12 @@ end
 --- Gets a list of owners of an asset.
 --- @within inventory
 local function owners(
-	with: { assetId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
+	request: { assetId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"?, cookie: string }
 ): AssetOwnerResponsePages
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://inventory.roblox.com/v2/assets/{with.assetId}/owners?limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://inventory.roblox.com/v2/assets/{request.assetId}/owners?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
@@ -437,11 +437,11 @@ end
 --- Assets that are created by Roblox user or are limited edition are not eligible for deletion
 --- and will return NotEligibleForDelete.
 --- @within inventory
-local function remove(with: { assetId: number, cookie: string }): ApiEmptyResponseModel
+local function remove(request: { assetId: number, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
-		url = `https://inventory.roblox.com/v2/inventory/asset/{with.assetId}`,
-		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+		url = `https://inventory.roblox.com/v2/inventory/asset/{request.assetId}`,
+		headers = { Cookie = `.ROBLOSECURITY={request.cookie}` },
 	})
 
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
