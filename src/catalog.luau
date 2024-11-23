@@ -59,24 +59,14 @@ export type BundleDetailsModel = {
 	items: { BundleItemDetailModel },
 }
 
---- <no description>
-export type StringPages = { Item2: StringPages, Item1: Int64Pages }
-
 --- Response model for avatar topics
 export type TopicModel = { originalTopicName: string, displayName: string }
-
---- <no description>
-export type OwnedBundleModelPages = { nextPageCursor: string, previousPageCursor: string, data: { OwnedBundleModel } }
 
 --- <no description>
 export type MultigetItemDetailsRequestModel = { items: { MultigetItemDetailsRequestItem } }
 
 --- <no description>
-export type CatalogSearchDetailedResponseItemPages = {
-	nextPageCursor: string,
-	previousPageCursor: string,
-	data: { CatalogSearchDetailedResponseItem },
-}
+export type OwnedBundleModelPages = { nextPageCursor: string, previousPageCursor: string, data: { OwnedBundleModel } }
 
 --- <no description>
 
@@ -87,6 +77,7 @@ export type AssetFavoriteModel = { created: string, assetId: number, userId: num
 export type ApiEmptyResponseModel = {}
 
 --- <no description>
+export type CatalogSearchDetailedResponseItemPages = { data: { CatalogSearchDetailedResponseItem } }
 
 --- <no description>
 
@@ -208,4 +199,39 @@ local function items(with: MultigetItemDetailsRequestModel & { cookie: string })
 	return serde.decode("json", response.body).data
 end
 
-return { items = items }
+--- Search for catalog items.
+local function search(with: {
+	assetTypeIds: { number }?,
+	bundleTypeIds: { number }?,
+	sortAggregation: number?,
+	sortType: number?,
+	creatorType: number?,
+	creatorTargetId: number?,
+	creatorName: string?,
+	maxPrice: number?,
+	minPrice: number?,
+	keyword: string?,
+	includeNotForSale: boolean?,
+	triggeredByTopicDiscovery: boolean?,
+	salesTypeFilter: number?,
+	topics: string?,
+	limit: number?,
+	cursor: string?,
+	sortOrder: "Desc"?,
+	cookie: string,
+}): CatalogSearchDetailedResponseItemPages
+	local response = requestWithCsrfToken({
+		method = "GET",
+		url = `https://catalog.roblox.com/v2/search/items/details?assetTypeIds={table.concat(
+			with.assetTypeIds or {},
+			"&assetTypeIds="
+		)}&bundleTypeIds={table.concat(with.bundleTypeIds or {}, "&bundleTypeIds=")}&sortAggregation={with.sortAggregation or ""}&sortType={with.sortType or ""}&creatorType={with.creatorType or ""}&creatorTargetId={with.creatorTargetId or ""}&creatorName={with.creatorName or ""}&maxPrice={with.maxPrice or ""}&minPrice={with.minPrice or ""}&keyword={with.keyword or ""}&includeNotForSale={with.includeNotForSale or ""}&triggeredByTopicDiscovery={with.triggeredByTopicDiscovery or ""}&salesTypeFilter={with.salesTypeFilter or ""}&topics={with.topics or ""}&limit={with.limit or ""}&cursor={with.cursor or ""}&sortOrder={with.sortOrder or ""}`,
+		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
+	})
+
+	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
+
+	return serde.decode("json", response.body)
+end
+
+return { items = items, search = search }

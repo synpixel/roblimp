@@ -44,9 +44,6 @@ export type GameFavoriteResponse = { isFavorited: boolean }
 --- Response model for getting the game vote
 export type GameVoteResponse = { id: number, upVotes: number, downVotes: number }
 
---- <no description>
-export type PurchaseData = { localizedFiatPrice: string, basePriceId: string }
-
 --- Response model for VIP server subscription.
 export type VipServerSubscriptionResponse = {
 	hasPriceChanged: boolean,
@@ -102,9 +99,6 @@ export type VipServerResponse = {
 	voiceSettings: VipServerVoiceSettingsResponse,
 }
 
---- <no description>
-export type GameServerResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GameServerResponse } }
-
 --- Response model for games.
 export type GameResponseModel = {
 	universeId: number,
@@ -130,13 +124,13 @@ export type GameResponseModel = {
 }
 
 --- <no description>
+export type GameServerResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GameServerResponse } }
+
+--- <no description>
 export type GamePassResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GamePassResponse } }
 
 --- <no description>
 export type GameVoteResponsePages = { data: { GameVoteResponse } }
-
---- <no description>
-export type GameProductResponsePages = { data: { GameProductResponse } }
 
 --- Game recommendations response model.
 export type GameRecommendationsResponse = { games: { GameResponseModel }, nextPaginationKey: string }
@@ -147,20 +141,14 @@ export type GameProductResponse = {
 	isForSale: boolean,
 	price: number,
 	sellerId: number,
-	fiatPurchaseData: PurchaseData,
 	productId: number,
 }
 
 --- Response model for getting a universe's playability status for a user
-export type PlayabilityStatusResponse = {
-	isPlayable: boolean,
-	universeId: number,
-	unplayableDisplayText: string,
-	playabilityStatus: number,
-}
+export type PlayabilityStatusResponse = { isPlayable: boolean, universeId: number, playabilityStatus: number }
 
 --- <no description>
-export type RefundPolicy = { locale: string, articleId: string, policyText: string, learnMoreBaseUrl: string }
+export type GameProductResponsePages = { data: { GameProductResponse } }
 
 --- <no description>
 export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
@@ -175,9 +163,6 @@ export type GameDetailResponse = {
 	genre: string,
 	genre_l2: string,
 	updated: string,
-	refundPolicy: RefundPolicy,
-	localizedFiatPrice: string,
-	refundLink: string,
 	favoritedCount: number,
 	isFavoritedByUser: boolean,
 	playing: number,
@@ -219,21 +204,6 @@ export type StringPages = {
 --- <no description>
 export type SkinnyUserResponse = { id: number, name: string, displayName: string }
 
---- <no description>
-export type ApiEmptyResponseModel = {}
-
---- Request model for updating permissions for a VIP server.
-export type VipServerUpdatePermissionsRequest = {
-	usersToRemove: { number },
-	enemyClanId: number,
-	usersToAdd: { number },
-	friendsAllowed: boolean,
-	clanAllowed: boolean,
-}
-
---- Contains voice settings of a vip server
-export type VipServerVoiceSettingsResponse = { enabled: boolean }
-
 --- Response model for getting game passes
 export type GamePassResponse = {
 	isOwned: boolean,
@@ -245,6 +215,21 @@ export type GamePassResponse = {
 	price: number,
 	displayName: string,
 }
+
+--- Request model for updating permissions for a VIP server.
+export type VipServerUpdatePermissionsRequest = {
+	usersToRemove: { number },
+	enemyClanId: number,
+	usersToAdd: { number },
+	friendsAllowed: boolean,
+	clanAllowed: boolean,
+}
+
+--- <no description>
+export type ApiEmptyResponseModel = {}
+
+--- Contains voice settings of a vip server
+export type VipServerVoiceSettingsResponse = { enabled: boolean }
 
 --- Response model for getting the game media item
 export type GameMediaItem = {
@@ -266,7 +251,6 @@ export type PlaceDetails = {
 	reasonProhibited: string,
 	sourceName: string,
 	description: string,
-	fiatPurchaseData: PurchaseData,
 	builder: string,
 	placeId: number,
 	hasVerifiedBadge: boolean,
@@ -305,7 +289,17 @@ export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: nu
 --- <no description>
 export type Int32Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int32Pages }
 
---- <no description>
+--- A response model representing a game.
+export type GameResponseV2 = {
+	created: string,
+	updated: string,
+	name: string,
+	placeVisits: number,
+	id: number,
+	description: string,
+	creator: CreatorTypePages,
+	rootPlace: AssetTypePages,
+}
 
 --- Response model for getting the game media item
 export type GameMediaItemResponseV2 = {
@@ -322,8 +316,6 @@ export type GameMediaItemResponseV2 = {
 export type GameMediaItemResponseV2Pages = { data: { GameMediaItemResponseV2 } }
 
 --- <no description>
-
---- <no description>
 export type GameResponseV2Pages = { nextPageCursor: string, previousPageCursor: string, data: { GameResponseV2 } }
 
 --- <no description>
@@ -331,22 +323,10 @@ export type GameResponseV2Pages = { nextPageCursor: string, previousPageCursor: 
 --- <no description>
 
 --- <no description>
-export type AssetTypePages = { id: number, type: number, name: string }
-
---- <no description>
 export type CreatorTypePages = { id: number, type: number, name: string }
 
---- A response model representing a game.
-export type GameResponseV2 = {
-	created: string,
-	updated: string,
-	name: string,
-	placeVisits: number,
-	id: number,
-	description: string,
-	creator: CreatorTypePages,
-	rootPlace: AssetTypePages,
-}
+--- <no description>
+export type AssetTypePages = { id: number, type: number, name: string }
 
 --- Get the game server list
 local function servers(with: {
@@ -600,13 +580,13 @@ end
 --- Get games recommendations based on a given universe
 local function recommendations(with: {
 	universeId: number,
-	PaginationKey: string,
-	MaxRows: number,
-	IsTruncatedResultsEnabled: boolean,
+	paginationKey: string,
+	maxRows: number,
+	isTruncatedResultsEnabled: boolean,
 }): GameRecommendationsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://games.roblox.com/v1/games/recommendations/game/{with.universeId}?PaginationKey={with.PaginationKey}&MaxRows={with.MaxRows}&IsTruncatedResultsEnabled={with.IsTruncatedResultsEnabled}`,
+		url = `https://games.roblox.com/v1/games/recommendations/game/{with.universeId}?paginationKey={with.paginationKey}&maxRows={with.maxRows}&isTruncatedResultsEnabled={with.isTruncatedResultsEnabled}`,
 		headers = {},
 	})
 

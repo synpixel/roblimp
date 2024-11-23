@@ -1,8 +1,8 @@
 local serde = require("./utils/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- Badge icon upload response.
-export type IconUploadResponse = { targetId: number }
+--- A response containing universe information.
+export type UniverseResponse = { id: number, rootPlaceId: number, name: string }
 
 --- <no description>
 export type BadgeResponseV2 = {
@@ -41,6 +41,16 @@ export type GetBadgesByUserResponse = {
 export type BadgeAwarderTypePages = { id: number, type: number, name: string }
 
 --- <no description>
+export type StringPages = {
+	discriminator: string,
+	sortOrder: number,
+	key: string,
+	count: number,
+	pagingDirection: number,
+	pageNumber: number,
+}
+
+--- <no description>
 export type Stream = {
 	CanRead: boolean,
 	CanWrite: boolean,
@@ -52,28 +62,11 @@ export type Stream = {
 	CanSeek: boolean,
 }
 
---- <no description>
-export type StringPages = {
-	discriminator: string,
-	sortOrder: number,
-	key: string,
-	count: number,
-	pagingDirection: number,
-	pageNumber: number,
-}
-
---- <no description>
-export type IUploadedFile = buffer
-
 --- Represents information about the badge creator. (Creator of the place that awarded the badge)
 export type BadgeCreatorResponse = { id: number, type: string, name: string }
 
 --- <no description>
-export type GetBadgesByUserResponsePages = {
-	nextPageCursor: string,
-	previousPageCursor: string,
-	data: { GetBadgesByUserResponse },
-}
+export type IUploadedFile = buffer
 
 --- A response containing badge information.
 export type BadgeResponse = {
@@ -95,7 +88,11 @@ export type BadgeResponse = {
 export type BadgeAwardResponsePages = { data: { BadgeAwardResponse } }
 
 --- <no description>
-export type BadgeResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { BadgeResponse } }
+export type GetBadgesByUserResponsePages = {
+	nextPageCursor: string,
+	previousPageCursor: string,
+	data: { GetBadgesByUserResponse },
+}
 
 --- A request model used for updating badge information.
 export type UpdateBadgeRequest = { enabled: boolean, name: string, description: string }
@@ -108,10 +105,10 @@ export type BadgeMetadataResponse = {
 }
 
 --- <no description>
-export type ApiEmptyResponseModel = {}
+export type BadgeResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { BadgeResponse } }
 
---- A response containing universe information.
-export type UniverseResponse = { id: number, rootPlaceId: number, name: string }
+--- <no description>
+export type ApiEmptyResponseModel = {}
 
 --- The result of being awarded a badge.
 export type BadgeAwardResponse = { badgeId: number, awardedDate: string }

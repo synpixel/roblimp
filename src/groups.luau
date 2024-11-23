@@ -95,7 +95,6 @@ export type GroupMembershipMetadataResponse = {
 	isBannedFromGroup: boolean,
 	isNotificationsEnabled: boolean,
 	isPrimary: boolean,
-	IsBanEvading: boolean,
 	areEnemiesAllowed: boolean,
 	areGroupFundsVisible: boolean,
 }
@@ -233,22 +232,10 @@ export type GroupNameHistoryResponseItemPages = {
 }
 
 --- <no description>
-export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
-
---- <no description>
 export type GroupPolicyRequest = { groupIds: { number } }
 
 --- <no description>
-export type Stream = {
-	CanRead: boolean,
-	CanWrite: boolean,
-	CanTimeout: boolean,
-	Position: number,
-	WriteTimeout: number,
-	Length: number,
-	ReadTimeout: number,
-	CanSeek: boolean,
-}
+export type GroupRoleDetailResponsePages = { data: { GroupRoleDetailResponse } }
 
 --- <no description>
 export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
@@ -280,8 +267,17 @@ export type GroupJoinRequestResponsePages = {
 --- <no description>
 export type RelationshipsRequest = { GroupIds: { number } }
 
---- A group role's permissions response model
-export type GroupPermissionsResponse = { permissions: GroupPermissionsModel, role: GroupRoleResponse, groupId: number }
+--- <no description>
+export type Stream = {
+	CanRead: boolean,
+	CanWrite: boolean,
+	CanTimeout: boolean,
+	Position: number,
+	WriteTimeout: number,
+	Length: number,
+	ReadTimeout: number,
+	CanSeek: boolean,
+}
 
 --- A request model for setting the authenticated user's primary group.
 export type PostGroupStatusRequest = { message: string }
@@ -297,17 +293,17 @@ export type GroupSearchPageResponse = {
 --- <no description>
 export type GroupWallPostModelPages = { nextPageCursor: string, previousPageCursor: string, data: { GroupWallPostModel } }
 
---- <no description>
-export type UserModelPages = { nextPageCursor: string, previousPageCursor: string, data: { UserModel } }
+--- A group role's permissions response model
+export type GroupPermissionsResponse = { permissions: GroupPermissionsModel, role: GroupRoleResponse, groupId: number }
 
 --- <no description>
-export type SocialLinkResponsePages = { data: { SocialLinkResponse } }
+export type UserModelPages = { nextPageCursor: string, previousPageCursor: string, data: { UserModel } }
 
 --- <no description>
 export type GroupPolicyResponse = { canViewGroup: boolean, groupId: number }
 
 --- <no description>
-export type GroupRoleDetailResponsePages = { data: { GroupRoleDetailResponse } }
+export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
 --- A request model for setting the authenticated user's primary group.
 export type PrimaryGroupRequest = { groupId: number }
@@ -315,6 +311,9 @@ export type PrimaryGroupRequest = { groupId: number }
 --- <no description>
 
 --- <no description>
+
+--- <no description>
+export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
 
 --- A social link response from a create request
 export type SocialLinkResponse = { id: number, type: number, title: string, url: string }
@@ -328,9 +327,6 @@ export type GroupOwnerTypePages = { id: number, type: number, name: string }
 --- <no description>
 export type GroupBasicResponse = { id: number, hasVerifiedBadge: boolean, name: string, memberCount: number }
 
---- <no description>
-export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- A request model for paying out Robux.
 export type PayoutRecipientRequest = { amount: number, recipientType: number, recipientId: number }
 
@@ -341,16 +337,8 @@ export type GroupAuditLogResponseItemPages = {
 	data: { GroupAuditLogResponseItem },
 }
 
---- A model representing group posts permissions
-export type GroupForumsPermissionsModel = {
-	createPosts: boolean,
-	pinPosts: boolean,
-	removePosts: boolean,
-	lockPosts: boolean,
-	removeComments: boolean,
-	createComments: boolean,
-	manageCategories: boolean,
-}
+--- <no description>
+export type SocialLinkResponsePages = { data: { SocialLinkResponse } }
 
 --- <no description>
 export type UpdateGroupNameResponse = { newName: string }
@@ -371,14 +359,7 @@ export type UpdatePermissionsRequest = {
 		AddGroupPlaces: boolean,
 		PostToWall: boolean,
 		BanMembers: boolean,
-		CreatePosts: boolean,
 		PostToStatus: boolean,
-		RemoveComments: boolean,
-		CreateComments: boolean,
-		PinPosts: boolean,
-		LockPosts: boolean,
-		RemovePosts: boolean,
-		ManageCategories: boolean,
 		ManageGroupGames: boolean,
 		ChangeRank: boolean,
 		RemoveMembers: boolean,
@@ -468,7 +449,6 @@ export type GroupsDisplayOptionsResponse = {
 --- A model for group permissions.
 export type GroupPermissionsModel = {
 	groupMembershipPermissions: GroupMembershipPermissionsModel,
-	groupForumsPermissions: GroupForumsPermissionsModel,
 	groupEconomyPermissions: GroupEconomyPermissionsModel,
 	groupOpenCloudPermissions: GroupOpenCloudPermissionsModel,
 	groupPostsPermissions: GroupPostsPermissionsModel,
@@ -837,11 +817,11 @@ end
 
 --- Gets a group's relationships
 local function relationships(
-	with: { groupId: number, groupRelationshipType: string, StartRowIndex: number, MaxRows: number }
+	with: { groupId: number, groupRelationshipType: string, startRowIndex: number, maxRows: number }
 ): GroupRelationshipsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}?StartRowIndex={with.StartRowIndex}&MaxRows={with.MaxRows}`,
+		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}?startRowIndex={with.startRowIndex}&maxRows={with.maxRows}`,
 		headers = {},
 	})
 
@@ -878,7 +858,7 @@ local function searchMetadata(): GroupSearchMetadataResponse
 	return serde.decode("json", response.body)
 end
 
---- Updates the group's settings
+--- Updates the user's group notification preferences
 local function toggleNotifications(
 	with: UpdateGroupNotificationPreferenceRequest & { groupId: number, cookie: string }
 ): number
@@ -944,10 +924,10 @@ local function deleteMessage(with: { groupId: number, postId: number, cookie: st
 end
 
 --- Updates the group icon.
-local function setIcon(with: { groupId: number, Files: buffer?, cookie: string }): ApiEmptyResponseModel
+local function setIcon(with: { groupId: number, files: buffer?, cookie: string }): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
-		url = `https://groups.roblox.com/v1/groups/icon?groupId={with.groupId}&Files={with.Files or ""}`,
+		url = `https://groups.roblox.com/v1/groups/icon?groupId={with.groupId}&files={with.files or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
@@ -1264,12 +1244,12 @@ local function create(with: {
 	description: string?,
 	publicGroup: boolean?,
 	buildersClubMembersOnly: boolean?,
-	Files: buffer?,
+	files: buffer?,
 	cookie: string,
 }): GroupResponseV2
 	local response = requestWithCsrfToken({
 		method = "POST",
-		url = `https://groups.roblox.com/v1/groups/create?name={with.name or ""}&description={with.description or ""}&publicGroup={with.publicGroup or ""}&buildersClubMembersOnly={with.buildersClubMembersOnly or ""}&Files={with.Files or ""}`,
+		url = `https://groups.roblox.com/v1/groups/create?name={with.name or ""}&description={with.description or ""}&publicGroup={with.publicGroup or ""}&buildersClubMembersOnly={with.buildersClubMembersOnly or ""}&files={with.files or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
@@ -1369,13 +1349,13 @@ end
 local function relationshipRequests(with: {
 	groupId: number,
 	groupRelationshipType: string,
-	StartRowIndex: number,
-	MaxRows: number,
+	startRowIndex: number,
+	maxRows: number,
 	cookie: string,
 }): GroupRelationshipsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
-		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}/requests?StartRowIndex={with.StartRowIndex}&MaxRows={with.MaxRows}`,
+		url = `https://groups.roblox.com/v1/groups/{with.groupId}/relationships/{with.groupRelationshipType}/requests?startRowIndex={with.startRowIndex}&maxRows={with.maxRows}`,
 		headers = { Cookie = `.ROBLOSECURITY={with.cookie}` },
 	})
 
