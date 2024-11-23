@@ -83,6 +83,7 @@ local mappings: { [string]: EndpointMappings } = {
 	},
 	catalog = {
 		["/v1/catalog/items/details"] = { post = "items" },
+		["/v2/search/items/details"] = { get = "search" },
 	},
 	chat = {
 		["/v2/metadata"] = { get = "metadata" },
@@ -344,7 +345,7 @@ local mappings: { [string]: EndpointMappings } = {
 
 local function resolveOpenApiDefinition(namespace: string, version: number): OpenApiDefinition?
 	local response = net.request(
-		`https://create.roblox.com/docs/_next/data/-lXptKM5ny0kISifArYeq/cloud/legacy/{namespace}/v{version}.json`
+		`https://create.roblox.com/docs/_next/data/203AYidpISfppRfYMTY9D/cloud/legacy/{namespace}/v{version}.json`
 	)
 	if response.statusCode == 404 then
 		return nil
@@ -536,12 +537,14 @@ for namespace, definitions in mappings do
 							continue
 						end
 
+						local name = parameter.name:sub(1, 1):lower() .. parameter.name:sub(2)
+
 						local type = translateOpenApiType(parameter)
-						if parameter.required == nil then
+						if not parameter.required then
 							type ..= "?"
 						end
 
-						table.insert(parameters, { name = parameter.name, type = type })
+						table.insert(parameters, { name = name, type = type })
 					end
 				end
 
@@ -594,6 +597,8 @@ for namespace, definitions in mappings do
 							continue
 						end
 
+						local name = parameter.name:sub(1, 1):lower() .. parameter.name:sub(2)
+
 						local symbol = if isFirstPathParameter then "?" else "&"
 
 						if isFirstPathParameter then
@@ -601,14 +606,10 @@ for namespace, definitions in mappings do
 						end
 
 						local value = if parameter.type == "array"
-							then `table.concat(with.{parameter.name}, "&{parameter.name}=")`
-							else `with.{parameter.name}`
+							then `table.concat(with.{name} {if parameter.required then "" else "or {}"}, "&{name}=")`
+							else `with.{name} {if parameter.required then "" else 'or ""'}`
 
-						if not parameter.required then
-							value ..= ' or ""'
-						end
-
-						patchEndpoint ..= `{symbol}{parameter.name}=\{{value}\}`
+						patchEndpoint ..= `{symbol}{name}=\{{value}\}`
 					end
 				end
 
