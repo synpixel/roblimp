@@ -26,8 +26,6 @@ export type UserAssetResponse = {
 }
 
 --- <no description>
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
 --- <no description>
 export type CanTradeResponse = { canTrade: boolean, status: number }
 

@@ -459,7 +459,12 @@ for namespace, definitions in mappings do
 				file ..= "--- <no description>\n"
 			end
 
-			file ..= `export type {patchOpenApiModelName(name)} = {translateOpenApiType(model)}\n\n`
+			local patchName = patchOpenApiModelName(name)
+			if file:match(`export type {patchName} =`) ~= nil then
+				continue
+			end
+
+			file ..= `export type {patchName} = {translateOpenApiType(model)}\n\n`
 		end
 	end
 

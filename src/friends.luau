@@ -116,8 +116,6 @@ export type FriendRequestResponse = {
 }
 
 --- <no description>
-export type UserResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { UserResponse } }
-
 --- <no description>
 export type FriendRequestResponsePages = {
 	nextPageCursor: string,
@@ -129,27 +127,11 @@ export type FriendRequestResponsePages = {
 export type FriendStatusResponsePages = { data: { FriendStatusResponse } }
 
 --- <no description>
-export type FriendRequestsPlatformExclusiveStartKeyPages = {
-	CursorRecipe: string,
-	ExclusiveStartKeyInfo: FriendRequestsPlatformExclusiveStartKeyPages,
-}
-
 --- This is response model to notify when action succeeded, failed, or captcha is required
 export type CaptchaStatusResponseModel = { success: boolean, isCaptchaRequired: boolean }
 
 --- <no description>
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- <no description>
-export type StringPages = {
-	discriminator: string,
-	sortOrder: number,
-	key: string,
-	count: number,
-	pagingDirection: number,
-	pageNumber: number,
-}
-
 --- A response model representing a friend request.
 export type FriendRequest = {
 	originSourceType: number,

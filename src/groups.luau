@@ -309,11 +309,7 @@ export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: nu
 export type PrimaryGroupRequest = { groupId: number }
 
 --- <no description>
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
 --- <no description>
-export type StringPages = { Item2: StringPages, Item1: Int64Pages }
-
 --- <no description>
 export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
 
@@ -391,8 +387,6 @@ export type StartIndexCursor = { discriminator: string, count: number, startInde
 export type UpdateGroupDescriptionRequest = { description: string }
 
 --- <no description>
-export type Int32Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int32Pages }
-
 --- <no description>
 export type GroupPoliciesResponse = { groups: { GroupPolicyResponse } }
 
@@ -474,14 +468,10 @@ export type GroupSearchMetadataResponse = { ShowFriendsGroupsSort: boolean, Sugg
 export type GroupPayoutResponse = { percentage: number, user: UserModel }
 
 --- <no description>
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- <no description>
 export type GroupMembershipResponsePages = { data: { GroupMembershipResponse } }
 
 --- A group role response model
-export type GroupRoleResponse = { name: string, id: number, memberCount: number, description: string, rank: number }
-
 --- <no description>
 export type GroupWallPostV2ModelPages =
 	{ nextPageCursor: string, previousPageCursor: string, data: { GroupWallPostV2Model } }
@@ -497,49 +487,15 @@ export type GroupMembershipResponse = {
 }
 
 --- <no description>
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
 --- A user group role response model
-export type UserGroupRoleResponse = { role: GroupRoleResponse, user: UserModel }
-
 --- A request model for creating a group wall post
-export type CreateWallPostRequest = {
-	challengeId: string,
-	captchaToken: string,
-	captchaId: string,
-	captchaProvider: string,
-	body: string,
-}
-
 --- <no description>
-export type GroupOwnerTypePages = { id: number, type: number, name: string }
-
 --- <no description>
 export type GroupRoleBasicResponse = { id: number, name: string, rank: number }
 
 --- <no description>
-export type GroupBasicResponse = { id: number, hasVerifiedBadge: boolean, name: string, memberCount: number }
-
 --- A model representing data about an Roblox.Platform.Membership.IUser
-export type UserModel = {
-	username: string,
-	buildersClubMembershipType: number,
-	userId: number,
-	hasVerifiedBadge: boolean,
-	displayName: string,
-}
-
 --- <no description>
-export type GroupResponseV2 = {
-	created: string,
-	name: string,
-	description: string,
-	id: number,
-	owner: GroupOwnerTypePages,
-	hasVerifiedBadge: boolean,
-	memberCount: number,
-}
-
 --- A response model for group wall post information
 export type GroupWallPostV2Model = {
 	created: string,

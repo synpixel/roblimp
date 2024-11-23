@@ -337,11 +337,7 @@ export type GameMediaItemResponseV2Pages = { data: { GameMediaItemResponseV2 } }
 export type GameResponseV2Pages = { nextPageCursor: string, previousPageCursor: string, data: { GameResponseV2 } }
 
 --- <no description>
-export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- <no description>
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
 --- <no description>
 export type CreatorTypePages = { id: number, type: number, name: string }
 

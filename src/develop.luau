@@ -123,8 +123,6 @@ export type GroupModel = { id: number, name: string }
 export type TeamCreateMembershipRequest = { userId: number }
 
 --- <no description>
-export type UniverseModelPages = { data: { UniverseModel } }
-
 --- A model containing information about a place to be configured
 export type PlaceConfigurationModel = { name: string, description: string }
 
@@ -135,8 +133,6 @@ export type UniverseIdPermissionsModelPages = { data: { UniverseIdPermissionsMod
 export type GroupModelPages = { data: { GroupModel } }
 
 --- <no description>
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- A request model for updating a plugin.
 export type UpdatePluginRequest = { commentsEnabled: boolean, name: string, description: string }
 
@@ -247,8 +243,6 @@ export type AssetVersion = {
 }
 
 --- <no description>
-export type StringPages = { CursorRecipe: string, ExclusiveStartKeyInfo: StringPages }
-
 --- <no description>
 export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
 
@@ -257,8 +251,6 @@ export type ScaleModel =
 	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
 
 --- <no description>
-export type ApiEmptyResponseModel = {}
-
 --- <no description>
 export type UniversePluginPermissions = {
 	IsThirdPartyTeleportAllowed: boolean,

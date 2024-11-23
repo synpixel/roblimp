@@ -359,9 +359,6 @@ export type AvatarModelV3 = {
 }
 
 --- <no description>
-export type ScaleModel =
-	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
-
 --- A model containing details needed to update or create an outfit
 export type OutfitUpdateModelV2 = {
 	bodyColors: BodyColorsModel,
@@ -377,20 +374,8 @@ export type WearRequestModel = { assets: { AssetWearModel } }
 
 --- A model containing details about an asset
 --- - V2: adds CurrentVersionId, AssetMetaModel
-export type AssetModelV2 = {
-	name: string,
-	id: number,
-	meta: AssetMetaModelV1,
-	assetType: AssetTypeModel,
-	currentVersionId: number,
-}
-
 --- <no description>
-export type AssetPosition = { Y: number, X: number, Z: number }
-
 --- A model containing details about an asset type
-export type AssetTypeModel = { id: number, name: string }
-
 --- <no description>
 export type ApiEmptyResponseModel = {}
 
@@ -400,34 +385,10 @@ export type ApiEmptyResponseModel = {}
 export type AssetWearModel = { id: number, meta: AssetMetaModelV1 }
 
 --- Exhaustive model denoting all possible metadata fields of an asset
-export type AssetMetaModelV1 = {
-	rotation: AssetRotation,
-	version: number,
-	position: AssetPosition,
-	order: number,
-	puffiness: number,
-	scale: AssetScale,
-}
-
 --- Success response class
-export type AvatarApiSuccessResponse = { success: boolean }
-
 --- A model container BrickColor ids for each body part.
-export type BodyColorsModel = {
-	headColorId: number,
-	torsoColorId: number,
-	rightArmColorId: number,
-	leftLegColorId: number,
-	rightLegColorId: number,
-	leftArmColorId: number,
-}
-
 --- <no description>
-export type AssetRotation = { Y: number, X: number, Z: number }
-
 --- Response object representing a user's emote
-export type EmoteResponseModel = { assetId: number, assetName: string, position: number }
-
 --- <no description>
 export type BodyColorsModelV2 = {
 	leftLegColor3: string,
@@ -449,27 +410,10 @@ export type BodyColors3Model = {
 }
 
 --- <no description>
-export type AssetScale = { Y: number, X: number, Z: number }
-
 --- A model for wear outfit responses
-export type WearResponseModel = { invalidAssets: { AssetModelV2 }, invalidAssetIds: { number }, success: boolean }
-
 --- A slim model for user outfits.
-export type OutfitModel = { id: number, outfitType: string, name: string, isEditable: boolean }
-
 --- Avatar page response.
-export type OutfitModelPages = { data: { OutfitModel }, paginationToken: string }
-
 --- Exhaustive model denoting all possible metadata fields of an asset
-export type AssetMetaModelV1 = {
-	rotation: AssetRotation,
-	version: number,
-	position: AssetPosition,
-	order: number,
-	puffiness: number,
-	scale: AssetScale,
-}
-
 --- A model containing details about a user outfit
 export type OutfitDetailsModelV2 = {
 	assets: { AssetModelV2 },
@@ -496,59 +440,18 @@ export type OutfitUpdateModelV3 = {
 }
 
 --- <no description>
-export type ScaleModel =
-	{ bodyType: number, head: number, height: number, depth: number, proportion: number, width: number }
-
 --- <no description>
-export type AssetRotation = { Y: number, X: number, Z: number }
-
 --- A model containing details about an asset
 --- - V2: adds CurrentVersionId, AssetMetaModel
-export type AssetModelV2 = {
-	name: string,
-	id: number,
-	meta: AssetMetaModelV1,
-	assetType: AssetTypeModel,
-	currentVersionId: number,
-}
-
 --- <no description>
-export type BodyColorsModelV2 = {
-	leftLegColor3: string,
-	torsoColor3: string,
-	rightLegColor3: string,
-	rightArmColor3: string,
-	headColor3: string,
-	leftArmColor3: string,
-}
-
 --- <no description>
-export type AssetPosition = { Y: number, X: number, Z: number }
-
 --- A model containing details about an asset type
-export type AssetTypeModel = { id: number, name: string }
-
 --- <no description>
-export type AssetScale = { Y: number, X: number, Z: number }
-
 --- A slim model for user outfits.
-export type OutfitModel = { id: number, outfitType: string, name: string, isEditable: boolean }
-
 --- A model containing RGB hex colors for each body part.
-export type BodyColors3Model = {
-	leftLegColor3: string,
-	torsoColor3: string,
-	rightLegColor3: string,
-	rightArmColor3: string,
-	headColor3: string,
-	leftArmColor3: string,
-}
-
 --- A model which contains
 --- - an asset id
 --- - AssetMetaModel
-export type AssetWearModel = { id: number, meta: AssetMetaModelV1 }
-
 --- Returns the business rules related to avatars
 local function rules(): AvatarRulesModel
 	local response = requestWithCsrfToken({
