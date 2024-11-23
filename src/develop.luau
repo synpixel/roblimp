@@ -661,7 +661,7 @@ end
 
 --- Gets a page of templates that can be used to start off making games.
 --- @within develop
-local function templates(request: {}, cookie: string?): { GameTemplateModel }
+local function templates(cookie: string?): { GameTemplateModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://develop.roblox.com/v1/gametemplates`,

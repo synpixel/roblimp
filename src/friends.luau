@@ -362,7 +362,7 @@ end
 
 --- Get the number of friends a user has
 --- @within friends
-local function count(request: {}, cookie: string): number
+local function count(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/my/friends/count`,
@@ -421,7 +421,7 @@ end
 
 --- Decline all pending friend requests for the authenticated user.
 --- @within friends
-local function declineAllFriendRequests(request: {}, cookie: string): boolean
+local function declineAllFriendRequests(cookie: string): boolean
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/friend-requests/decline-all`,
@@ -620,7 +620,7 @@ end
 
 --- Return the number of pending friend requests.
 --- @within friends
-local function countFriendRequests(request: {}, cookie: string): number
+local function countFriendRequests(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/user/friend-requests/count`,

@@ -630,6 +630,8 @@ for namespace, definitions in mappings do
 				if onlyParameter ~= nil then
 					local parameterName = onlyParameter.name:sub(1, 1):lower() .. onlyParameter.name:sub(2)
 					file ..= `local function {name}({parameterName}: {translateOpenApiType(onlyParameter)}, {cookieParameter}): {patchModelName}\n`
+				elseif firstKey == nil and bodyParameter == nil then
+					file ..= `local function {name}({cookieParameter}): {patchModelName}\n`
 				elseif firstKey == nil and bodyParameter ~= nil then
 					file ..= `local function {name}(`
 

@@ -470,7 +470,7 @@ end
 
 --- De-register all devices to disable push notifications
 --- @within notifications
-local function deregisterAllDevices(request: {}, cookie: string): string
+local function deregisterAllDevices(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-all-devices`,
@@ -484,7 +484,7 @@ end
 
 --- De-register current device to disable push notifications
 --- @within notifications
-local function deregisterDevice(request: {}, cookie: string): string
+local function deregisterDevice(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-current-device`,
@@ -498,7 +498,7 @@ end
 
 --- Get Chrome Manifest to link GCM project to Chrome Browser
 --- @within notifications
-local function chromeManifest(request: {}, cookie: string): ChromeManifestModel
+local function chromeManifest(cookie: string): ChromeManifestModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/chrome-manifest`,
@@ -512,7 +512,7 @@ end
 
 --- De-register current device to disable pushkit notifications
 --- @within notifications
-local function deregisterIOSPushkit(request: {}, cookie: string): string
+local function deregisterIOSPushkit(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-current-device-ios-pushkit`,
@@ -526,7 +526,7 @@ end
 
 --- Get Notification Stream metadata.
 --- @within notifications
-local function streamMetadata(request: {}, cookie: string): NotificationStreamMetadataResponse
+local function streamMetadata(cookie: string): NotificationStreamMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/metadata`,
@@ -540,7 +540,7 @@ end
 
 --- Clears the unread Notification stream count
 --- @within notifications
-local function clearUnread(request: {}, cookie: string): string
+local function clearUnread(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/clear-unread`,
@@ -569,7 +569,7 @@ end
 
 --- Gets valid destinations associated with the signed user
 --- @within notifications
-local function destinations(request: {}, cookie: string): GetPushDestinationsResponseModel
+local function destinations(cookie: string): GetPushDestinationsResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/get-destinations`,
@@ -678,7 +678,7 @@ end
 
 --- Gets the count of unread Notification stream entries
 --- @within notifications
-local function countUnread(request: {}, cookie: string): UnreadStreamNotificationsModel
+local function countUnread(cookie: string): UnreadStreamNotificationsModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/unread-count`,
@@ -709,7 +709,7 @@ end
 
 --- Gets the current device destination
 --- @within notifications
-local function destination(request: {}, cookie: string): GetCurrentPushDestinationResponseModel
+local function destination(cookie: string): GetCurrentPushDestinationResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/get-current-device-destination`,
@@ -753,7 +753,7 @@ end
 
 --- Gets the notification settings related to realtime
 --- @within notifications
-local function realtimeSettings(request: {}, cookie: string): RealTimeNotificationsSettingsResponseModel
+local function realtimeSettings(cookie: string): RealTimeNotificationsSettingsResponseModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/notifications/settings/realtime`,

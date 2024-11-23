@@ -230,7 +230,7 @@ end
 
 --- Get a user's current account country setting.
 --- @within accountsettings
-local function country(request: {}, cookie: string): UserAccountCountry
+local function country(cookie: string): UserAccountCountry
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/account/settings/account-country`,
@@ -259,7 +259,7 @@ end
 
 --- Gets the authenticated user's email address and verified status
 --- @within accountsettings
-local function email(request: {}, cookie: string): EmailResponse
+local function email(cookie: string): EmailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/email`,
@@ -273,7 +273,7 @@ end
 
 --- Returns metadata used by the account settings page
 --- @within accountsettings
-local function metadata(request: {}, cookie: string): AccountsSettingsMetadataModel
+local function metadata(cookie: string): AccountsSettingsMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/account/settings/metadata`,
@@ -302,7 +302,7 @@ end
 
 --- Get a user's inventory privacy setting
 --- @within accountsettings
-local function inventoryPrivacy(request: {}, cookie: string): number
+local function inventoryPrivacy(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/inventory-privacy`,
@@ -345,7 +345,7 @@ end
 
 --- Get a user's game chat privacy setting
 --- @within accountsettings
-local function gameChatPrivacy(request: {}, cookie: string): string
+local function gameChatPrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/game-chat-privacy`,
@@ -373,7 +373,7 @@ end
 
 --- Gets all blocked users with details.
 --- @within accountsettings
-local function blockedUsers(request: {}, cookie: string): GetDetailedBlockedUsersResponse
+local function blockedUsers(cookie: string): GetDetailedBlockedUsersResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/users/get-detailed-blocked-users`,
@@ -402,7 +402,7 @@ end
 
 --- Get a user's trade quality filter setting
 --- @within accountsettings
-local function tradeQualityFilter(request: {}, cookie: string): string
+local function tradeQualityFilter(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/trade-value`,
@@ -431,7 +431,7 @@ end
 
 --- Get a user's app chat privacy setting
 --- @within accountsettings
-local function appChatPrivacy(request: {}, cookie: string): string
+local function appChatPrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/app-chat-privacy`,
@@ -460,7 +460,7 @@ end
 
 --- Get a user's trade privacy setting
 --- @within accountsettings
-local function tradePrivacy(request: {}, cookie: string): string
+local function tradePrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/trade-privacy`,
@@ -489,7 +489,7 @@ end
 
 --- Get a user's private message privacy setting
 --- @within accountsettings
-local function messagePrivacy(request: {}, cookie: string): string
+local function messagePrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/private-message-privacy`,

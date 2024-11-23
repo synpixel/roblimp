@@ -168,7 +168,7 @@ end
 
 --- Gets metadata about the trade system.
 --- @within trades
-local function metadata(request: {}, cookie: string): TradeMetadata
+local function metadata(cookie: string): TradeMetadata
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://trades.roblox.com/v1/trades/metadata`,

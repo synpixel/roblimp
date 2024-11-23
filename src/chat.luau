@@ -466,7 +466,7 @@ end
 
 --- Get Chat metadata.
 --- @within chat
-local function metadata(request: {}, cookie: string): ChatMetadataResponse
+local function metadata(cookie: string): ChatMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/metadata`,
@@ -659,7 +659,7 @@ end
 
 --- For every authenticated user, the clients hit this endpoint to get the chat related settings. Example : Chat is enabled or not
 --- @within chat
-local function settings(request: {}, cookie: string): ChatSettingsResponse
+local function settings(cookie: string): ChatSettingsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/chat-settings`,
@@ -673,7 +673,7 @@ end
 
 --- Gets the count of unread conversations
 --- @within chat
-local function countUnreadConversations(request: {}, cookie: string): number
+local function countUnreadConversations(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://chat.roblox.com/v2/get-unread-conversation-count`,

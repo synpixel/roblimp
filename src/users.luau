@@ -272,7 +272,7 @@ end
 
 --- Get the user's birthdate
 --- @within users
-local function birthdate(request: {}, cookie: string): BirthdateResponse
+local function birthdate(cookie: string): BirthdateResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/birthdate`,
@@ -301,7 +301,7 @@ end
 
 --- Get the user's description
 --- @within users
-local function description(request: {}, cookie: string): string
+local function description(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/description`,
@@ -362,7 +362,7 @@ end
 
 --- Get the user's gender
 --- @within users
-local function gender(request: {}, cookie: string): number
+local function gender(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/gender`,
@@ -376,7 +376,7 @@ end
 
 --- Gets the country code of the authenticated user.
 --- @within users
-local function countryCode(request: {}, cookie: string): string
+local function countryCode(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated/country-code`,
@@ -390,7 +390,7 @@ end
 
 --- Gets the (public) roles of the authenticated user, such as `"Soothsayer"` and `"BetaTester"`.
 --- @within users
-local function publicRoles(request: {}, cookie: string): { string }
+local function publicRoles(cookie: string): { string }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated/roles`,
@@ -437,7 +437,7 @@ end
 
 --- Gets the age bracket of the authenticated user.
 --- @within users
-local function ageBracket(request: {}, cookie: string): number
+local function ageBracket(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated/age-bracket`,
@@ -451,7 +451,7 @@ end
 
 --- Gets the minimal authenticated user.
 --- @within users
-local function authenticated(request: {}, cookie: string): AuthenticatedGetUserResponse
+local function authenticated(cookie: string): AuthenticatedGetUserResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://users.roblox.com/v1/users/authenticated`,

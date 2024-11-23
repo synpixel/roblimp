@@ -300,7 +300,7 @@ end
 
 --- Gets metadata about the badges system.
 --- @within badges
-local function metadata(request: {}, cookie: string?): BadgeMetadataResponse
+local function metadata(cookie: string?): BadgeMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://badges.roblox.com/v1/badges/metadata`,

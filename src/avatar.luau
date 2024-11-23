@@ -674,7 +674,7 @@ export type OutfitUpdateModelV3 = {
 
 --- Returns the business rules related to avatars
 --- @within avatar
-local function rules(request: {}, cookie: string?): AvatarRulesModel
+local function rules(cookie: string?): AvatarRulesModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar-rules`,
@@ -703,7 +703,7 @@ end
 
 --- Requests the authenticated user's thumbnail be redrawn
 --- @within avatar
-local function redrawThumbnail(request: {}, cookie: string): EmptyResponse
+local function redrawThumbnail(cookie: string): EmptyResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
 		url = `https://avatar.roblox.com/v1/avatar/redraw-thumbnail`,
@@ -747,7 +747,7 @@ end
 
 --- Returns metadata used by the avatar page of the website
 --- @within avatar
-local function metadata(request: {}, cookie: string?): AvatarMetadataModel
+local function metadata(cookie: string?): AvatarMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v1/avatar/metadata`,
@@ -789,7 +789,7 @@ end
 
 --- Returns details about the authenticated user's avatar
 --- @within avatar
-local function get(request: {}, cookie: string): AvatarModelV3
+local function get(cookie: string): AvatarModelV3
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://avatar.roblox.com/v2/avatar/avatar`,

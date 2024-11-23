@@ -925,7 +925,7 @@ export type GroupWallPostV2Model = {
 
 --- Gets Group configuration contextual information
 --- @within groups
-local function configurationMetadata(request: {}, cookie: string?): GroupConfigurationDisplayOptionsResponse
+local function configurationMetadata(cookie: string?): GroupConfigurationDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/configuration/metadata`,
@@ -942,7 +942,7 @@ end
 --- Current number of groups a user is a member of.
 --- Whether to show/hide certain features based on device type.
 --- @within groups
-local function metadata(request: {}, cookie: string?): GroupsDisplayOptionsResponse
+local function metadata(cookie: string?): GroupsDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/metadata`,
@@ -1076,7 +1076,7 @@ end
 
 --- Gets groups that the authenticated user has requested to join
 --- @within groups
-local function pending(request: {}, cookie: string): { GroupDetailResponse }
+local function pending(cookie: string): { GroupDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/user/groups/pending`,
@@ -1284,7 +1284,7 @@ end
 
 --- Get suggested groups and other miscellaneous information needed for the group/join page like flags
 --- @within groups
-local function searchMetadata(request: {}, cookie: string?): GroupSearchMetadataResponse
+local function searchMetadata(cookie: string?): GroupSearchMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/metadata`,
@@ -1607,7 +1607,7 @@ end
 
 --- Removes the authenticated user's primary group
 --- @within groups
-local function removePrimaryGroup(request: {}, cookie: string): ApiEmptyResponseModel
+local function removePrimaryGroup(cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/user/groups/primary`,

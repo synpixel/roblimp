@@ -149,7 +149,7 @@ end
 
 --- Gets unread messages for the authenticated user.
 --- @within privatemessages
-local function countUnread(request: {}, cookie: string): number
+local function countUnread(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/messages/unread/count`,
@@ -162,7 +162,7 @@ local function countUnread(request: {}, cookie: string): number
 end
 
 --- @within privatemessages
-local function announcementMetadata(request: {}, cookie: string): number
+local function announcementMetadata(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/announcements/metadata`,
@@ -207,7 +207,7 @@ end
 
 --- Migrate from RobloxWebsite project, return news notification for Private Message page
 --- @within privatemessages
-local function announcements(request: {}, cookie: string): GetAnnouncementsResponse
+local function announcements(cookie: string): GetAnnouncementsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/announcements`,
