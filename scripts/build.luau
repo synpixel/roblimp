@@ -39,10 +39,6 @@ local function translate(raw: { [string]: any }?): string
 		return reference(raw["$ref"])
 	end
 
-	if raw.type == "integer" then
-		return "number"
-	end
-
 	if raw.enum ~= nil then
 		local enum = {}
 
@@ -53,7 +49,14 @@ local function translate(raw: { [string]: any }?): string
 			end
 
 			if typeof(item) == "string" then
-				table.insert(enum, `"{item}"`)
+				item = `"{item}"`
+			end
+
+			if typeof(item) == "number" then
+				item = "number"
+			end
+
+			if table.find(enum, item) ~= nil then
 				continue
 			end
 
@@ -61,6 +64,10 @@ local function translate(raw: { [string]: any }?): string
 		end
 
 		return `{table.concat(enum, " | ")}`
+	end
+
+	if raw.type == "integer" then
+		return "number"
 	end
 
 	if raw.type == "array" then
