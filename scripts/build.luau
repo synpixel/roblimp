@@ -162,43 +162,13 @@ local function writeNamespace(
 		table.insert(documentations, documentation)
 	end
 
-	local unusedModels: { [string]: true } = {}
-
-	local function markAsUsed(model: { [string]: any }?, documentation: OpenApiDefinition)
-		if model == nil then
-			return
-		end
-
-		local ref = model["$ref"]
-		if ref == nil then
-			if model.items ~= nil then
-				markAsUsed(model.items, documentation)
-			end
-
-			if model.properties ~= nil then
-				for _, member in model.properties do
-					markAsUsed(member, documentation)
-				end
-			end
-
-			return
-		end
-
-		local name = reference(ref)
-		unusedModels[name] = nil
-
-		local model = traverseRef(model, documentation)
-		markAsUsed(model, documentation)
-	end
-
 	local file = ""
 
 	file ..= 'local serde = require("@lune/serde")\n'
 	file ..= 'local requestWithCsrfToken = require("./utils/request-with-csrf-token")\n'
 	file ..= 'local Result = require("../lune_packages/result")\n\n'
 
-	file ..= "type Error = requestWithCsrfToken.Error\n"
-	file ..= "type Response<T> = Result.Result<T, Error>\n\n"
+	file ..= "type Response<T> = Result.Result<T, requestWithCsrfToken.Error>\n\n"
 
 	for _, documentation in documentations do
 		if documentation.definitions == nil then
@@ -207,11 +177,9 @@ local function writeNamespace(
 
 		for rawName, model in documentation.definitions do
 			local name = reference(rawName)
-			if unusedModels[name] then
+			if file:match(`export type {name} =`) ~= nil then
 				continue
 			end
-
-			unusedModels[name] = true
 
 			if model.description ~= nil then
 				file ..= comment(model.description) .. "\n"
@@ -259,10 +227,6 @@ local function writeNamespace(
 					route.parameters = {}
 				end
 
-				if alias == "batch" then
-					print(route.parameters)
-				end
-
 				local body = nil
 
 				do
@@ -305,8 +269,6 @@ local function writeNamespace(
 						if hasParameters then
 							request ..= "&"
 						end
-
-						markAsUsed(body.schema, documentation)
 					end
 
 					if hasParameters then
@@ -316,8 +278,6 @@ local function writeNamespace(
 						for _, parameter in route.parameters do
 							local optional = if not parameter.required then "?" else ""
 							request ..= `{parameter.name}: {translate(parameter)}{optional},`
-
-							markAsUsed(parameter, documentation)
 						end
 
 						request ..= "}"
@@ -337,21 +297,15 @@ local function writeNamespace(
 							requestName = key
 							takes = "%s"
 							construct = true
-
-							markAsUsed(property, documentation)
 						else
 							request = translate(model)
 							requestName = body.name
 							takes = `{requestName}.%s`
-
-							markAsUsed(model, documentation)
 						end
 					else
 						request = translate(model)
 						requestName = body.name
 						takes = "%s"
-
-						markAsUsed(model, documentation)
 					end
 				elseif next(route.parameters) ~= nil and body == nil then
 					local key, parameter = singleKey(route.parameters)
@@ -359,8 +313,6 @@ local function writeNamespace(
 						request = translate(parameter)
 						requestName = parameter.name
 						takes = "%s"
-
-						markAsUsed(parameter, documentation)
 					else
 						defaultRequest()
 					end
@@ -379,12 +331,7 @@ local function writeNamespace(
 						if key ~= nil then
 							returns ..= `.{key}`
 							response = translate(property)
-							markAsUsed(property, documentation)
-						else
-							markAsUsed(okResponse.schema, documentation)
 						end
-					else
-						markAsUsed(okResponse.schema, documentation)
 					end
 				else
 					returns = "nil"
@@ -460,10 +407,6 @@ local function writeNamespace(
 	end
 
 	file ..= "}\n"
-
-	for model in unusedModels do
-		file = file:gsub(`\n\n[^\n]*export type {model}%s*=%s*.-\n\n`, "\n\n")
-	end
 
 	return if FORMAT then stylua(file) else file
 end
