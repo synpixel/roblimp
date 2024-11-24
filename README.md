@@ -1,6 +1,6 @@
 # Roblimp
 
-An auto-generated API wrapper for Roblox.
+An auto-generated wrapper around Roblox's API.
 
 ## Quick Start
 
