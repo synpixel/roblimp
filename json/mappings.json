@@ -115,7 +115,7 @@
       "post": "follow",
       "delete": "unfollow"
     },
-    "/v2/users/{userId}/universes": { "get": "followingsOf" }
+    "/v2/users/{userId}/universes": { "get": "of" }
   },
   "friends": {
     "/v1/metadata": { "get": "metadata" },
@@ -126,7 +126,7 @@
     "/v1/users/{targetUserId}/followers/count": { "get": "countFollowersOf" },
     "/v1/users/{targetUserId}/followings": { "get": "followingsOf" },
     "/v1/users/{targetUserId}/followings/count": { "get": "countFollowingsOf" },
-    "/v1/users/{userId}/friends": { "get": "friendsOf" },
+    "/v1/users/{userId}/friends": { "get": "of" },
     "/v1/users/{userId}/friends/count": { "get": "countFriendsOf" },
     "/v1/users/{userId}/friends/find": { "get": "friendshipsOf" },
     "/v1/users/{userId}/friends/inactive": { "get": "inactiveFriendsOf" },
@@ -235,8 +235,8 @@
     "/v1/groups/search/lookup": { "get": "lookup" },
     "/v1/roles": { "get": "roles" },
     "/v1/user/groups/pending": { "get": "pending" },
-    "/v1/users/{userId}/friends/groups/roles": { "get": "withFriendsOf" },
-    "/v1/users/{userId}/groups/primary/role": { "get": "primaryOf" },
+    "/v1/users/{userId}/friends/groups/roles": { "get": "withFriends" },
+    "/v1/users/{userId}/groups/primary/role": { "get": "primary" },
     "/v1/groups/{groupId}/change-owner": { "post": "giveOwnership" },
     "/v1/groups/{groupId}/claim-ownership": { "post": "claimOwnership" },
     "/v1/groups/{groupId}/payouts/recurring": {
@@ -254,8 +254,8 @@
     "/v1/groups/create": { "post": "create" },
     "/v1/groups/policies": { "post": "policies" },
     "/v1/user/groups/primary": {
-      "post": "setPrimaryGroup",
-      "delete": "removePrimaryGroup"
+      "post": "setPrimary",
+      "delete": "removePrimary"
     },
     "/v1/groups/{groupId}/description": { "patch": "setDescription" },
     "/v1/groups/{groupId}/name": { "patch": "setName" },
