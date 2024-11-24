@@ -390,7 +390,7 @@
     "/v1/users/authenticated/roles": { "get": "publicRoles" },
     "/v1/users": { "post": "fromIds" },
     "/v1/usernames/users": { "post": "fromNames" },
-    "/v1/users/{userId}/username-history": { "get": "nameHistory" },
+    "/v1/users/{userId}/username-history": { "get": "usernameHistory" },
     "/v1/users/search": { "get": "search" }
   }
 }
