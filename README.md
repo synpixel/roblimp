@@ -5,10 +5,21 @@ An auto-generated wrapper around Roblox's API.
 ## Quick Start
 
 ```luau
+local roblox = require("@lune/roblox")
 local roblimp = require("@pkg/roblimp")
 
-local user = roblimp.users.authenticated(COOKIE):unwrap()
-local robux = roblimp.economy.robux(COOKIE):unwrap()
+local COOKIE = assert(roblox.getAuthCookie(true))
 
-print(`@{user.name} has {robux} robux`)
+local user = roblimp.users.authenticated(COOKIE):unwrap()
+print(`logged in on @{user.name}`)
+
+local memberships = roblimp.groups
+	.rolesOf({
+		userId = user.id,
+		includeLocked = true,
+		includeNotificationPreferences = false,
+	})
+	:unwrap()
+
+print(`you're a member of {#memberships} groups`)
 ```
