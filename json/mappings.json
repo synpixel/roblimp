@@ -127,7 +127,7 @@
     "/v1/users/{targetUserId}/followings": { "get": "followings" },
     "/v1/users/{targetUserId}/followings/count": { "get": "countFollowings" },
     "/v1/users/{userId}/friends": { "get": "of" },
-    "/v1/users/{userId}/friends/count": { "get": "count" },
+    "/v1/users/{userId}/friends/count": { "get": "countOf" },
     "/v1/users/{userId}/friends/find": { "get": "friendships" },
     "/v1/users/{userId}/friends/inactive": { "get": "inactive" },
     "/v1/users/{userId}/friends/online": { "get": "online" },
