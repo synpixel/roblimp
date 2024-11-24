@@ -99,7 +99,7 @@ local function announcementMetadata(cookie: string): Response<number>
 end
 
 --- Gets whether the sender can send a message to the specified user.
-local function canMessage(userId: number, cookie: string): Response<boolean>
+local function canSend(userId: number, cookie: string): Response<boolean>
 	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://privatemessages.roblox.com/v1/messages/{userId}/can-message`,
@@ -197,7 +197,7 @@ return {
 	markAsRead = markAsRead,
 	countUnread = countUnread,
 	announcementMetadata = announcementMetadata,
-	canMessage = canMessage,
+	canSend = canSend,
 	all = all,
 	announcements = announcements,
 	markAsUnread = markAsUnread,
