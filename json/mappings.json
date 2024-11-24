@@ -132,7 +132,7 @@
     "/v1/users/{userId}/friends/inactive": { "get": "inactive" },
     "/v1/users/{userId}/friends/online": { "get": "online" },
     "/v1/users/{userId}/friends/search": { "get": "search" },
-    "/v1/user/{userId}/multiget-are-friends": { "post": "areFriends" },
+    "/v1/user/{userId}/multiget-are-friends": { "post": "are" },
     "/v1/user/following-exists": { "post": "following" },
     "/v1/user/friend-requests/decline-all": {
       "post": "declineAllRequests"
