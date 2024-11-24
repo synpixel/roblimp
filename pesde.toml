@@ -3,10 +3,12 @@ version = "0.1.0"
 authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
 license = "MIT"
+includes = ["pesde.toml", "LICENSE", "src"]
 private = true
 
 [target]
 environment = "lune"
+lib = "src/init.luau"
 
 [indices]
 default = "https://github.com/daimond113/pesde-index"
