@@ -677,7 +677,7 @@ for namespace, definitions in mappings do
 							onlyParameter.name = firstKey
 						end
 					else
-						onlyParameter = table.clone(bodyParameter.schema)
+						onlyParameter = table.clone(schema)
 						onlyParameter.name = bodyParameter.name
 					end
 				end
