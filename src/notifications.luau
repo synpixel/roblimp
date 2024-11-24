@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 export type ReceiverDestinationSettingModel = {
 	platform: "ChromeOnDesktop"
@@ -261,342 +265,306 @@ export type MarkCategoryAsReadRequestModel = {
 local function recent(
 	request: { startIndex: number?, maxRows: number? },
 	cookie: string
-): { NotificationStreamEntriesModel }
-	local response = requestWithCsrfToken({
+): Response<{ NotificationStreamEntriesModel }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/get-recent?startIndex={request.startIndex or ""}&maxRows={request.maxRows or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Registers IOS device for pushkit notifications
-local function registerIOSPushkit(request: RegisterIOSPushKitRequestModel, cookie: string): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+local function registerIOSPushkit(
+	request: RegisterIOSPushKitRequestModel,
+	cookie: string
+): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-ios-pushkit`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- De-register all devices to disable push notifications
-local function deregisterAllDevices(cookie: string): string
-	local response = requestWithCsrfToken({
+local function deregisterAllDevices(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-all-devices`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- De-register current device to disable push notifications
-local function deregisterDevice(cookie: string): string
-	local response = requestWithCsrfToken({
+local function deregisterDevice(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-current-device`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- Get Chrome Manifest to link GCM project to Chrome Browser
-local function chromeManifest(cookie: string): ChromeManifestModel
-	local response = requestWithCsrfToken({
+local function chromeManifest(cookie: string): Response<ChromeManifestModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/chrome-manifest`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- De-register current device to disable pushkit notifications
-local function deregisterIOSPushkit(cookie: string): string
-	local response = requestWithCsrfToken({
+local function deregisterIOSPushkit(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/deregister-current-device-ios-pushkit`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- Get Notification Stream metadata.
-local function streamMetadata(cookie: string): NotificationStreamMetadataResponse
-	local response = requestWithCsrfToken({
+local function streamMetadata(cookie: string): Response<NotificationStreamMetadataResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/metadata`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Clears the unread Notification stream count
-local function clearUnread(cookie: string): string
-	local response = requestWithCsrfToken({
+local function clearUnread(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/clear-unread`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- Sends metrics when a Game Update Notification is Read from the Game Update Notifications Section of the Notification Stream
-local function acknowledgeGameUpdate(request: GameUpdateNotificationReadRequestModel, cookie: string): string
-	local response = requestWithCsrfToken({
+local function acknowledgeGameUpdate(request: GameUpdateNotificationReadRequestModel, cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/game-update-notification-read`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- Gets valid destinations associated with the signed user
-local function destinations(cookie: string): GetPushDestinationsResponseModel
-	local response = requestWithCsrfToken({
+local function destinations(cookie: string): Response<GetPushDestinationsResponseModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/get-destinations`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the notificationIds for the specified notification token
 local function multiple(
 	request: { notificationToken: string, limit: number, cursor: number? },
 	cookie: string
-): NotificationIdsResponseModel
-	local response = requestWithCsrfToken({
+): Response<NotificationIdsResponseModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/notification-ids?notificationToken={request.notificationToken}&limit={request.limit}&cursor={request.cursor or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Registers IOS device for push notifications
-local function registerIOSNative(request: RegisterIOSNativeRequestModel, cookie: string): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+local function registerIOSNative(
+	request: RegisterIOSNativeRequestModel,
+	cookie: string
+): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-ios-native`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Register Android Native for push notifications
-local function registerAndroidNative(request: RegisterAndroidRequestModel, cookie: string): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+local function registerAndroidNative(
+	request: RegisterAndroidRequestModel,
+	cookie: string
+): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-android-native`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Register Android Tencent service device for push notifications
 local function registerAndroidTencentService(
 	request: RegisterTencentServiceRequestModel,
 	cookie: string
-): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-android-tencent-service`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Registers Firefox for push notifications
-local function registerFirefox(request: RegisterFirefoxRequestModel, cookie: string): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+local function registerFirefox(
+	request: RegisterFirefoxRequestModel,
+	cookie: string
+): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-firefox`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Registers Chrome for push notifications
-local function registerChrome(request: RegisterChromeRequestModel, cookie: string): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+local function registerChrome(request: RegisterChromeRequestModel, cookie: string): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-chrome`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the count of unread Notification stream entries
-local function countUnread(cookie: string): UnreadStreamNotificationsModel
-	local response = requestWithCsrfToken({
+local function countUnread(cookie: string): Response<UnreadStreamNotificationsModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/unread-count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the corresponding metadata for the specified notification
 local function metadata(
 	request: { notificationToken: string, notificationId: string },
 	cookie: string
-): GetMetadataResponseModel
-	local response = requestWithCsrfToken({
+): Response<GetMetadataResponseModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/metadata?notificationToken={request.notificationToken}&notificationId={request.notificationId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the current device destination
-local function destination(cookie: string): GetCurrentPushDestinationResponseModel
-	local response = requestWithCsrfToken({
+local function destination(cookie: string): Response<GetCurrentPushDestinationResponseModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/push-notifications/get-current-device-destination`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Marks a Notification Stream Entry as Interacted
-local function markInteracted(eventId: string, cookie: string): string
-	local response = requestWithCsrfToken({
+local function markInteracted(eventId: string, cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/stream-notifications/mark-interacted`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { eventId = eventId }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- Marks Interaction status for push notification
-local function markInteraction(request: MarkInteractionRequestModel, cookie: string): string
-	local response = requestWithCsrfToken({
+local function markInteraction(request: MarkInteractionRequestModel, cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/mark-interaction`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).statusMessage
+	}):map(function(response)
+		return serde.decode("json", response.body).statusMessage
+	end)
 end
 
 --- Gets the notification settings related to realtime
-local function realtimeSettings(cookie: string): RealTimeNotificationsSettingsResponseModel
-	local response = requestWithCsrfToken({
+local function realtimeSettings(cookie: string): Response<RealTimeNotificationsSettingsResponseModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/notifications/settings/realtime`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Register Amazon Android for push notifications
 local function registerAmazonAndroid(
 	request: RegisterAndroidAmazonRequestModel,
 	cookie: string
-): RegistrationResponseModel
-	local response = requestWithCsrfToken({
+): Response<RegistrationResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://notifications.roblox.com/v2/push-notifications/register-android-amazon`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 local function latestGameUpdates(
 	request: { universeIds: { number }, sinceDateTime: string? },
 	cookie: string
-): { GameUpdateNotificationModel }
-	local response = requestWithCsrfToken({
+): Response<{ GameUpdateNotificationModel }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://notifications.roblox.com/v2/stream-notifications/get-latest-game-updates?universeIds={table.concat(
 			request.universeIds,
 			"&universeIds="
 		)}&sinceDateTime={request.sinceDateTime or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 return {

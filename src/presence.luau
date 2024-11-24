@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 --- Get users presences request model
 export type UserPresenceRequest = { userIds: { number } }
@@ -29,17 +33,15 @@ export type LastOnlineResponse = { lastOnlineTimestamps: { LastOnline } }
 export type LastOnlineRequest = { userIds: { number } }
 
 --- Get Presence for a list of users
-local function get(userIds: { number }, cookie: string?): { UserPresence }
-	local response = requestWithCsrfToken({
+local function get(userIds: { number }, cookie: string?): Response<{ UserPresence }>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://presence.roblox.com/v1/presence/users`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie or ""}` },
 		body = serde.encode("json", { userIds = userIds }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).userPresences
+	}):map(function(response)
+		return serde.decode("json", response.body).userPresences
+	end)
 end
 
 return { get = get }

@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 --- Request model for updating an email
 export type UpdateEmailRequest = {
@@ -104,285 +108,243 @@ export type AppChatPrivacyResponse = { appChatPrivacy: string }
 export type AppChatPrivacyRequest = { appChatPrivacy: number }
 
 --- Updates the user's account country.
-local function setCountry(targetCountryId: number, cookie: string): UpdateAccountCountryResponse
-	local response = requestWithCsrfToken({
+local function setCountry(targetCountryId: number, cookie: string): Response<UpdateAccountCountryResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/account/settings/account-country`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { targetCountryId = targetCountryId }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's current account country setting.
-local function country(cookie: string): UserAccountCountry
-	local response = requestWithCsrfToken({
+local function country(cookie: string): Response<UserAccountCountry>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/account/settings/account-country`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).value
+	}):map(function(response)
+		return serde.decode("json", response.body).value
+	end)
 end
 
 --- Updates the authenticated user's email address
-local function setEmail(request: UpdateEmailRequest, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setEmail(request: UpdateEmailRequest, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/email`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the authenticated user's email address and verified status
-local function email(cookie: string): EmailResponse
-	local response = requestWithCsrfToken({
+local function email(cookie: string): Response<EmailResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/email`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Returns metadata used by the account settings page
-local function metadata(cookie: string): AccountsSettingsMetadataModel
-	local response = requestWithCsrfToken({
+local function metadata(cookie: string): Response<AccountsSettingsMetadataModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/account/settings/metadata`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates a user's inventory privacy setting
-local function setInventoryPrivacy(inventoryPrivacy: number, cookie: string): InventoryPrivacyUpdateResponse
-	local response = requestWithCsrfToken({
+local function setInventoryPrivacy(inventoryPrivacy: number, cookie: string): Response<InventoryPrivacyUpdateResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/inventory-privacy`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { inventoryPrivacy = inventoryPrivacy }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's inventory privacy setting
-local function inventoryPrivacy(cookie: string): number
-	local response = requestWithCsrfToken({
+local function inventoryPrivacy(cookie: string): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/inventory-privacy`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).inventoryPrivacy
+	}):map(function(response)
+		return serde.decode("json", response.body).inventoryPrivacy
+	end)
 end
 
 --- Unblocks a previously blocked user.
-local function unblock(userId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function unblock(userId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/users/{userId}/unblock`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates a user's game chat privacy setting
-local function setGameChatPrivacy(gameChatPrivacy: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setGameChatPrivacy(gameChatPrivacy: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/game-chat-privacy`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { gameChatPrivacy = gameChatPrivacy }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's game chat privacy setting
-local function gameChatPrivacy(cookie: string): string
-	local response = requestWithCsrfToken({
+local function gameChatPrivacy(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/game-chat-privacy`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).gameChatPrivacy
+	}):map(function(response)
+		return serde.decode("json", response.body).gameChatPrivacy
+	end)
 end
 
 --- Blocks another user.
-local function block(userId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function block(userId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/users/{userId}/block`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets all blocked users with details.
-local function blockedUsers(cookie: string): GetDetailedBlockedUsersResponse
-	local response = requestWithCsrfToken({
+local function blockedUsers(cookie: string): Response<GetDetailedBlockedUsersResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/users/get-detailed-blocked-users`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates a user's trade quality filter setting
-local function setTradeQualityFilter(tradeValue: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setTradeQualityFilter(tradeValue: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/trade-value`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { tradeValue = tradeValue }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's trade quality filter setting
-local function tradeQualityFilter(cookie: string): string
-	local response = requestWithCsrfToken({
+local function tradeQualityFilter(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/trade-value`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).tradeValue
+	}):map(function(response)
+		return serde.decode("json", response.body).tradeValue
+	end)
 end
 
 --- Updates a user's app chat privacy setting
-local function setAppChatPrivacy(appChatPrivacy: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setAppChatPrivacy(appChatPrivacy: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/app-chat-privacy`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { appChatPrivacy = appChatPrivacy }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's app chat privacy setting
-local function appChatPrivacy(cookie: string): string
-	local response = requestWithCsrfToken({
+local function appChatPrivacy(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/app-chat-privacy`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).appChatPrivacy
+	}):map(function(response)
+		return serde.decode("json", response.body).appChatPrivacy
+	end)
 end
 
 --- Updates a user's trade privacy setting
-local function setTradePrivacy(tradePrivacy: number, cookie: string): TradePrivacyUpdateResponse
-	local response = requestWithCsrfToken({
+local function setTradePrivacy(tradePrivacy: number, cookie: string): Response<TradePrivacyUpdateResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/trade-privacy`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { tradePrivacy = tradePrivacy }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's trade privacy setting
-local function tradePrivacy(cookie: string): string
-	local response = requestWithCsrfToken({
+local function tradePrivacy(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/trade-privacy`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).tradePrivacy
+	}):map(function(response)
+		return serde.decode("json", response.body).tradePrivacy
+	end)
 end
 
 --- Updates a user's private message privacy setting
-local function setMessagePrivacy(privateMessagePrivacy: string, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setMessagePrivacy(privateMessagePrivacy: string, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/private-message-privacy`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { privateMessagePrivacy = privateMessagePrivacy }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get a user's private message privacy setting
-local function messagePrivacy(cookie: string): string
-	local response = requestWithCsrfToken({
+local function messagePrivacy(cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://accountsettings.roblox.com/v1/private-message-privacy`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).privateMessagePrivacy
+	}):map(function(response)
+		return serde.decode("json", response.body).privateMessagePrivacy
+	end)
 end
 
 --- Send verify email to the authenticated user's email address
-local function verifyEmail(request: SendVerifyEmailRequest, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function verifyEmail(request: SendVerifyEmailRequest, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://accountsettings.roblox.com/v1/email/verify`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 return {

@@ -1,0 +1,15 @@
+name = "synpixel/roblimp"
+version = "0.1.0"
+authors = ["synpixel"]
+repository = "https://github.com/synpixel/roblimp"
+license = "MIT"
+private = true
+
+[target]
+environment = "lune"
+
+[indices]
+default = "https://github.com/daimond113/pesde-index"
+
+[dependencies]
+result = { name = "lukadev_0/result", version = "^1.2.0" }

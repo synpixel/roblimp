@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 --- Response model for getting whether a universe has private servers enabled.
 export type PrivateServersEnabledInUniverseResponse = { privateServersEnabled: boolean }
@@ -318,252 +322,224 @@ local function servers(
 		cursor: string?,
 	},
 	cookie: string?
-): GameServerResponsePages
-	local response = requestWithCsrfToken({
+): Response<GameServerResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{request.placeId}/servers/{request.serverType}?sortOrder={request.sortOrder or ""}&excludeFullGames={request.excludeFullGames or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get the favorites count of the a specific game
-local function favorites(universeId: number, cookie: string?): number
-	local response = requestWithCsrfToken({
+local function favorites(universeId: number, cookie: string?): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{universeId}/favorites/count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).favoritesCount
+	}):map(function(response)
+		return serde.decode("json", response.body).favoritesCount
+	end)
 end
 
 --- Updates vip server
-local function configurePrivate(request: VipServerUpdateRequest & { id: number }, cookie: string): VipServerResponse
-	local response = requestWithCsrfToken({
+local function configurePrivate(
+	request: VipServerUpdateRequest & { id: number },
+	cookie: string
+): Response<VipServerResponse>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/vip-servers/{request.id}`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get necessary data to generate webpage
-local function private(id: number, cookie: string): VipServerResponse
-	local response = requestWithCsrfToken({
+local function private(id: number, cookie: string): Response<VipServerResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/vip-servers/{id}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of universe playability statuses for the authenticated user
-local function playability(universeIds: { number }, cookie: string?): { PlayabilityStatusResponse }
-	local response = requestWithCsrfToken({
+local function playability(universeIds: { number }, cookie: string?): Response<{ PlayabilityStatusResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/multiget-playability-status?universeIds={table.concat(
 			universeIds,
 			"&universeIds="
 		)}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Update friend/clan access and allowed friends/clan list
 local function updatePermissions(
 	request: VipServerUpdatePermissionsRequest & { id: number },
 	cookie: string
-): VipServerPermissionsResponse
-	local response = requestWithCsrfToken({
+): Response<VipServerPermissionsResponse>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/vip-servers/{request.id}/permissions`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get list of private servers user can access for given game id.
 local function privatesIn(
 	request: { placeId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string?
-): GameServerResponsePages
-	local response = requestWithCsrfToken({
+): Response<GameServerResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{request.placeId}/private-servers?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Checks if the private servers are enabled in the specified universe.
-local function arePrivatesEnabled(universeId: number, cookie: string?): boolean
-	local response = requestWithCsrfToken({
+local function arePrivatesEnabled(universeId: number, cookie: string?): Response<boolean>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/private-servers/enabled-in-universe/{universeId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).privateServersEnabled
+	}):map(function(response)
+		return serde.decode("json", response.body).privateServersEnabled
+	end)
 end
 
 --- Gets a list of universe vote status
-local function votes(universeIds: { number }, cookie: string?): { GameVoteResponse }
-	local response = requestWithCsrfToken({
+local function votes(universeIds: { number }, cookie: string?): Response<{ GameVoteResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/votes?universeIds={table.concat(universeIds, "&universeIds=")}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Get the user's vote status for a game
-local function vote(universeId: number, cookie: string): UserGameVoteResponse
-	local response = requestWithCsrfToken({
+local function vote(universeId: number, cookie: string): Response<UserGameVoteResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{universeId}/votes/user`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Create VIP server for a game
 local function createPrivate(
 	request: CreateVipServersRequest & { universeId: number },
 	cookie: string
-): GameServerResponse
-	local response = requestWithCsrfToken({
+): Response<GameServerResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://games.roblox.com/v1/games/vip-servers/{request.universeId}`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of games' product info, used to purchase a game
-local function products(universeIds: { number }, cookie: string?): { GameProductResponse }
-	local response = requestWithCsrfToken({
+local function products(universeIds: { number }, cookie: string?): Response<{ GameProductResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/games-product-info?universeIds={table.concat(
 			universeIds,
 			"&universeIds="
 		)}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Get the game's game passes
 local function gamepasses(
 	request: { universeId: number, limit: number, sortOrder: number?, cursor: string? },
 	cookie: string?
-): GamePassResponsePages
-	local response = requestWithCsrfToken({
+): Response<GamePassResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{request.universeId}/game-passes?limit={request.limit}&sortOrder={request.sortOrder or ""}&cursor={request.cursor or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of games' detail
-local function multiple(universeIds: { number }, cookie: string?): { GameDetailResponse }
-	local response = requestWithCsrfToken({
+local function multiple(universeIds: { number }, cookie: string?): Response<{ GameDetailResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games?universeIds={table.concat(universeIds, "&universeIds=")}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Set the user's vote for a game
-local function setVote(request: SetUserGameVoteRequest & { universeId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setVote(
+	request: SetUserGameVoteRequest & { universeId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/games/{request.universeId}/user-votes`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get private servers from private server ids
-local function privates(privateServerIds: { number }, cookie: string): { GameServerResponse }
-	local response = requestWithCsrfToken({
+local function privates(privateServerIds: { number }, cookie: string): Response<{ GameServerResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/private-servers?privateServerIds={table.concat(
 			privateServerIds,
 			"&privateServerIds="
 		)}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).privateServerResponses
+	}):map(function(response)
+		return serde.decode("json", response.body).privateServerResponses
+	end)
 end
 
 --- Get private servers for the authenticated user
 local function ownedPrivates(
 	request: { privateServersTab: number?, itemsPerPage: number?, cursor: string? },
 	cookie: string
-): MyPrivateServersResponse
-	local response = requestWithCsrfToken({
+): Response<MyPrivateServersResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/private-servers/my-private-servers?privateServersTab={request.privateServersTab or ""}&itemsPerPage={request.itemsPerPage or ""}&cursor={request.cursor or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get games recommendations based on a given universe
@@ -575,132 +551,117 @@ local function recommendations(
 		isTruncatedResultsEnabled: boolean,
 	},
 	cookie: string?
-): GameRecommendationsResponse
-	local response = requestWithCsrfToken({
+): Response<GameRecommendationsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/recommendations/game/{request.universeId}?paginationKey={request.paginationKey}&maxRows={request.maxRows}&isTruncatedResultsEnabled={request.isTruncatedResultsEnabled}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Determines if a user by id is allowed to receive a VIP Server invite from the authenticated user.
-local function canInviteToPrivate(userId: number, cookie: string): VipServerCanInviteResponse
-	local response = requestWithCsrfToken({
+local function canInviteToPrivate(userId: number, cookie: string): Response<VipServerCanInviteResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/vip-server/can-invite/{userId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates subscription status of a vip server
 local function updateSubscription(
 	request: VipServerUpdateSubscriptionRequest & { id: number },
 	cookie: string
-): VipServerSubscriptionResponse
-	local response = requestWithCsrfToken({
+): Response<VipServerSubscriptionResponse>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/vip-servers/{request.id}/subscription`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Update voice settings for a private server.
 local function updateVoiceSettings(
 	request: VipServerUpdateVoiceSettingsRequest & { id: number },
 	cookie: string
-): boolean
-	local response = requestWithCsrfToken({
+): Response<boolean>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://games.roblox.com/v1/vip-servers/{request.id}/voicesettings`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).enabled
+	}):map(function(response)
+		return serde.decode("json", response.body).enabled
+	end)
 end
 
 --- Get place details
-local function places(placeIds: { number }, cookie: string): { PlaceDetails }
-	local response = requestWithCsrfToken({
+local function places(placeIds: { number }, cookie: string): Response<{ PlaceDetails }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/multiget-place-details?placeIds={table.concat(placeIds, "&placeIds=")}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Favors (or unfavors) a game for the authenticated user
-local function favorite(request: GameFavoritesRequest & { universeId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function favorite(
+	request: GameFavoritesRequest & { universeId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://games.roblox.com/v1/games/{request.universeId}/favorites`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Returns if a game was marked as favorite for the authenticated user
-local function favorited(universeId: number, cookie: string): boolean
-	local response = requestWithCsrfToken({
+local function favorited(universeId: number, cookie: string): Response<boolean>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v1/games/{universeId}/favorites`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).isFavorited
+	}):map(function(response)
+		return serde.decode("json", response.body).isFavorited
+	end)
 end
 
 --- Gets games created by the specified user.
 local function of(
 	request: { userId: number, accessFilter: number?, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string?
-): GameResponseV2Pages
-	local response = requestWithCsrfToken({
+): Response<GameResponseV2Pages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/users/{request.userId}/games?accessFilter={request.accessFilter or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get the game media data
-local function media(universeId: number, cookie: string?): { GameMediaItemResponseV2 }
-	local response = requestWithCsrfToken({
+local function media(universeId: number, cookie: string?): Response<{ GameMediaItemResponseV2 }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/games/{universeId}/media`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Gets games created by the specified group. This will replace V1 after validation. Note that this can only used for public/all universes.
@@ -713,16 +674,14 @@ local function ofGroup(
 		sortOrder: "Asc" | "Desc"?,
 	},
 	cookie: string?
-): GameResponseV2Pages
-	local response = requestWithCsrfToken({
+): Response<GameResponseV2Pages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://games.roblox.com/v2/groups/{request.groupId}/gamesV2?accessFilter={request.accessFilter or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 return {

@@ -485,8 +485,12 @@ end
 for namespace, definitions in mappings do
 	local file = ""
 
-	file ..= `local serde = require("@lune/serde")\n`
-	file ..= `local requestWithCsrfToken = require("./utils/request-with-csrf-token")\n\n`
+	file ..= 'local serde = require("@lune/serde")\n'
+	file ..= 'local requestWithCsrfToken = require("./utils/request-with-csrf-token")\n'
+	file ..= 'local Result = require("../lune_packages/result")\n\n'
+
+	file ..= "type Error = requestWithCsrfToken.Error\n"
+	file ..= "type Response<T> = Result.Result<T, Error>\n\n"
 
 	local openapis = {}
 
@@ -635,11 +639,13 @@ for namespace, definitions in mappings do
 
 				local cookieParameter = if needsCookie then "cookie: string" else "cookie: string?"
 
+				local returnResponse = `Response<{patchModelName}>`
+
 				if onlyParameter ~= nil then
 					local parameterName = onlyParameter.name:sub(1, 1):lower() .. onlyParameter.name:sub(2)
-					file ..= `local function {name}({parameterName}: {translateOpenApiType(onlyParameter)}, {cookieParameter}): {patchModelName}\n`
+					file ..= `local function {name}({parameterName}: {translateOpenApiType(onlyParameter)}, {cookieParameter}): {returnResponse}\n`
 				elseif firstKey == nil and bodyParameter == nil then
-					file ..= `local function {name}({cookieParameter}): {patchModelName}\n`
+					file ..= `local function {name}({cookieParameter}): {returnResponse}\n`
 				elseif firstKey == nil and bodyParameter ~= nil then
 					file ..= `local function {name}(`
 
@@ -648,7 +654,7 @@ for namespace, definitions in mappings do
 						file ..= ", "
 					end
 
-					file ..= `{cookieParameter}): {patchModelName}\n`
+					file ..= `{cookieParameter}): {returnResponse}\n`
 				else
 					file ..= `local function {name}(request:`
 
@@ -662,14 +668,14 @@ for namespace, definitions in mappings do
 						file ..= `{parameter.name}: {parameter.type},`
 					end
 
-					file ..= `}, {cookieParameter}): {patchModelName}\n`
+					file ..= `}, {cookieParameter}): {returnResponse}\n`
 				end
 
 				local function readRequest(field: string): string
 					return if onlyParameter ~= nil then field else `request.{field}`
 				end
 
-				file ..= "local response = requestWithCsrfToken({\n"
+				file ..= "return requestWithCsrfToken({\n"
 
 				file ..= `method = "{method:upper()}",\n`
 
@@ -724,9 +730,9 @@ for namespace, definitions in mappings do
 					end
 				end
 
-				file ..= "})\n\n"
+				file ..= "})"
 
-				file ..= "assert(response.ok, `{response.statusCode} {response.statusMessage}`)\n\n"
+				file ..= ":map(function(response)\n"
 
 				if producesJson then
 					file ..= 'return serde.decode("json", response.body)'
@@ -740,6 +746,7 @@ for namespace, definitions in mappings do
 					file ..= "return response.body\n"
 				end
 
+				file ..= "end)\n"
 				file ..= `end\n\n`
 			end
 		end

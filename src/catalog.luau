@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
 
@@ -151,59 +155,54 @@ export type ElasticsearchDebugInfo = {
 }
 
 --- Returns details about the given bundleId.
-local function bundle(bundleId: number, cookie: string?): BundleDetailsModel
-	local response = requestWithCsrfToken({
+local function bundle(bundleId: number, cookie: string?): Response<BundleDetailsModel>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/bundles/{bundleId}/details`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Returns list of item details.
-local function items(items: { MultigetItemDetailsRequestItem }, cookie: string): { CatalogSearchDetailedResponseItem }
-	local response = requestWithCsrfToken({
+local function items(
+	items: { MultigetItemDetailsRequestItem },
+	cookie: string
+): Response<{ CatalogSearchDetailedResponseItem }>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://catalog.roblox.com/v1/catalog/items/details`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { items = items }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Returns details about the given bundleIds.
-local function bundles(bundleIds: { number }, cookie: string?): { BundleDetailsModel }
-	local response = requestWithCsrfToken({
+local function bundles(bundleIds: { number }, cookie: string?): Response<{ BundleDetailsModel }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/bundles/details?bundleIds={table.concat(bundleIds, "&bundleIds=")}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Lists the bundles owned by a given user.
 local function bundlesOf(
 	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string?
-): OwnedBundleModelPages
-	local response = requestWithCsrfToken({
+): Response<OwnedBundleModelPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v1/users/{request.userId}/bundles?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Search for catalog items.
@@ -228,19 +227,17 @@ local function search(
 		sortOrder: "Desc"?,
 	},
 	cookie: string
-): CatalogSearchDetailedResponseItemPages
-	local response = requestWithCsrfToken({
+): Response<CatalogSearchDetailedResponseItemPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://catalog.roblox.com/v2/search/items/details?assetTypeIds={table.concat(
 			request.assetTypeIds or {},
 			"&assetTypeIds="
 		)}&bundleTypeIds={table.concat(request.bundleTypeIds or {}, "&bundleTypeIds=")}&sortAggregation={request.sortAggregation or ""}&sortType={request.sortType or ""}&creatorType={request.creatorType or ""}&creatorTargetId={request.creatorTargetId or ""}&creatorName={request.creatorName or ""}&maxPrice={request.maxPrice or ""}&minPrice={request.minPrice or ""}&keyword={request.keyword or ""}&includeNotForSale={request.includeNotForSale or ""}&triggeredByTopicDiscovery={request.triggeredByTopicDiscovery or ""}&salesTypeFilter={request.salesTypeFilter or ""}&topics={request.topics or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 return { bundle = bundle, items = items, search = search, bundles = bundles, bundlesOf = bundlesOf }

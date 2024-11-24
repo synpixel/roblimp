@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
@@ -96,29 +100,25 @@ export type AssetOwnerResponse =
 	{ created: string, serialNumber: number, id: number, owner: AgentTypePages, updated: string }
 
 --- Return favorites categories for a user
-local function favorites(userId: number, cookie: string?): { AssetsExplorerCategoryModel }
-	local response = requestWithCsrfToken({
+local function favorites(userId: number, cookie: string?): Response<{ AssetsExplorerCategoryModel }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{userId}/categories/favorites`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).categories
+	}):map(function(response)
+		return serde.decode("json", response.body).categories
+	end)
 end
 
 --- Gets whether the specified user's inventory can be viewed.
-local function canView(userId: number, cookie: string?): boolean
-	local response = requestWithCsrfToken({
+local function canView(userId: number, cookie: string?): Response<boolean>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{userId}/can-view-inventory`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).canView
+	}):map(function(response)
+		return serde.decode("json", response.body).canView
+	end)
 end
 
 --- Gets all collectible assets owned by the specified user.
@@ -131,58 +131,53 @@ local function collectibles(
 		sortOrder: "Asc" | "Desc"?,
 	},
 	cookie: string
-): CollectibleUserAssetModelPages
-	local response = requestWithCsrfToken({
+): Response<CollectibleUserAssetModelPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{request.userId}/assets/collectibles?assetType={request.assetType or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets Created, MyGames, or OtherGames places inventory for a user
 local function games(
 	request: { userId: number, placesTab: number, itemsPerPage: number, cursor: number },
 	cookie: string
-): PlaceModelPages
-	local response = requestWithCsrfToken({
+): Response<PlaceModelPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{request.userId}/places/inventory?placesTab={request.placesTab}&itemsPerPage={request.itemsPerPage}&cursor={request.cursor}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Return inventory categories for a user
-local function categories(userId: number, cookie: string?): { AssetsExplorerCategoryModel }
-	local response = requestWithCsrfToken({
+local function categories(userId: number, cookie: string?): Response<{ AssetsExplorerCategoryModel }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{userId}/categories`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).categories
+	}):map(function(response)
+		return serde.decode("json", response.body).categories
+	end)
 end
 
 --- Gets whether a user owns an item of type itemType with id itemTargetId.
-local function owns(request: { userId: number, itemType: number, itemTargetId: number }, cookie: string?): boolean
-	local response = requestWithCsrfToken({
+local function owns(
+	request: { userId: number, itemType: number, itemTargetId: number },
+	cookie: string?
+): Response<boolean>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v1/users/{request.userId}/items/{request.itemType}/{request.itemTargetId}/is-owned`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get user's inventory by multiple Roblox.Platform.Assets.AssetType.
@@ -273,50 +268,44 @@ local function of(
 		sortOrder: "Asc" | "Desc"?,
 	},
 	cookie: string
-): UserAssetItemModelV2Pages
-	local response = requestWithCsrfToken({
+): Response<UserAssetItemModelV2Pages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v2/users/{request.userId}/inventory?assetTypes={table.concat(
 			request.assetTypes,
 			"&assetTypes="
 		)}&filterDisapprovedAssets={request.filterDisapprovedAssets or ""}&showApprovedOnly={request.showApprovedOnly or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of owners of an asset.
 local function owners(
 	request: { assetId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): AssetOwnerResponsePages
-	local response = requestWithCsrfToken({
+): Response<AssetOwnerResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://inventory.roblox.com/v2/assets/{request.assetId}/owners?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Give up an asset owned by the authenticated user.
 --- Assets that are created by Roblox user or are limited edition are not eligible for deletion
 --- and will return NotEligibleForDelete.
-local function remove(assetId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function remove(assetId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://inventory.roblox.com/v2/inventory/asset/{assetId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 return {

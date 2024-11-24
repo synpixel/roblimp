@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 --- Multi-payout request information.
 export type PayoutRequest = { PayoutType: number, Recipients: { PayoutRecipientRequest } }
@@ -456,90 +460,87 @@ export type GroupWallPostV2Model = {
 }
 
 --- Gets Group configuration contextual information
-local function configurationMetadata(cookie: string?): GroupConfigurationDisplayOptionsResponse
-	local response = requestWithCsrfToken({
+local function configurationMetadata(cookie: string?): Response<GroupConfigurationDisplayOptionsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/configuration/metadata`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets Groups contextual information:
 --- Max number of groups a user can be part of.
 --- Current number of groups a user is a member of.
 --- Whether to show/hide certain features based on device type.
-local function metadata(cookie: string?): GroupsDisplayOptionsResponse
-	local response = requestWithCsrfToken({
+local function metadata(cookie: string?): Response<GroupsDisplayOptionsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/metadata`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Changes the group owner to another user.
-local function giveOwnership(request: ChangeOwnerRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function giveOwnership(
+	request: ChangeOwnerRequest & { groupId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/change-owner`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Batch accepts group join requests
-local function acceptJoinRequests(request: MembersRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function acceptJoinRequests(
+	request: MembersRequest & { groupId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/join-requests`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Batch declines group join requests
-local function declineJoinRequests(request: MembersRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function declineJoinRequests(
+	request: MembersRequest & { groupId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/join-requests`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a page of Group Join Requests for a group.
 local function joinRequests(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): GroupJoinRequestResponsePages
-	local response = requestWithCsrfToken({
+): Response<GroupJoinRequestResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/join-requests?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of users in a group for a specific roleset.
@@ -552,62 +553,54 @@ local function usersWithRole(
 		sortOrder: "Asc" | "Desc"?,
 	},
 	cookie: string
-): UserModelPages
-	local response = requestWithCsrfToken({
+): Response<UserModelPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/roles/{request.roleSetId}/users?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates a social link
 local function updateSocialLink(
 	request: SocialLinkRequest & { groupId: number, socialLinkId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/social-links/{request.socialLinkId}`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Deletes a social link
 local function deleteSocialLink(
 	request: { groupId: number, socialLinkId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/social-links/{request.socialLinkId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets groups that the authenticated user has requested to join
-local function pending(cookie: string): { GroupDetailResponse }
-	local response = requestWithCsrfToken({
+local function pending(cookie: string): Response<{ GroupDetailResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/user/groups/pending`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Gets the Group's audit log
@@ -667,526 +660,476 @@ local function auditLog(
 		sortOrder: "Asc" | "Desc"?,
 	},
 	cookie: string
-): GroupAuditLogResponseItemPages
-	local response = requestWithCsrfToken({
+): Response<GroupAuditLogResponseItemPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/audit-log?actionType={request.actionType or ""}&userId={request.userId or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Joins a group
-local function join(request: JoinGroupRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function join(request: JoinGroupRequest & { groupId: number }, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/users`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of users in a group.
 local function users(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string?
-): UserGroupRoleResponsePages
-	local response = requestWithCsrfToken({
+): Response<UserGroupRoleResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/users?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Sets group status
-local function setStatus(request: PostGroupStatusRequest & { groupId: number }, cookie: string): ShoutResponse
-	local response = requestWithCsrfToken({
+local function setStatus(request: PostGroupStatusRequest & { groupId: number }, cookie: string): Response<ShoutResponse>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/status`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates the group's name.
-local function setName(request: UpdateGroupNameRequest & { groupId: number }, cookie: string): string
-	local response = requestWithCsrfToken({
+local function setName(request: UpdateGroupNameRequest & { groupId: number }, cookie: string): Response<string>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/name`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).newName
+	}):map(function(response)
+		return serde.decode("json", response.body).newName
+	end)
 end
 
 --- Gets a list of all groups the specified users' friends are in.
-local function withFriendsOf(userId: number, cookie: string): { UserGroupMembershipResponse }
-	local response = requestWithCsrfToken({
+local function withFriendsOf(userId: number, cookie: string): Response<{ UserGroupMembershipResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/users/{userId}/friends/groups/roles`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Gets a value indicating whether the group can use payout feature
-local function canPayout(groupId: number, cookie: string): GroupPayoutRestrictionResponse
-	local response = requestWithCsrfToken({
+local function canPayout(groupId: number, cookie: string): Response<GroupPayoutRestrictionResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/payout-restriction`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a group's relationships
 local function relationships(
 	request: { groupId: number, groupRelationshipType: string, startRowIndex: number, maxRows: number },
 	cookie: string?
-): GroupRelationshipsResponse
-	local response = requestWithCsrfToken({
+): Response<GroupRelationshipsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}?startRowIndex={request.startRowIndex}&maxRows={request.maxRows}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the Group's name change history.
 local function nameHistory(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): GroupNameHistoryResponseItemPages
-	local response = requestWithCsrfToken({
+): Response<GroupNameHistoryResponseItemPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/name-history?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get suggested groups and other miscellaneous information needed for the group/join page like flags
-local function searchMetadata(cookie: string?): GroupSearchMetadataResponse
-	local response = requestWithCsrfToken({
+local function searchMetadata(cookie: string?): Response<GroupSearchMetadataResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/metadata`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates the user's group notification preferences
 local function toggleNotifications(
 	request: UpdateGroupNotificationPreferenceRequest & { groupId: number },
 	cookie: string
-): number
-	local response = requestWithCsrfToken({
+): Response<number>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/notification-preference`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Accepts a group relationship request.
 local function acceptRelationshipRequest(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/requests/{request.relatedGroupId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Declines a group relationship request.
 local function declineRelationshipRequest(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/requests/{request.relatedGroupId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Deletes a group wall post.
-local function deleteMessage(request: { groupId: number, postId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function deleteMessage(
+	request: { groupId: number, postId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/wall/posts/{request.postId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates the group icon.
-local function setIcon(request: { groupId: number, files: buffer? }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setIcon(request: { groupId: number, files: buffer? }, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/icon?groupId={request.groupId}&files={request.files or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates a users role in a group.
 local function changeRole(
 	request: UpdateUserRoleRequest & { groupId: number, userId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/users/{request.userId}`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Removes a user from a group
-local function exileUser(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function exileUser(request: { groupId: number, userId: number }, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/users/{request.userId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets all permissions for each role
-local function allPermissions(groupId: number, cookie: string): { GroupPermissionsResponse }
-	local response = requestWithCsrfToken({
+local function allPermissions(groupId: number, cookie: string): Response<{ GroupPermissionsResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/roles/permissions`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Updates existing group roleset.
 local function updateRole(
 	request: UpdateRoleSetRequest & { groupId: number, rolesetId: number },
 	cookie: string
-): GroupRoleResponse
-	local response = requestWithCsrfToken({
+): Response<GroupRoleResponse>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/rolesets/{request.rolesetId}`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Deletes existing group roleset.
-local function deleteRole(request: { groupId: number, rolesetId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function deleteRole(
+	request: { groupId: number, rolesetId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/rolesets/{request.rolesetId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Creates new group roleset.
-local function createRole(request: CreateRoleSetRequest & { groupId: number }, cookie: string): GroupRoleResponse
-	local response = requestWithCsrfToken({
+local function createRole(
+	request: CreateRoleSetRequest & { groupId: number },
+	cookie: string
+): Response<GroupRoleResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/rolesets/create`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the permissions for a group's guest roleset. These can be viewed by all (members and guests) users.
-local function guestPermissions(groupId: number, cookie: string?): GroupPermissionsResponse
-	local response = requestWithCsrfToken({
+local function guestPermissions(groupId: number, cookie: string?): Response<GroupPermissionsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/roles/guest/permissions`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Deletes all group wall posts made by a specific user.
-local function deleteMessagesOf(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function deleteMessagesOf(
+	request: { groupId: number, userId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/wall/users/{request.userId}/posts`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets group membership information in the context of the authenticated user
 local function membership(
 	request: { groupId: number, includeNotificationPreferences: boolean },
 	cookie: string?
-): GroupMembershipMetadataResponse
-	local response = requestWithCsrfToken({
+): Response<GroupMembershipMetadataResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/membership?includeNotificationPreferences={request.includeNotificationPreferences}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Pays out a user in Robux.
-local function payout(request: PayoutRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function payout(request: PayoutRequest & { groupId: number }, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/payouts`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of the group payout percentages
-local function recurringPayouts(groupId: number, cookie: string): { GroupPayoutResponse }
-	local response = requestWithCsrfToken({
+local function recurringPayouts(groupId: number, cookie: string): Response<{ GroupPayoutResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/payouts`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Updates the group's settings
 local function updateSettings(
 	request: UpdateGroupSettingsRequest & { groupId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/settings`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the Group's settings
-local function settings(groupId: number, cookie: string): GroupSettingsResponse
-	local response = requestWithCsrfToken({
+local function settings(groupId: number, cookie: string): Response<GroupSettingsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/settings`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates the groups description
-local function setDescription(request: UpdateGroupDescriptionRequest & { groupId: number }, cookie: string): string
-	local response = requestWithCsrfToken({
+local function setDescription(
+	request: UpdateGroupDescriptionRequest & { groupId: number },
+	cookie: string
+): Response<string>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/description`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).newDescription
+	}):map(function(response)
+		return serde.decode("json", response.body).newDescription
+	end)
 end
 
 --- Sets the authenticated user's primary group
-local function setPrimaryGroup(groupId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function setPrimaryGroup(groupId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/user/groups/primary`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { groupId = groupId }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Removes the authenticated user's primary group
-local function removePrimaryGroup(cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function removePrimaryGroup(cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/user/groups/primary`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Looks up groups by a name. Prioritizes an exact match as the first result.
-local function lookup(groupName: string, cookie: string?): { GroupBasicResponse }
-	local response = requestWithCsrfToken({
+local function lookup(groupName: string, cookie: string?): Response<{ GroupBasicResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search/lookup?groupName={groupName}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Gets group information
-local function get(groupId: number, cookie: string?): GroupDetailResponse
-	local response = requestWithCsrfToken({
+local function get(groupId: number, cookie: string?): Response<GroupDetailResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Accepts a group join request.
-local function acceptJoinRequest(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function acceptJoinRequest(
+	request: { groupId: number, userId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/join-requests/users/{request.userId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Declines/cancels a group join request.
-local function declineJoinRequest(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function declineJoinRequest(
+	request: { groupId: number, userId: number },
+	cookie: string
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/join-requests/users/{request.userId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a group join request by userId.
-local function joinRequest(request: { groupId: number, userId: number }, cookie: string): GroupJoinRequestResponse
-	local response = requestWithCsrfToken({
+local function joinRequest(
+	request: { groupId: number, userId: number },
+	cookie: string
+): Response<GroupJoinRequestResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/join-requests/users/{request.userId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets group policy info used for compliance.
-local function policies(groupIds: { number }, cookie: string): { GroupPolicyResponse }
-	local response = requestWithCsrfToken({
+local function policies(groupIds: { number }, cookie: string): Response<{ GroupPolicyResponse }>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/policies`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { groupIds = groupIds }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).groups
+	}):map(function(response)
+		return serde.decode("json", response.body).groups
+	end)
 end
 
 --- Creates a new group.
@@ -1199,98 +1142,86 @@ local function create(
 		files: buffer?,
 	},
 	cookie: string
-): GroupResponseV2
-	local response = requestWithCsrfToken({
+): Response<GroupResponseV2>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/create?name={request.name or ""}&description={request.description or ""}&publicGroup={request.publicGroup or ""}&buildersClubMembersOnly={request.buildersClubMembersOnly or ""}&files={request.files or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Create a group relationship.
 local function requestRelationship(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/{request.relatedGroupId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Deletes a group relationship.
 local function deleteRelationship(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/{request.relatedGroupId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Search for groups by keyword.
 local function search(
 	request: { keyword: string, prioritizeExactMatch: boolean?, limit: number?, cursor: string? },
 	cookie: string?
-): GroupSearchPageResponse
-	local response = requestWithCsrfToken({
+): Response<GroupSearchPageResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/search?keyword={request.keyword}&prioritizeExactMatch={request.prioritizeExactMatch or ""}&limit={request.limit or ""}&cursor={request.cursor or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Batch accepts group affiliate requests
 local function acceptRelationshipRequests(
 	request: RelationshipsRequest & { groupId: number, groupRelationshipType: string },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/requests`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Batch declines group affiliate requests
 local function declineRelationshipRequests(
 	request: RelationshipsRequest & { groupId: number, groupRelationshipType: string },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/requests`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a group's relationship requests
@@ -1302,188 +1233,171 @@ local function relationshipRequests(
 		maxRows: number,
 	},
 	cookie: string
-): GroupRelationshipsResponse
-	local response = requestWithCsrfToken({
+): Response<GroupRelationshipsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/relationships/{request.groupRelationshipType}/requests?startRowIndex={request.startRowIndex}&maxRows={request.maxRows}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates recurring payouts.
 local function updateRecurringPayouts(
 	request: PayoutRequest & { groupId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/payouts/recurring`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Updates the permissions for a group's roleset. The authorized user must be the group owner.
 local function updateRolePermissions(
 	request: UpdatePermissionsRequest & { groupId: number, roleSetId: number },
 	cookie: string
-): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "PATCH",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/roles/{request.roleSetId}/permissions`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the permissions for a group's roleset. The authorized user must either be the group owner or the roleset being requested, except for guest roles, which can be viewed by all (members and guests).
-local function permissions(request: { groupId: number, roleSetId: number }, cookie: string): GroupPermissionsResponse
-	local response = requestWithCsrfToken({
+local function permissions(
+	request: { groupId: number, roleSetId: number },
+	cookie: string
+): Response<GroupPermissionsResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/roles/{request.roleSetId}/permissions`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Claims ownership of the group as the authenticated user
-local function claimOwnership(groupId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function claimOwnership(groupId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/claim-ownership`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a user's primary group.
-local function primary(userId: number, cookie: string?): GroupMembershipDetailResponse
-	local response = requestWithCsrfToken({
+local function primary(userId: number, cookie: string?): Response<GroupMembershipDetailResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/users/{userId}/groups/primary/role`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets the Roles by their ids.
-local function roles(ids: { number }, cookie: string?): { GroupRoleDetailResponse }
-	local response = requestWithCsrfToken({
+local function roles(ids: { number }, cookie: string?): Response<{ GroupRoleDetailResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/roles?ids={table.concat(ids, "&ids=")}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Posts a social links
-local function addSocialLink(request: SocialLinkRequest & { groupId: number }, cookie: string): SocialLinkResponse
-	local response = requestWithCsrfToken({
+local function addSocialLink(
+	request: SocialLinkRequest & { groupId: number },
+	cookie: string
+): Response<SocialLinkResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v1/groups/{request.groupId}/social-links`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get social link data associated with a group
-local function socialLinks(groupId: number, cookie: string): { SocialLinkResponse }
-	local response = requestWithCsrfToken({
+local function socialLinks(groupId: number, cookie: string): Response<{ SocialLinkResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v1/groups/{groupId}/social-links`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Creates a post on a group wall
-local function sendMessage(request: CreateWallPostRequest & { groupId: number }, cookie: string): GroupWallPostV2Model
-	local response = requestWithCsrfToken({
+local function sendMessage(
+	request: CreateWallPostRequest & { groupId: number },
+	cookie: string
+): Response<GroupWallPostV2Model>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://groups.roblox.com/v2/groups/{request.groupId}/wall/posts`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets a list of group wall posts.
 local function messages(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): GroupWallPostV2ModelPages
-	local response = requestWithCsrfToken({
+): Response<GroupWallPostV2ModelPages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/groups/{request.groupId}/wall/posts?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Multi-get groups information by Ids.
-local function multiple(groupIds: { number }, cookie: string?): { GroupResponseV2 }
-	local response = requestWithCsrfToken({
+local function multiple(groupIds: { number }, cookie: string?): Response<{ GroupResponseV2 }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/groups?groupIds={table.concat(groupIds, "&groupIds=")}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Gets a list of all group roles for groups the specified user is in.
 local function rolesOf(
 	request: { userId: number, includeLocked: boolean, includeNotificationPreferences: boolean },
 	cookie: string?
-): { GroupMembershipResponse }
-	local response = requestWithCsrfToken({
+): Response<{ GroupMembershipResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://groups.roblox.com/v2/users/{request.userId}/groups/roles?includeLocked={request.includeLocked}&includeNotificationPreferences={request.includeNotificationPreferences}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 return {

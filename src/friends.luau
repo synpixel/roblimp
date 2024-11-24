@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 export type FriendsPageMetadataResponse = {
 	isFriendsFilterBarEnabled: boolean,
@@ -144,326 +148,286 @@ export type FriendResponsePages = {
 export type DeclineAllFriendRequestsResponse = { backgrounded: boolean }
 
 --- Returns whether or not the current user is following each userId in a list of userIds
-local function following(targetUserIds: { number }, cookie: string): { FollowingExistsResponse }
-	local response = requestWithCsrfToken({
+local function following(targetUserIds: { number }, cookie: string): Response<{ FollowingExistsResponse }>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/following-exists`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", { targetUserIds = targetUserIds }),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).followings
+	}):map(function(response)
+		return serde.decode("json", response.body).followings
+	end)
 end
 
 --- Creates the following between a user and user with targetUserId
 local function follow(
 	request: CaptchaTokenRequest & { targetUserId: number },
 	cookie: string
-): CaptchaStatusResponseModel
-	local response = requestWithCsrfToken({
+): Response<CaptchaStatusResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/follow`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get the number of friends a user has
-local function countFriendsOf(userId: number, cookie: string?): number
-	local response = requestWithCsrfToken({
+local function countFriendsOf(userId: number, cookie: string?): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{userId}/friends/count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).count
+	}):map(function(response)
+		return serde.decode("json", response.body).count
+	end)
 end
 
-local function metadata(targetUserId: number?, cookie: string?): FriendsPageMetadataResponse
-	local response = requestWithCsrfToken({
+local function metadata(targetUserId: number?, cookie: string?): Response<FriendsPageMetadataResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/metadata?targetUserId={targetUserId or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get the number of friends a user has
-local function count(cookie: string): number
-	local response = requestWithCsrfToken({
+local function count(cookie: string): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/my/friends/count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).count
+	}):map(function(response)
+		return serde.decode("json", response.body).count
+	end)
 end
 
 --- Accept a friend request.
-local function acceptFriendRequest(requesterUserId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function acceptFriendRequest(requesterUserId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/users/{requesterUserId}/accept-friend-request`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Search for friends by name using a text query.
 local function search(
 	request: { userId: number, query: string?, cursor: string?, limit: number? },
 	cookie: string
-): FriendResponsePages
-	local response = requestWithCsrfToken({
+): Response<FriendResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/search?query={request.query or ""}&cursor={request.cursor or ""}&limit={request.limit or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get list of all online friends for the specified user.
-local function onlineFriendsOf(request: { userId: number, userSort: number? }, cookie: string): { UserPresenceResponse }
-	local response = requestWithCsrfToken({
+local function onlineFriendsOf(
+	request: { userId: number, userSort: number? },
+	cookie: string
+): Response<{ UserPresenceResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/online?userSort={request.userSort or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Decline all pending friend requests for the authenticated user.
-local function declineAllFriendRequests(cookie: string): boolean
-	local response = requestWithCsrfToken({
+local function declineAllFriendRequests(cookie: string): Response<boolean>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/friend-requests/decline-all`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).backgrounded
+	}):map(function(response)
+		return serde.decode("json", response.body).backgrounded
+	end)
 end
 
 --- Get all users that user with targetUserId is following in page response format
 local function followingsOf(
 	request: { targetUserId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): UserResponsePages
-	local response = requestWithCsrfToken({
+): Response<UserResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/followings?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Check if the requesting user is friends with the specified users.
-local function areFriends(request: MultigetAreFriendsRequestModel & { userId: number }, cookie: string): { number }
-	local response = requestWithCsrfToken({
+local function areFriends(
+	request: MultigetAreFriendsRequestModel & { userId: number },
+	cookie: string
+): Response<{ number }>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/user/{request.userId}/multiget-are-friends`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).friendsId
+	}):map(function(response)
+		return serde.decode("json", response.body).friendsId
+	end)
 end
 
 --- Get all users that follow user with targetUserId in page response format
 local function followersOf(
 	request: { targetUserId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): UserResponsePages
-	local response = requestWithCsrfToken({
+): Response<UserResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/followers?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Unfriend a user
-local function unfriend(targetUserId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function unfriend(targetUserId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/users/{targetUserId}/unfriend`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Send a friend request to target user
 local function sendFriendRequest(
 	request: FriendshipRequestModel & { targetUserId: number },
 	cookie: string
-): CaptchaStatusResponseModel
-	local response = requestWithCsrfToken({
+): Response<CaptchaStatusResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/users/{request.targetUserId}/request-friendship`,
 		headers = { ["Content-Type"] = "application/json", Cookie = `.ROBLOSECURITY={cookie}` },
 		body = serde.encode("json", request),
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get the number of following a user has
-local function countFollowingsOf(targetUserId: number, cookie: string?): number
-	local response = requestWithCsrfToken({
+local function countFollowingsOf(targetUserId: number, cookie: string?): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{targetUserId}/followings/count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).count
+	}):map(function(response)
+		return serde.decode("json", response.body).count
+	end)
 end
 
 --- Deletes the following between a user and user with targetUserId
-local function unfollow(targetUserId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function unfollow(targetUserId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/users/{targetUserId}/unfollow`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get list of inactive friends for the specified user.
-local function inactiveFriendsOf(userId: number, cookie: string): { UserResponse }
-	local response = requestWithCsrfToken({
+local function inactiveFriendsOf(userId: number, cookie: string): Response<{ UserResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{userId}/friends/inactive`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Get all users that friend requests with targetUserId using exclusive start paging
 local function friendRequests(
 	request: { limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
-): FriendRequestResponsePages
-	local response = requestWithCsrfToken({
+): Response<FriendRequestResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/my/friends/requests?limit={request.limit or ""}&cursor={request.cursor or ""}&sortOrder={request.sortOrder or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Decline a friend request.
-local function declineFriendRequest(requesterUserId: number, cookie: string): ApiEmptyResponseModel
-	local response = requestWithCsrfToken({
+local function declineFriendRequest(requesterUserId: number, cookie: string): Response<ApiEmptyResponseModel>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://friends.roblox.com/v1/users/{requesterUserId}/decline-friend-request`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Get list of all friends for the specified user.
-local function friendsOf(request: { userId: number, userSort: number? }, cookie: string?): { UserResponse }
-	local response = requestWithCsrfToken({
+local function friendsOf(request: { userId: number, userSort: number? }, cookie: string?): Response<{ UserResponse }>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{request.userId}/friends?userSort={request.userSort or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).data
+	}):map(function(response)
+		return serde.decode("json", response.body).data
+	end)
 end
 
 --- Get a paginated list of all friends for the specified user.
 local function friendshipsOf(
 	request: { userId: number, userSort: number?, cursor: string?, limit: number? },
 	cookie: string?
-): FriendResponsePages
-	local response = requestWithCsrfToken({
+): Response<FriendResponsePages>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{request.userId}/friends/find?userSort={request.userSort or ""}&cursor={request.cursor or ""}&limit={request.limit or ""}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Return the number of pending friend requests.
-local function countFriendRequests(cookie: string): number
-	local response = requestWithCsrfToken({
+local function countFriendRequests(cookie: string): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/user/friend-requests/count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).count
+	}):map(function(response)
+		return serde.decode("json", response.body).count
+	end)
 end
 
 --- Get the number of following a user has
-local function countFollowersOf(targetUserId: number, cookie: string?): number
-	local response = requestWithCsrfToken({
+local function countFollowersOf(targetUserId: number, cookie: string?): Response<number>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://friends.roblox.com/v1/users/{targetUserId}/followers/count`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie or ""}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body).count
+	}):map(function(response)
+		return serde.decode("json", response.body).count
+	end)
 end
 
 return {

@@ -1,5 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
+local Result = require("../lune_packages/result")
+
+type Error = requestWithCsrfToken.Error
+type Response<T> = Result.Result<T, Error>
 
 --- Model for a user following a universe controller responses
 export type UserFollowingUniverseResponse = { userId: number, universeId: number }
@@ -21,55 +25,53 @@ export type FollowsByTypeResponse = { followedSources: {}, followerId: number, f
 local function followingStatus(
 	request: { userId: number, universeId: number },
 	cookie: string
-): UserFollowingUniverseStatusResponse
-	local response = requestWithCsrfToken({
+): Response<UserFollowingUniverseStatusResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://followings.roblox.com/v1/users/{request.userId}/universes/{request.universeId}/status`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Creates the following between a user with userId and universe with universeId
-local function follow(request: { userId: number, universeId: number }, cookie: string): UserFollowingUniverseResponse
-	local response = requestWithCsrfToken({
+local function follow(
+	request: { userId: number, universeId: number },
+	cookie: string
+): Response<UserFollowingUniverseResponse>
+	return requestWithCsrfToken({
 		method = "POST",
 		url = `https://followings.roblox.com/v1/users/{request.userId}/universes/{request.universeId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Deletes the following between a user with userId and universe with universeId
-local function unfollow(request: { userId: number, universeId: number }, cookie: string): UserFollowingUniverseResponse
-	local response = requestWithCsrfToken({
+local function unfollow(
+	request: { userId: number, universeId: number },
+	cookie: string
+): Response<UserFollowingUniverseResponse>
+	return requestWithCsrfToken({
 		method = "DELETE",
 		url = `https://followings.roblox.com/v1/users/{request.userId}/universes/{request.universeId}`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 --- Gets all universes followed by a user.
-local function followingsOf(userId: number, cookie: string): FollowsByTypeResponse
-	local response = requestWithCsrfToken({
+local function followingsOf(userId: number, cookie: string): Response<FollowsByTypeResponse>
+	return requestWithCsrfToken({
 		method = "GET",
 		url = `https://followings.roblox.com/v2/users/{userId}/universes`,
 		headers = { Cookie = `.ROBLOSECURITY={cookie}` },
-	})
-
-	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
-
-	return serde.decode("json", response.body)
+	}):map(function(response)
+		return serde.decode("json", response.body)
+	end)
 end
 
 return { followingStatus = followingStatus, followingsOf = followingsOf, follow = follow, unfollow = unfollow }
