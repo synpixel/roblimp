@@ -43,7 +43,7 @@
     "/v1/outfits/{userOutfitId}/delete": { "post": "deleteOutfit" },
     "/v2/avatar/avatar": { "get": "get" },
     "/v2/avatar/users/{userId}/avatar": { "get": "of" },
-    "/v2/avatar/users/{userId}/outfits": { "get": "outfitsOf" },
+    "/v2/avatar/users/{userId}/outfits": { "get": "outfits" },
     "/v2/avatar/set-body-colors": { "post": "setBodyColors" },
     "/v2/avatar/set-wearing-assets": { "post": "wearAssets" },
     "/v3/outfits/{userOutfitId}/details": { "get": "outfit" },
