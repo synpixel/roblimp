@@ -362,6 +362,8 @@ local function writeNamespace(
 
 				file ..= `return requestWithCsrfToken(\{\n`
 
+				file ..= `method = "{method:upper()}",\n`
+
 				local takesEndpoint = endpoint:gsub("{(.-)}", `\{{takes:format("%1")}\}`)
 				local pathSeparator = "?"
 
