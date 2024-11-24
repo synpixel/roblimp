@@ -443,7 +443,7 @@ local function buildPackage(mappings: Mappings, outDir: string)
 
 	fs.writeDir(outDir)
 
-	fs.copy("utils", `{outDir}/utils`)
+	fs.copy("src/utils", `{outDir}/utils`)
 
 	for namespace, endpoints in mappings do
 		local file = writeNamespace(namespace, endpoints)
