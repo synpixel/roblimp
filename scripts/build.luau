@@ -17,7 +17,7 @@ type OpenApiDefinition = {
 local DEPLOYMENT = "203AYidpISfppRfYMTY9D"
 local MAPPINGS = serde.decode("json", fs.readFile("json/mappings.json")) :: Mappings
 local OUT_DIR = "build"
-local FORMAT = false
+local FORMAT = true
 
 local function reference(ref: string): string
 	local isPages = ref:match("%[(.+)%]") ~= nil
