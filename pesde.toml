@@ -4,12 +4,15 @@ description = "An auto-generated wrapper around Roblox's API"
 authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
 license = "MIT"
-includes = ["pesde.toml", "README.md", "LICENSE", "src"]
+includes = ["pesde.toml", "README.md", "LICENSE", "build", "utils"]
 private = true
 
 [target]
 environment = "lune"
-lib = "src/init.luau"
+lib = "build/init.luau"
+
+[scripts]
+build = "scripts/build"
 
 [indices]
 default = "https://github.com/daimond113/pesde-index"
