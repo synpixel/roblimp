@@ -36,7 +36,7 @@
     "/v1/avatar/metadata": { "get": "metadata" },
     "/v1/avatar-rules": { "get": "rules" },
     "/v1/recent-items/{recentItemListType}/list": { "get": "recentItems" },
-    "/v1/users/{userId}/currently-wearing": { "get": "assetsWorn" },
+    "/v1/users/{userId}/currently-wearing": { "get": "wearing" },
     "/v1/avatar/redraw-thumbnail": { "post": "redrawThumbnail" },
     "/v1/avatar/set-player-avatar-type": { "post": "setRigType" },
     "/v1/avatar/set-scales": { "post": "setScales" },
@@ -258,7 +258,7 @@
       "delete": "removePrimary"
     },
     "/v1/groups/{groupId}/description": { "patch": "setDescription" },
-    "/v1/groups/{groupId}/name": { "patch": "setName" },
+    "/v1/groups/{groupId}/name": { "patch": "rename" },
     "/v1/groups/{groupId}/notification-preference": {
       "patch": "toggleNotifications"
     },
@@ -309,7 +309,7 @@
       "get": "destination"
     },
     "/v2/push-notifications/get-destinations": { "get": "destinations" },
-    "/v2/push-notifications/notification-ids": { "get": "multiple" },
+    "/v2/push-notifications/notification-ids": { "get": "ids" },
     "/v2/stream-notifications/get-latest-game-updates": {
       "get": "latestGameUpdates"
     },
