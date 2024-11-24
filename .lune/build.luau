@@ -329,7 +329,7 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/announcements/metadata"] = { get = "announcementMetadata" },
 		["/v1/messages"] = { get = "all" },
 		["/v1/messages/{messageId}"] = { get = "get" },
-		["/v1/messages/{userId}/can-message"] = { get = "canMessage" },
+		["/v1/messages/{userId}/can-message"] = { get = "canSend" },
 		["/v1/messages/unread/count"] = { get = "countUnread" },
 		["/v1/messages/archive"] = { post = "archive" },
 		["/v1/messages/unarchive"] = { post = "unarchive" },
