@@ -17,7 +17,7 @@ type OpenApiDefinition = {
 local DEPLOYMENT = "203AYidpISfppRfYMTY9D"
 local MAPPINGS = serde.decode("json", fs.readFile("json/mappings.json")) :: Mappings
 local OUT_DIR = "build"
-local FORMAT = true
+local FORMAT = false
 
 local function reference(ref: string): string
 	local isPages = ref:match("%[(.+)%]") ~= nil
@@ -259,15 +259,28 @@ local function writeNamespace(
 					route.parameters = {}
 				end
 
+				if alias == "batch" then
+					print(route.parameters)
+				end
+
 				local body = nil
-				for index, parameter in route.parameters do
-					if parameter["in"] == "body" then
-						body = parameter
-						table.remove(route.parameters, index)
-					elseif parameter["in"] == "header" then
-						table.remove(route.parameters, index)
-					else
+
+				do
+					local removeParameters: { [number]: true } = {}
+
+					for index, parameter in route.parameters do
 						parameter.name = parameter.name:sub(1, 1):lower() .. parameter.name:sub(2)
+
+						if parameter["in"] == "body" then
+							body = parameter
+							removeParameters[index] = true
+						elseif parameter["in"] == "header" then
+							removeParameters[index] = true
+						end
+					end
+
+					for index in removeParameters do
+						route.parameters[index] = nil
 					end
 				end
 
@@ -282,14 +295,21 @@ local function writeNamespace(
 				local construct = false
 
 				local function defaultRequest()
-					if body ~= nil then
-						request = request or ""
+					local hasBody = body ~= nil
+					local hasParameters = next(route.parameters) ~= nil
 
-						request ..= `{translate(body.schema)} & `
+					if hasBody then
+						request = request or ""
+						request ..= `{translate(body.schema)}`
+
+						if hasParameters then
+							request ..= "&"
+						end
+
 						markAsUsed(body.schema, documentation)
 					end
 
-					if next(route.parameters) ~= nil then
+					if hasParameters then
 						request = request or ""
 						request ..= "{"
 
@@ -309,6 +329,7 @@ local function writeNamespace(
 
 				if next(route.parameters) == nil and body ~= nil then
 					local model = traverseRef(body.schema, documentation)
+
 					if model.type == "object" then
 						local key, property = singleKey(model.properties or {})
 						if key ~= nil then
