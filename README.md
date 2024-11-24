@@ -18,16 +18,11 @@ local roblimp = require("@pkg/roblimp")
 
 local COOKIE = assert(roblox.getAuthCookie(true))
 
-local user = roblimp.users.authenticated(COOKIE):unwrap()
-print(`logged in on @{user.name}`)
+local you = roblimp.users.authenticated(COOKIE):unwrap()
+print(`name: {you.name}`)
 
-local memberships = roblimp.groups
-	.rolesOf({
-		userId = user.id,
-		includeLocked = true,
-		includeNotificationPreferences = false,
-	})
-	:unwrap()
-
-print(`you're a member of {#memberships} groups`)
+local details = roblimp.users.get(you.id):unwrap()
+print(`bio: "{details.description}"`)
+print(`join date: {details.created}`)
+print(`verified: {details.hasVerifiedBadge}`)
 ```
