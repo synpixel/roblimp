@@ -2,6 +2,14 @@
 
 An auto-generated wrapper around Roblox's API.
 
+## Installation
+
+### pesde
+
+```sh
+pesde add synpixel/roblimp
+```
+
 ## Quick Start
 
 ```luau
