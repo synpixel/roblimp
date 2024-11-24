@@ -1,31 +1,9 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- [badges.roblox.com](https://badges.roblox.com)
---- @class badges
-
 --- A response containing universe information.
---- @interface UniverseResponse
---- .id number
---- .rootPlaceId number
---- .name string
---- @within badges
 export type UniverseResponse = { id: number, rootPlaceId: number, name: string }
 
---- @interface BadgeResponseV2
---- .enabled boolean
---- .description string
---- .id number
---- .iconImageId number
---- .displayName string
---- .updated string
---- .name string
---- .created string
---- .displayIconImageId number
---- .statistics BadgeAwardStatisticsResponse
---- .awarder BadgeAwarderTypePages
---- .displayDescription string
---- @within badges
 export type BadgeResponseV2 = {
 	enabled: boolean,
 	description: string,
@@ -42,21 +20,6 @@ export type BadgeResponseV2 = {
 }
 
 --- Response for the GetBadgesByUser endpoint.
---- @interface GetBadgesByUserResponse
---- .enabled boolean
---- .creator BadgeCreatorResponse
---- .id number
---- .iconImageId number
---- .displayName string
---- .updated string
---- .created string
---- .name string
---- .awarder BadgeAwarderTypePages
---- .displayIconImageId number
---- .statistics BadgeAwardStatisticsResponse
---- .displayDescription string
---- .description string
---- @within badges
 export type GetBadgesByUserResponse = {
 	enabled: boolean,
 	creator: BadgeCreatorResponse,
@@ -73,21 +36,8 @@ export type GetBadgesByUserResponse = {
 	description: string,
 }
 
---- @interface BadgeAwarderTypePages
---- .id number
---- .type number
---- .name string
---- @within badges
 export type BadgeAwarderTypePages = { id: number, type: number, name: string }
 
---- @interface StringPages
---- .discriminator string
---- .sortOrder number
---- .key string
---- .count number
---- .pagingDirection number
---- .pageNumber number
---- @within badges
 export type StringPages = {
 	discriminator: string,
 	sortOrder: number,
@@ -97,16 +47,6 @@ export type StringPages = {
 	pageNumber: number,
 }
 
---- @interface Stream
---- .CanRead boolean
---- .CanWrite boolean
---- .CanTimeout boolean
---- .Position number
---- .WriteTimeout number
---- .Length number
---- .ReadTimeout number
---- .CanSeek boolean
---- @within badges
 export type Stream = {
 	CanRead: boolean,
 	CanWrite: boolean,
@@ -119,32 +59,11 @@ export type Stream = {
 }
 
 --- Represents information about the badge creator. (Creator of the place that awarded the badge)
---- @interface BadgeCreatorResponse
---- .id number
---- .type string
---- .name string
---- @within badges
 export type BadgeCreatorResponse = { id: number, type: string, name: string }
 
---- @type IUploadedFile buffer
---- @within badges
 export type IUploadedFile = buffer
 
 --- A response containing badge information.
---- @interface BadgeResponse
---- .enabled boolean
---- .description string
---- .awardingUniverse UniverseResponse
---- .id number
---- .iconImageId number
---- .displayName string
---- .updated string
---- .name string
---- .displayIconImageId number
---- .statistics BadgeAwardStatisticsResponse
---- .created string
---- .displayDescription string
---- @within badges
 export type BadgeResponse = {
 	enabled: boolean,
 	description: string,
@@ -160,16 +79,8 @@ export type BadgeResponse = {
 	displayDescription: string,
 }
 
---- @interface BadgeAwardResponsePages
---- .data { BadgeAwardResponse }
---- @within badges
 export type BadgeAwardResponsePages = { data: { BadgeAwardResponse } }
 
---- @interface GetBadgesByUserResponsePages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { GetBadgesByUserResponse }
---- @within badges
 export type GetBadgesByUserResponsePages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
@@ -177,52 +88,25 @@ export type GetBadgesByUserResponsePages = {
 }
 
 --- A request model used for updating badge information.
---- @interface UpdateBadgeRequest
---- .enabled boolean
---- .name string
---- .description string
---- @within badges
 export type UpdateBadgeRequest = { enabled: boolean, name: string, description: string }
 
 --- Metadata about badges.
---- @interface BadgeMetadataResponse
---- .maxBadgeNameLength number
---- .badgeCreationPrice number
---- .maxBadgeDescriptionLength number
---- @within badges
 export type BadgeMetadataResponse = {
 	maxBadgeNameLength: number,
 	badgeCreationPrice: number,
 	maxBadgeDescriptionLength: number,
 }
 
---- @interface BadgeResponsePages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { BadgeResponse }
---- @within badges
 export type BadgeResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { BadgeResponse } }
 
---- @interface ApiEmptyResponseModel
---- @within badges
 export type ApiEmptyResponseModel = {}
 
 --- The result of being awarded a badge.
---- @interface BadgeAwardResponse
---- .badgeId number
---- .awardedDate string
---- @within badges
 export type BadgeAwardResponse = { badgeId: number, awardedDate: string }
 
---- @interface BadgeAwardStatisticsResponse
---- .pastDayAwardedCount number
---- .winRatePercentage number
---- .awardedCount number
---- @within badges
 export type BadgeAwardStatisticsResponse = { pastDayAwardedCount: number, winRatePercentage: number, awardedCount: number }
 
 --- Gets timestamps for when badges were awarded to a user.
---- @within badges
 local function awardedTimestamps(
 	request: { userId: number, badgeIds: { number } },
 	cookie: string?
@@ -242,7 +126,6 @@ local function awardedTimestamps(
 end
 
 --- Updates badge configuration.
---- @within badges
 local function update(request: UpdateBadgeRequest & { badgeId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
@@ -257,7 +140,6 @@ local function update(request: UpdateBadgeRequest & { badgeId: number }, cookie:
 end
 
 --- Gets badge information by the badge Id.
---- @within badges
 local function get(badgeId: number, cookie: string?): BadgeResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -271,7 +153,6 @@ local function get(badgeId: number, cookie: string?): BadgeResponse
 end
 
 --- Gets the number of free badges left for the current UTC day by their awarding game.
---- @within badges
 local function freeQuota(universeId: number, cookie: string?): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -285,7 +166,6 @@ local function freeQuota(universeId: number, cookie: string?): number
 end
 
 --- Removes a badge from the user.
---- @within badges
 local function removeFrom(request: { userId: number, badgeId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -299,7 +179,6 @@ local function removeFrom(request: { userId: number, badgeId: number }, cookie: 
 end
 
 --- Gets metadata about the badges system.
---- @within badges
 local function metadata(cookie: string?): BadgeMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -313,7 +192,6 @@ local function metadata(cookie: string?): BadgeMetadataResponse
 end
 
 --- Creates a new badge.
---- @within badges
 local function create(
 	request: {
 		universeId: number,
@@ -338,7 +216,6 @@ local function create(
 end
 
 --- Gets badges by their awarding game.
---- @within badges
 local function universe(
 	request: {
 		universeId: number,
@@ -361,7 +238,6 @@ local function universe(
 end
 
 --- Removes a badge from the authenticated user.
---- @within badges
 local function remove(badgeId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -375,7 +251,6 @@ local function remove(badgeId: number, cookie: string): ApiEmptyResponseModel
 end
 
 --- Gets a list of badges a user has been awarded.
---- @within badges
 local function of(
 	request: { userId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string?

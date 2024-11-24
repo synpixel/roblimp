@@ -1,22 +1,8 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- [inventory.roblox.com](https://inventory.roblox.com)
---- @class inventory
-
---- @interface Int64Pages
---- .SortOrder number
---- .PagingDirection number
---- .Count number
---- @within inventory
 export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
---- @interface AssetsExplorerCategoryModel
---- .items { AssetsExplorerCategoryItemModel }
---- .categoryType string
---- .name string
---- .displayName string
---- @within inventory
 export type AssetsExplorerCategoryModel = {
 	items: { AssetsExplorerCategoryItemModel },
 	categoryType: string,
@@ -24,47 +10,20 @@ export type AssetsExplorerCategoryModel = {
 	displayName: string,
 }
 
---- @interface CollectibleUserAssetModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { CollectibleUserAssetModel }
---- @within inventory
 export type CollectibleUserAssetModelPages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { CollectibleUserAssetModel },
 }
 
---- @interface PlaceModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { PlaceModel }
---- @within inventory
 export type PlaceModelPages = { nextPageCursor: string, previousPageCursor: string, data: { PlaceModel } }
 
 --- A model that contains a list of asset ids
---- @interface AssetIdListModel
---- .assetIds { number }
---- @within inventory
 export type AssetIdListModel = { assetIds: { number } }
 
---- @interface CanViewInventoryResponse
---- .canView boolean
---- @within inventory
 export type CanViewInventoryResponse = { canView: boolean }
 
 --- A model containing information about a Roblox.Platform.AssetOwnership.UserAsset
---- @interface CollectibleUserAssetModel
---- .buildersClubMembershipType number
---- .serialNumber number
---- .userAssetId number
---- .assetId number
---- .name string
---- .originalPrice number
---- .isOnHold boolean
---- .assetStock number
---- .recentAveragePrice number
---- @within inventory
 export type CollectibleUserAssetModel = {
 	buildersClubMembershipType: number,
 	serialNumber: number,
@@ -77,14 +36,6 @@ export type CollectibleUserAssetModel = {
 	recentAveragePrice: number,
 }
 
---- @interface AssetsExplorerCategoryItemModel
---- .type number
---- .name string
---- .filter string
---- .id number
---- .categoryType string
---- .displayName string
---- @within inventory
 export type AssetsExplorerCategoryItemModel = {
 	type: number,
 	name: string,
@@ -95,99 +46,35 @@ export type AssetsExplorerCategoryItemModel = {
 }
 
 --- Model representing an inventory item
---- @interface IItemModel
---- .Id number
---- .Type number
---- .Name string
---- .InstanceId number
---- @within inventory
 export type IItemModel = { Id: number, Type: number, Name: string, InstanceId: number }
 
---- @interface PlaceModel
---- .universeId number
---- .name string
---- .priceInRobux number
---- .placeId number
---- .creator CreatorModel
---- @within inventory
 export type PlaceModel = { universeId: number, name: string, priceInRobux: number, placeId: number, creator: CreatorModel }
 
 --- Model class that contains the categories of the Inventory or Favorites page
---- @interface CategoriesModel
---- .categories { AssetsExplorerCategoryModel }
---- @within inventory
 export type CategoriesModel = { categories: { AssetsExplorerCategoryModel } }
 
---- @interface IItemModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { IItemModel }
---- @within inventory
 export type IItemModelPages = { nextPageCursor: string, previousPageCursor: string, data: { IItemModel } }
 
---- @interface ApiEmptyResponseModel
---- @within inventory
 export type ApiEmptyResponseModel = {}
 
---- @interface CreatorModel
---- .id number
---- .type number
---- .name string
---- @within inventory
 export type CreatorModel = { id: number, type: number, name: string }
 
---- @interface InventoryPageResponse
---- .total number
---- .data { nil }
---- .includesAccessories boolean
---- @within inventory
 export type InventoryPageResponse = { total: number, data: { nil }, includesAccessories: boolean }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
---- @interface UserModel
---- .username string
---- .buildersClubMembershipType number
---- .userId number
---- @within inventory
 export type UserModel = { username: string, buildersClubMembershipType: number, userId: number }
 
---- @interface UserAssetItemModelV2Pages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { UserAssetItemModelV2 }
---- @within inventory
 export type UserAssetItemModelV2Pages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { UserAssetItemModelV2 },
 }
 
---- @interface AssetOwnerResponsePages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { AssetOwnerResponse }
---- @within inventory
 export type AssetOwnerResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { AssetOwnerResponse } }
 
---- @interface AgentTypePages
---- .id number
---- .type number
---- .name string
---- @within inventory
 export type AgentTypePages = { id: number, type: number, name: string }
 
 --- A model containing information about an inventory item.
---- @interface InventoryItemModel
---- .collectibleItemInstanceId string
---- .assetName string
---- .userAssetId number
---- .owner UserModel
---- .collectibleItemId string
---- .updated string
---- .assetId number
---- .created string
---- .serialNumber number
---- @within inventory
 export type InventoryItemModel = {
 	collectibleItemInstanceId: string,
 	assetName: string,
@@ -200,34 +87,15 @@ export type InventoryItemModel = {
 	serialNumber: number,
 }
 
---- @interface InventoryItemModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { InventoryItemModel }
---- @within inventory
 export type InventoryItemModelPages = { nextPageCursor: string, previousPageCursor: string, data: { InventoryItemModel } }
 
 --- The user asset item model for V2 controllers.
---- @interface UserAssetItemModelV2
---- .created string
---- .assetId number
---- .name string
---- .assetType number
---- @within inventory
 export type UserAssetItemModelV2 = { created: string, assetId: number, name: string, assetType: number }
 
---- @interface AssetOwnerResponse
---- .created string
---- .serialNumber number
---- .id number
---- .owner AgentTypePages
---- .updated string
---- @within inventory
 export type AssetOwnerResponse =
 	{ created: string, serialNumber: number, id: number, owner: AgentTypePages, updated: string }
 
 --- Return favorites categories for a user
---- @within inventory
 local function favorites(userId: number, cookie: string?): { AssetsExplorerCategoryModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -241,7 +109,6 @@ local function favorites(userId: number, cookie: string?): { AssetsExplorerCateg
 end
 
 --- Gets whether the specified user's inventory can be viewed.
---- @within inventory
 local function canView(userId: number, cookie: string?): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -255,7 +122,6 @@ local function canView(userId: number, cookie: string?): boolean
 end
 
 --- Gets all collectible assets owned by the specified user.
---- @within inventory
 local function collectibles(
 	request: {
 		userId: number,
@@ -278,7 +144,6 @@ local function collectibles(
 end
 
 --- Gets Created, MyGames, or OtherGames places inventory for a user
---- @within inventory
 local function games(
 	request: { userId: number, placesTab: number, itemsPerPage: number, cursor: number },
 	cookie: string
@@ -295,7 +160,6 @@ local function games(
 end
 
 --- Return inventory categories for a user
---- @within inventory
 local function categories(userId: number, cookie: string?): { AssetsExplorerCategoryModel }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -309,7 +173,6 @@ local function categories(userId: number, cookie: string?): { AssetsExplorerCate
 end
 
 --- Gets whether a user owns an item of type itemType with id itemTargetId.
---- @within inventory
 local function owns(request: { userId: number, itemType: number, itemTargetId: number }, cookie: string?): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -323,7 +186,6 @@ local function owns(request: { userId: number, itemType: number, itemTargetId: n
 end
 
 --- Get user's inventory by multiple Roblox.Platform.Assets.AssetType.
---- @within inventory
 local function of(
 	request: {
 		userId: number,
@@ -427,7 +289,6 @@ local function of(
 end
 
 --- Gets a list of owners of an asset.
---- @within inventory
 local function owners(
 	request: { assetId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
@@ -446,7 +307,6 @@ end
 --- Give up an asset owned by the authenticated user.
 --- Assets that are created by Roblox user or are limited edition are not eligible for deletion
 --- and will return NotEligibleForDelete.
---- @within inventory
 local function remove(assetId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",

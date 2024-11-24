@@ -1,16 +1,7 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- [accountsettings.roblox.com](https://accountsettings.roblox.com)
---- @class accountsettings
-
 --- Request model for updating an email
---- @interface UpdateEmailRequest
---- .password string
---- .skipVerificationEmail boolean
---- .emailAddress string
---- .isAdsAccount boolean
---- @within accountsettings
 export type UpdateEmailRequest = {
 	password: string,
 	skipVerificationEmail: boolean,
@@ -18,43 +9,20 @@ export type UpdateEmailRequest = {
 	isAdsAccount: boolean,
 }
 
---- @interface UpdateAccountCountryResponse
---- @within accountsettings
 export type UpdateAccountCountryResponse = {}
 
 --- Response model for getting the user's inventory privacy settings
---- @interface InventoryPrivacyResponse
---- .inventoryPrivacy number
---- @within accountsettings
 export type InventoryPrivacyResponse = { inventoryPrivacy: number }
 
---- @interface StringPages
---- .data { string }
---- @within accountsettings
 export type StringPages = { data: { string } }
 
 --- Response model for getting the user's email address and verified status
---- @interface EmailResponse
---- .verified boolean
---- .emailAddress string
---- .canBypassPasswordForEmailUpdate boolean
---- @within accountsettings
 export type EmailResponse = { verified: boolean, emailAddress: string, canBypassPasswordForEmailUpdate: boolean }
 
 --- Response model for getting the user's game chat privacy settings
---- @interface GameChatPrivacyResponse
---- .gameChatPrivacy string
---- @within accountsettings
 export type GameChatPrivacyResponse = { gameChatPrivacy: string }
 
 --- A model containing website metadata for avatars
---- @interface AccountsSettingsMetadataModel
---- .IsAccountsRestrictionsSpamBugFixEnabled boolean
---- .IsContentControlsEnabled boolean
---- .IsParentalNotificationSettingsInUIEnabled boolean
---- .IsParentalMonthlyLimitInUIEnabled boolean
---- .MaximumParentalControlsMonthlySpendLimitInUSD number
---- @within accountsettings
 export type AccountsSettingsMetadataModel = {
 	IsAccountsRestrictionsSpamBugFixEnabled: boolean,
 	IsContentControlsEnabled: boolean,
@@ -63,35 +31,17 @@ export type AccountsSettingsMetadataModel = {
 	MaximumParentalControlsMonthlySpendLimitInUSD: number,
 }
 
---- @interface ApiEmptyResponseModel
---- @within accountsettings
 export type ApiEmptyResponseModel = {}
 
 --- Request model for trade privacy setting update
---- @interface UpdateTradePrivacyRequest
---- .tradePrivacy number
---- @within accountsettings
 export type UpdateTradePrivacyRequest = { tradePrivacy: number }
 
 --- Request Model for updating a user's account country
---- @interface UpdateAccountCountryRequest
---- .targetCountryId number
---- @within accountsettings
 export type UpdateAccountCountryRequest = { targetCountryId: number }
 
 --- Response model for getting the user's trade value settings
---- @interface TradeValueResponse
---- .tradeValue string
---- @within accountsettings
 export type TradeValueResponse = { tradeValue: string }
 
---- @interface UserAccountCountry
---- .countryId number
---- .localizedSubdivision string
---- .countryName string
---- .localizedName string
---- .subdivisionIso string
---- @within accountsettings
 export type UserAccountCountry = {
 	countryId: number,
 	localizedSubdivision: string,
@@ -100,31 +50,15 @@ export type UserAccountCountry = {
 	subdivisionIso: string,
 }
 
---- @interface AccountCountrySettingsResponse
---- .value UserAccountCountry
---- @within accountsettings
 export type AccountCountrySettingsResponse = { value: UserAccountCountry }
 
 --- Request model for inventory privacy setting update
---- @interface InventoryPrivacyRequest
---- .inventoryPrivacy number
---- @within accountsettings
 export type InventoryPrivacyRequest = { inventoryPrivacy: number }
 
 --- Another user that has been blocked by this user.
---- @interface BlockedUser
---- .name string
---- .userId number
---- .displayName string
---- @within accountsettings
 export type BlockedUser = { name: string, userId: number, displayName: string }
 
 --- Response model for updating the user's inventory privacy settings
---- @interface InventoryPrivacyUpdateResponse
---- .privacySettingResponse number
---- .tradePrivacy number
---- .inventoryPrivacy number
---- @within accountsettings
 export type InventoryPrivacyUpdateResponse = {
 	privacySettingResponse: number,
 	tradePrivacy: number,
@@ -132,89 +66,44 @@ export type InventoryPrivacyUpdateResponse = {
 }
 
 --- Request model for trade value setting update
---- @interface TradeValueRequest
---- .tradeValue number
---- @within accountsettings
 export type TradeValueRequest = { tradeValue: number }
 
 --- Response model for getting the user's trade privacy settings
---- @interface TradePrivacyResponse
---- .tradePrivacy string
---- @within accountsettings
 export type TradePrivacyResponse = { tradePrivacy: string }
 
 --- Response model for updating the user's trade privacy settings
---- @interface TradePrivacyUpdateResponse
---- .privacySettingResponse number
---- .tradePrivacy number
---- .inventoryPrivacy number
---- @within accountsettings
 export type TradePrivacyUpdateResponse = { privacySettingResponse: number, tradePrivacy: number, inventoryPrivacy: number }
 
 --- Response model for get user's theme type
---- @interface ThemeConfigurationResponse
---- .themeType string
---- @within accountsettings
 export type ThemeConfigurationResponse = { themeType: string }
 
 --- Request model for game chat privacy setting update
---- @interface GameChatPrivacyRequest
---- .gameChatPrivacy number
---- @within accountsettings
 export type GameChatPrivacyRequest = { gameChatPrivacy: number }
 
 --- Response model for getting blocked users.
---- @interface GetDetailedBlockedUsersResponse
---- .blockedUsers { BlockedUser }
---- .total number
---- .maxBlockedUsers number
---- @within accountsettings
 export type GetDetailedBlockedUsersResponse = { blockedUsers: { BlockedUser }, total: number, maxBlockedUsers: number }
 
 --- Request model for sending a verify email request
---- @interface SendVerifyEmailRequest
---- .freeItem boolean
---- .isAdsAccount boolean
---- @within accountsettings
 export type SendVerifyEmailRequest = { freeItem: boolean, isAdsAccount: boolean }
 
---- @interface GetBlockedUsersResponse
---- .blockedUserIds { number }
---- @within accountsettings
 export type GetBlockedUsersResponse = { blockedUserIds: { number } }
 
 --- Response model for getting the user's private message privacy settings
---- @interface PrivateMessagePrivacyResponse
---- .privateMessagePrivacy string
---- @within accountsettings
 export type PrivateMessagePrivacyResponse = { privateMessagePrivacy: string }
 
 --- Request model for private message privacy setting update
---- @interface PrivateMessagePrivacyRequest
---- .privateMessagePrivacy string
---- @within accountsettings
 export type PrivateMessagePrivacyRequest = { privateMessagePrivacy: string }
 
 --- Response model for get user's theme type
---- @interface ThemeConfigurationRequest
---- .themeType string
---- @within accountsettings
 export type ThemeConfigurationRequest = { themeType: string }
 
 --- Response model for getting the user's app chat privacy setting GET
---- @interface AppChatPrivacyResponse
---- .appChatPrivacy string
---- @within accountsettings
 export type AppChatPrivacyResponse = { appChatPrivacy: string }
 
 --- Request model for app chat privacy setting update
---- @interface AppChatPrivacyRequest
---- .appChatPrivacy number
---- @within accountsettings
 export type AppChatPrivacyRequest = { appChatPrivacy: number }
 
 --- Updates the user's account country.
---- @within accountsettings
 local function setCountry(targetCountryId: number, cookie: string): UpdateAccountCountryResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -229,7 +118,6 @@ local function setCountry(targetCountryId: number, cookie: string): UpdateAccoun
 end
 
 --- Get a user's current account country setting.
---- @within accountsettings
 local function country(cookie: string): UserAccountCountry
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -243,7 +131,6 @@ local function country(cookie: string): UserAccountCountry
 end
 
 --- Updates the authenticated user's email address
---- @within accountsettings
 local function setEmail(request: UpdateEmailRequest, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -258,7 +145,6 @@ local function setEmail(request: UpdateEmailRequest, cookie: string): ApiEmptyRe
 end
 
 --- Gets the authenticated user's email address and verified status
---- @within accountsettings
 local function email(cookie: string): EmailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -272,7 +158,6 @@ local function email(cookie: string): EmailResponse
 end
 
 --- Returns metadata used by the account settings page
---- @within accountsettings
 local function metadata(cookie: string): AccountsSettingsMetadataModel
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -286,7 +171,6 @@ local function metadata(cookie: string): AccountsSettingsMetadataModel
 end
 
 --- Updates a user's inventory privacy setting
---- @within accountsettings
 local function setInventoryPrivacy(inventoryPrivacy: number, cookie: string): InventoryPrivacyUpdateResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -301,7 +185,6 @@ local function setInventoryPrivacy(inventoryPrivacy: number, cookie: string): In
 end
 
 --- Get a user's inventory privacy setting
---- @within accountsettings
 local function inventoryPrivacy(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -315,7 +198,6 @@ local function inventoryPrivacy(cookie: string): number
 end
 
 --- Unblocks a previously blocked user.
---- @within accountsettings
 local function unblock(userId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -329,7 +211,6 @@ local function unblock(userId: number, cookie: string): ApiEmptyResponseModel
 end
 
 --- Updates a user's game chat privacy setting
---- @within accountsettings
 local function setGameChatPrivacy(gameChatPrivacy: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -344,7 +225,6 @@ local function setGameChatPrivacy(gameChatPrivacy: number, cookie: string): ApiE
 end
 
 --- Get a user's game chat privacy setting
---- @within accountsettings
 local function gameChatPrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -358,7 +238,6 @@ local function gameChatPrivacy(cookie: string): string
 end
 
 --- Blocks another user.
---- @within accountsettings
 local function block(userId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -372,7 +251,6 @@ local function block(userId: number, cookie: string): ApiEmptyResponseModel
 end
 
 --- Gets all blocked users with details.
---- @within accountsettings
 local function blockedUsers(cookie: string): GetDetailedBlockedUsersResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -386,7 +264,6 @@ local function blockedUsers(cookie: string): GetDetailedBlockedUsersResponse
 end
 
 --- Updates a user's trade quality filter setting
---- @within accountsettings
 local function setTradeQualityFilter(tradeValue: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -401,7 +278,6 @@ local function setTradeQualityFilter(tradeValue: number, cookie: string): ApiEmp
 end
 
 --- Get a user's trade quality filter setting
---- @within accountsettings
 local function tradeQualityFilter(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -415,7 +291,6 @@ local function tradeQualityFilter(cookie: string): string
 end
 
 --- Updates a user's app chat privacy setting
---- @within accountsettings
 local function setAppChatPrivacy(appChatPrivacy: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -430,7 +305,6 @@ local function setAppChatPrivacy(appChatPrivacy: number, cookie: string): ApiEmp
 end
 
 --- Get a user's app chat privacy setting
---- @within accountsettings
 local function appChatPrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -444,7 +318,6 @@ local function appChatPrivacy(cookie: string): string
 end
 
 --- Updates a user's trade privacy setting
---- @within accountsettings
 local function setTradePrivacy(tradePrivacy: number, cookie: string): TradePrivacyUpdateResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -459,7 +332,6 @@ local function setTradePrivacy(tradePrivacy: number, cookie: string): TradePriva
 end
 
 --- Get a user's trade privacy setting
---- @within accountsettings
 local function tradePrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -473,7 +345,6 @@ local function tradePrivacy(cookie: string): string
 end
 
 --- Updates a user's private message privacy setting
---- @within accountsettings
 local function setMessagePrivacy(privateMessagePrivacy: string, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -488,7 +359,6 @@ local function setMessagePrivacy(privateMessagePrivacy: string, cookie: string):
 end
 
 --- Get a user's private message privacy setting
---- @within accountsettings
 local function messagePrivacy(cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -502,7 +372,6 @@ local function messagePrivacy(cookie: string): string
 end
 
 --- Send verify email to the authenticated user's email address
---- @within accountsettings
 local function verifyEmail(request: SendVerifyEmailRequest, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",

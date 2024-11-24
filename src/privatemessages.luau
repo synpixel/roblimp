@@ -1,18 +1,7 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- [privatemessages.roblox.com](https://privatemessages.roblox.com)
---- @class privatemessages
-
 --- A message details response.
---- @interface AnnouncementsDetailsResponse
---- .created string
---- .sender VerifiedSkinnyUserResponse
---- .subject string
---- .id number
---- .updated string
---- .body string
---- @within privatemessages
 export type AnnouncementsDetailsResponse = {
 	created: string,
 	sender: VerifiedSkinnyUserResponse,
@@ -22,51 +11,18 @@ export type AnnouncementsDetailsResponse = {
 	body: string,
 }
 
---- @interface UnreadMessagesCountResponse
---- .count number
---- @within privatemessages
 export type UnreadMessagesCountResponse = { count: number }
 
---- @interface SendMessageResponse
---- .message string
---- .success boolean
---- .shortMessage string
---- @within privatemessages
 export type SendMessageResponse = { message: string, success: boolean, shortMessage: string }
 
---- @interface BatchMessagesRequest
---- .messageIds { number }
---- @within privatemessages
 export type BatchMessagesRequest = { messageIds: { number } }
 
---- @interface FailedMessageResponse
---- .messageId number
---- .errorMessage string
---- @within privatemessages
 export type FailedMessageResponse = { messageId: number, errorMessage: string }
 
 --- A response model representing user basic information and the user's verified badge status.
---- @interface VerifiedSkinnyUserResponse
---- .id number
---- .name string
---- .hasVerifiedBadge boolean
---- .displayName string
---- @within privatemessages
 export type VerifiedSkinnyUserResponse = { id: number, name: string, hasVerifiedBadge: boolean, displayName: string }
 
 --- A message details response.
---- @interface MessageDetailsResponse
---- .recipient VerifiedSkinnyUserResponse
---- .sender VerifiedSkinnyUserResponse
---- .id number
---- .body string
---- .updated string
---- .subject string
---- .isSystemMessage boolean
---- .isReportAbuseDisplayed boolean
---- .isRead boolean
---- .created string
---- @within privatemessages
 export type MessageDetailsResponse = {
 	recipient: VerifiedSkinnyUserResponse,
 	sender: VerifiedSkinnyUserResponse,
@@ -80,12 +36,6 @@ export type MessageDetailsResponse = {
 	created: string,
 }
 
---- @interface GetMessagesResponse
---- .collection { MessageDetailsResponse }
---- .pageNumber number
---- .totalPages number
---- .totalCollectionSize number
---- @within privatemessages
 export type GetMessagesResponse = {
 	collection: { MessageDetailsResponse },
 	pageNumber: number,
@@ -94,19 +44,8 @@ export type GetMessagesResponse = {
 }
 
 --- A message details response.
---- @interface AnnouncementsMetadataResponse
---- .numOfAnnouncements number
---- @within privatemessages
 export type AnnouncementsMetadataResponse = { numOfAnnouncements: number }
 
---- @interface SendMessageRequest
---- .replyMessageId number
---- .subject string
---- .includePreviousMessage boolean
---- .recipientId number
---- .userId number
---- .body string
---- @within privatemessages
 export type SendMessageRequest = {
 	replyMessageId: number,
 	subject: string,
@@ -116,24 +55,13 @@ export type SendMessageRequest = {
 	body: string,
 }
 
---- @interface CanMessageResponse
---- .canMessage boolean
---- @within privatemessages
 export type CanMessageResponse = { canMessage: boolean }
 
---- @interface BatchMessagesResponse
---- .failedMessages { FailedMessageResponse }
---- @within privatemessages
 export type BatchMessagesResponse = { failedMessages: { FailedMessageResponse } }
 
---- @interface GetAnnouncementsResponse
---- .collection { AnnouncementsDetailsResponse }
---- .totalCollectionSize number
---- @within privatemessages
 export type GetAnnouncementsResponse = { collection: { AnnouncementsDetailsResponse }, totalCollectionSize: number }
 
 --- Marks a batch of messages as read.
---- @within privatemessages
 local function markAsRead(messageIds: { number }, cookie: string): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -148,7 +76,6 @@ local function markAsRead(messageIds: { number }, cookie: string): { FailedMessa
 end
 
 --- Gets unread messages for the authenticated user.
---- @within privatemessages
 local function countUnread(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -161,7 +88,6 @@ local function countUnread(cookie: string): number
 	return serde.decode("json", response.body).count
 end
 
---- @within privatemessages
 local function announcementMetadata(cookie: string): number
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -175,7 +101,6 @@ local function announcementMetadata(cookie: string): number
 end
 
 --- Gets whether the sender can send a message to the specified user.
---- @within privatemessages
 local function canMessage(userId: number, cookie: string): boolean
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -189,7 +114,6 @@ local function canMessage(userId: number, cookie: string): boolean
 end
 
 --- Gets a user's messages.
---- @within privatemessages
 local function all(
 	request: { pageNumber: number?, pageSize: number?, messageTab: "Inbox" | "Sent" | "Archive"? },
 	cookie: string
@@ -206,7 +130,6 @@ local function all(
 end
 
 --- Migrate from RobloxWebsite project, return news notification for Private Message page
---- @within privatemessages
 local function announcements(cookie: string): GetAnnouncementsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -220,7 +143,6 @@ local function announcements(cookie: string): GetAnnouncementsResponse
 end
 
 --- Marks a batch of messages as unread.
---- @within privatemessages
 local function markAsUnread(messageIds: { number }, cookie: string): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -235,7 +157,6 @@ local function markAsUnread(messageIds: { number }, cookie: string): { FailedMes
 end
 
 --- Unarchives a batch of messages.
---- @within privatemessages
 local function unarchive(messageIds: { number }, cookie: string): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -250,7 +171,6 @@ local function unarchive(messageIds: { number }, cookie: string): { FailedMessag
 end
 
 --- Sends a message to a specified user.
---- @within privatemessages
 local function send(request: SendMessageRequest, cookie: string): SendMessageResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -265,7 +185,6 @@ local function send(request: SendMessageRequest, cookie: string): SendMessageRes
 end
 
 --- Gets a message's details.
---- @within privatemessages
 local function get(messageId: number, cookie: string): MessageDetailsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -279,7 +198,6 @@ local function get(messageId: number, cookie: string): MessageDetailsResponse
 end
 
 --- Archives a batch of messages.
---- @within privatemessages
 local function archive(messageIds: { number }, cookie: string): { FailedMessageResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",

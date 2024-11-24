@@ -1,37 +1,15 @@
 local serde = require("@lune/serde")
 local requestWithCsrfToken = require("./utils/request-with-csrf-token")
 
---- [groups.roblox.com](https://groups.roblox.com)
---- @class groups
-
 --- Multi-payout request information.
---- @interface PayoutRequest
---- .PayoutType number
---- .Recipients { PayoutRecipientRequest }
---- @within groups
 export type PayoutRequest = { PayoutType: number, Recipients: { PayoutRecipientRequest } }
 
---- @interface GroupOpenCloudPermissionsModel
---- .useCloudAuthentication boolean
---- .administerCloudAuthentication boolean
---- @within groups
 export type GroupOpenCloudPermissionsModel = { useCloudAuthentication: boolean, administerCloudAuthentication: boolean }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
---- @interface GroupManagementPermissionsModel
---- .viewAuditLogs boolean
---- .manageClan boolean
---- .manageRelationships boolean
---- @within groups
 export type GroupManagementPermissionsModel = { viewAuditLogs: boolean, manageClan: boolean, manageRelationships: boolean }
 
 --- A request model for updating a group's settings.
---- @interface UpdateGroupSettingsRequest
---- .areGroupFundsVisible boolean
---- .isApprovalRequired boolean
---- .areGroupGamesVisible boolean
---- .areEnemiesAllowed boolean
---- @within groups
 export type UpdateGroupSettingsRequest = {
 	areGroupFundsVisible: boolean,
 	isApprovalRequired: boolean,
@@ -39,44 +17,17 @@ export type UpdateGroupSettingsRequest = {
 	areEnemiesAllowed: boolean,
 }
 
---- @interface UserGroupMembershipResponsePages
---- .data { UserGroupMembershipResponse }
---- @within groups
 export type UserGroupMembershipResponsePages = { data: { UserGroupMembershipResponse } }
 
---- @type IUploadedFile buffer
---- @within groups
 export type IUploadedFile = buffer
 
 --- A group roles response model
---- @interface GroupAllRolesResponse
---- .roles { GroupRoleResponse }
---- .groupId number
---- @within groups
 export type GroupAllRolesResponse = { roles: { GroupRoleResponse }, groupId: number }
 
 --- A response model for group wall post information
---- @interface GroupWallPostModel
---- .created string
---- .id number
---- .updated string
---- .body string
---- .poster UserModel
---- @within groups
 export type GroupWallPostModel = { created: string, id: number, updated: string, body: string, poster: UserModel }
 
 --- A group search response
---- @interface GroupSearchResponseItem
---- .created string
---- .description string
---- .id number
---- .hasVerifiedBadge boolean
---- .memberCount number
---- .updated string
---- .name string
---- .previousName string
---- .publicEntryAllowed boolean
---- @within groups
 export type GroupSearchResponseItem = {
 	created: string,
 	description: string,
@@ -90,18 +41,9 @@ export type GroupSearchResponseItem = {
 }
 
 --- A request model for setting a name for the group
---- @interface UpdateGroupNameRequest
---- .name string
---- @within groups
 export type UpdateGroupNameRequest = { name: string }
 
 --- A group audit log response model
---- @interface GroupAuditLogResponseItem
---- .created string
---- .actor UserGroupRoleResponse
---- .description nil
---- .actionType string
---- @within groups
 export type GroupAuditLogResponseItem = {
 	created: string,
 	actor: UserGroupRoleResponse,
@@ -109,30 +51,11 @@ export type GroupAuditLogResponseItem = {
 	actionType: string,
 }
 
---- @interface GroupPayoutResponsePages
---- .data { GroupPayoutResponse }
---- @within groups
 export type GroupPayoutResponsePages = { data: { GroupPayoutResponse } }
 
---- @interface CreateRoleSetRequest
---- .description string
---- .usingGroupFunds boolean
---- .name string
---- .rank number
---- @within groups
 export type CreateRoleSetRequest = { description: string, usingGroupFunds: boolean, name: string, rank: number }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
---- @interface GroupEconomyPermissionsModel
---- .viewGroupPayouts boolean
---- .manageGroupGames boolean
---- .createItems boolean
---- .manageItems boolean
---- .advertiseGroup boolean
---- .viewAnalytics boolean
---- .spendGroupFunds boolean
---- .addGroupPlaces boolean
---- @within groups
 export type GroupEconomyPermissionsModel = {
 	viewGroupPayouts: boolean,
 	manageGroupGames: boolean,
@@ -144,19 +67,9 @@ export type GroupEconomyPermissionsModel = {
 	addGroupPlaces: boolean,
 }
 
---- @interface GroupDescriptionResponse
---- .newDescription string
---- @within groups
 export type GroupDescriptionResponse = { newDescription: string }
 
 --- A model representing group posts permissions
---- @interface GroupPostsPermissionsModel
---- .postToStatus boolean
---- .viewStatus boolean
---- .postToWall boolean
---- .deleteFromWall boolean
---- .viewWall boolean
---- @within groups
 export type GroupPostsPermissionsModel = {
 	postToStatus: boolean,
 	viewStatus: boolean,
@@ -166,19 +79,6 @@ export type GroupPostsPermissionsModel = {
 }
 
 --- A user's group membership metadata response model
---- @interface GroupMembershipMetadataResponse
---- .canConfigure boolean
---- .groupId number
---- .areGroupGamesVisible boolean
---- .userRole UserGroupRoleResponse
---- .permissions GroupPermissionsModel
---- .isPendingJoin boolean
---- .isBannedFromGroup boolean
---- .isNotificationsEnabled boolean
---- .isPrimary boolean
---- .areEnemiesAllowed boolean
---- .areGroupFundsVisible boolean
---- @within groups
 export type GroupMembershipMetadataResponse = {
 	canConfigure: boolean,
 	groupId: number,
@@ -194,21 +94,9 @@ export type GroupMembershipMetadataResponse = {
 }
 
 --- Response model for Group Payout Restriction
---- @interface GroupPayoutRestrictionResponse
---- .canUseOneTimePayout boolean
---- .canUseRecurringPayout boolean
---- @within groups
 export type GroupPayoutRestrictionResponse = { canUseOneTimePayout: boolean, canUseRecurringPayout: boolean }
 
 --- Response model for Group Settings
---- @interface GroupSettingsResponse
---- .isGroupNameChangeEnabled boolean
---- .areEnemiesAllowed boolean
---- .areGroupFundsVisible boolean
---- .isApprovalRequired boolean
---- .areGroupGamesVisible boolean
---- .isBuildersClubRequired boolean
---- @within groups
 export type GroupSettingsResponse = {
 	isGroupNameChangeEnabled: boolean,
 	areEnemiesAllowed: boolean,
@@ -218,38 +106,14 @@ export type GroupSettingsResponse = {
 	isBuildersClubRequired: boolean,
 }
 
---- @interface ShoutResponse
---- .created string
---- .updated string
---- .poster UserModel
---- .body string
---- @within groups
 export type ShoutResponse = { created: string, updated: string, poster: UserModel, body: string }
 
 --- A request model for changing the group owner.
---- @interface ChangeOwnerRequest
---- .userId number
---- @within groups
 export type ChangeOwnerRequest = { userId: number }
 
 --- A group role response model
---- @interface GroupRoleResponse
---- .name string
---- .id number
---- .memberCount number
---- .description string
---- .rank number
---- @within groups
 export type GroupRoleResponse = { name: string, id: number, memberCount: number, description: string, rank: number }
 
---- @interface StringPages
---- .discriminator string
---- .sortOrder number
---- .key string
---- .count number
---- .pagingDirection number
---- .pageNumber number
---- @within groups
 export type StringPages = {
 	discriminator: string,
 	sortOrder: number,
@@ -260,18 +124,6 @@ export type StringPages = {
 }
 
 --- A detailed group response model
---- @interface GroupDetailResponse
---- .description string
---- .id number
---- .owner UserModel
---- .hasVerifiedBadge boolean
---- .memberCount number
---- .isBuildersClubOnly boolean
---- .isLocked boolean
---- .name string
---- .shout ShoutResponse
---- .publicEntryAllowed boolean
---- @within groups
 export type GroupDetailResponse = {
 	description: string,
 	id: number,
@@ -285,14 +137,6 @@ export type GroupDetailResponse = {
 	publicEntryAllowed: boolean,
 }
 
---- @interface GroupRoleDetailResponse
---- .name string
---- .groupId number
---- .id number
---- .memberCount number
---- .description string
---- .rank number
---- @within groups
 export type GroupRoleDetailResponse = {
 	name: string,
 	groupId: number,
@@ -303,14 +147,6 @@ export type GroupRoleDetailResponse = {
 }
 
 --- A request model for joining group.
---- @interface JoinGroupRequest
---- .challengeId string
---- .redemptionToken string
---- .sessionId string
---- .captchaId string
---- .captchaProvider string
---- .captchaToken string
---- @within groups
 export type JoinGroupRequest = {
 	challengeId: string,
 	redemptionToken: string,
@@ -320,20 +156,8 @@ export type JoinGroupRequest = {
 	captchaToken: string,
 }
 
---- @interface GroupDetailResponsePages
---- .data { GroupDetailResponse }
---- @within groups
 export type GroupDetailResponsePages = { data: { GroupDetailResponse } }
 
---- @interface GroupResponseV2
---- .created string
---- .name string
---- .description string
---- .id number
---- .owner GroupOwnerTypePages
---- .hasVerifiedBadge boolean
---- .memberCount number
---- @within groups
 export type GroupResponseV2 = {
 	created: string,
 	name: string,
@@ -345,14 +169,6 @@ export type GroupResponseV2 = {
 }
 
 --- A response model for group configuration
---- @interface GroupConfigurationDisplayOptionsResponse
---- .groupConfiguration GroupConfigurationResponse
---- .recurringPayoutsConfiguration RecurringPayoutsConfigurationResponse
---- .isDefaultEmblemPolicyEnabled boolean
---- .isPremiumPayoutsEnabled boolean
---- .groupNameChangeConfiguration GroupNameChangeConfigurationResponse
---- .roleConfiguration RoleConfigurationResponse
---- @within groups
 export type GroupConfigurationDisplayOptionsResponse = {
 	groupConfiguration: GroupConfigurationResponse,
 	recurringPayoutsConfiguration: RecurringPayoutsConfigurationResponse,
@@ -363,20 +179,9 @@ export type GroupConfigurationDisplayOptionsResponse = {
 }
 
 --- Response model for !:GroupJoinRequests
---- @interface GroupJoinRequestResponse
---- .requester UserModel
---- .created string
---- @within groups
 export type GroupJoinRequestResponse = { requester: UserModel, created: string }
 
 --- A response model for group configuration
---- @interface GroupConfigurationResponse
---- .iconMaxFileSizeMb number
---- .isUsingTwoStepWebviewComponent boolean
---- .cost number
---- .descriptionMaxLength number
---- .nameMaxLength number
---- @within groups
 export type GroupConfigurationResponse = {
 	iconMaxFileSizeMb: number,
 	isUsingTwoStepWebviewComponent: boolean,
@@ -385,28 +190,12 @@ export type GroupConfigurationResponse = {
 	nameMaxLength: number,
 }
 
---- @interface UpdateRoleSetRequest
---- .description string
---- .name string
---- .rank number
---- @within groups
 export type UpdateRoleSetRequest = { description: string, name: string, rank: number }
 
 --- A user group role response model
---- @interface UserGroupRoleResponse
---- .role GroupRoleResponse
---- .user UserModel
---- @within groups
 export type UserGroupRoleResponse = { role: GroupRoleResponse, user: UserModel }
 
 --- A request model for creating a group wall post
---- @interface CreateWallPostRequest
---- .challengeId string
---- .captchaToken string
---- .captchaId string
---- .captchaProvider string
---- .body string
---- @within groups
 export type CreateWallPostRequest = {
 	challengeId: string,
 	captchaToken: string,
@@ -416,12 +205,6 @@ export type CreateWallPostRequest = {
 }
 
 --- A group membership response model
---- @interface GroupMembershipDetailResponse
---- .group GroupDetailResponse
---- .role GroupRoleResponse
---- .isPrimaryGroup boolean
---- .isNotificationsEnabled boolean
---- @within groups
 export type GroupMembershipDetailResponse = {
 	group: GroupDetailResponse,
 	role: GroupRoleResponse,
@@ -429,57 +212,26 @@ export type GroupMembershipDetailResponse = {
 	isNotificationsEnabled: boolean,
 }
 
---- @interface GroupNameHistoryResponseItemPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { GroupNameHistoryResponseItem }
---- @within groups
 export type GroupNameHistoryResponseItemPages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { GroupNameHistoryResponseItem },
 }
 
---- @interface GroupPolicyRequest
---- .groupIds { number }
---- @within groups
 export type GroupPolicyRequest = { groupIds: { number } }
 
---- @interface GroupRoleDetailResponsePages
---- .data { GroupRoleDetailResponse }
---- @within groups
 export type GroupRoleDetailResponsePages = { data: { GroupRoleDetailResponse } }
 
---- @interface Int64Pages
---- .SortOrder number
---- .PagingDirection number
---- .Count number
---- @within groups
 export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
---- @interface GroupMembershipDetailResponsePages
---- .data { GroupMembershipDetailResponse }
---- @within groups
 export type GroupMembershipDetailResponsePages = { data: { GroupMembershipDetailResponse } }
 
 --- A response model for recurring payout configuration
---- @interface RecurringPayoutsConfigurationResponse
---- .maxPayoutPartners number
---- @within groups
 export type RecurringPayoutsConfigurationResponse = { maxPayoutPartners: number }
 
---- @interface GroupBasicResponsePages
---- .data { GroupBasicResponse }
---- @within groups
 export type GroupBasicResponsePages = { data: { GroupBasicResponse } }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
---- @interface GroupMembershipPermissionsModel
---- .banMembers boolean
---- .changeRank boolean
---- .removeMembers boolean
---- .inviteMembers boolean
---- @within groups
 export type GroupMembershipPermissionsModel = {
 	banMembers: boolean,
 	changeRank: boolean,
@@ -487,32 +239,14 @@ export type GroupMembershipPermissionsModel = {
 	inviteMembers: boolean,
 }
 
---- @interface GroupJoinRequestResponsePages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { GroupJoinRequestResponse }
---- @within groups
 export type GroupJoinRequestResponsePages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { GroupJoinRequestResponse },
 }
 
---- @interface RelationshipsRequest
---- .GroupIds { number }
---- @within groups
 export type RelationshipsRequest = { GroupIds: { number } }
 
---- @interface Stream
---- .CanRead boolean
---- .CanWrite boolean
---- .CanTimeout boolean
---- .Position number
---- .WriteTimeout number
---- .Length number
---- .ReadTimeout number
---- .CanSeek boolean
---- @within groups
 export type Stream = {
 	CanRead: boolean,
 	CanWrite: boolean,
@@ -525,18 +259,9 @@ export type Stream = {
 }
 
 --- A request model for setting the authenticated user's primary group.
---- @interface PostGroupStatusRequest
---- .message string
---- @within groups
 export type PostGroupStatusRequest = { message: string }
 
 --- ApiPageResponse for catalog search
---- @interface GroupSearchPageResponse
---- .nextPageCursor string
---- .data { GroupSearchResponseItem }
---- .keyword string
---- .previousPageCursor string
---- @within groups
 export type GroupSearchPageResponse = {
 	nextPageCursor: string,
 	data: { GroupSearchResponseItem },
@@ -544,134 +269,54 @@ export type GroupSearchPageResponse = {
 	previousPageCursor: string,
 }
 
---- @interface GroupWallPostModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { GroupWallPostModel }
---- @within groups
 export type GroupWallPostModelPages = { nextPageCursor: string, previousPageCursor: string, data: { GroupWallPostModel } }
 
 --- A group role's permissions response model
---- @interface GroupPermissionsResponse
---- .permissions GroupPermissionsModel
---- .role GroupRoleResponse
---- .groupId number
---- @within groups
 export type GroupPermissionsResponse = { permissions: GroupPermissionsModel, role: GroupRoleResponse, groupId: number }
 
---- @interface UserModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { UserModel }
---- @within groups
 export type UserModelPages = { nextPageCursor: string, previousPageCursor: string, data: { UserModel } }
 
---- @interface GroupPolicyResponse
---- .canViewGroup boolean
---- .groupId number
---- @within groups
 export type GroupPolicyResponse = { canViewGroup: boolean, groupId: number }
 
---- @interface Int32Pages
---- .SortOrder number
---- .PagingDirection number
---- .Count number
---- @within groups
 export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
 --- A request model for setting the authenticated user's primary group.
---- @interface PrimaryGroupRequest
---- .groupId number
---- @within groups
 export type PrimaryGroupRequest = { groupId: number }
 
---- @interface GroupPermissionsResponsePages
---- .data { GroupPermissionsResponse }
---- @within groups
 export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
 
 --- A social link response from a create request
---- @interface SocialLinkResponse
---- .id number
---- .type number
---- .title string
---- .url string
---- @within groups
 export type SocialLinkResponse = { id: number, type: number, title: string, url: string }
 
 --- A request model for setting a users role in a group.
---- @interface UpdateUserRoleRequest
---- .roleId number
---- @within groups
 export type UpdateUserRoleRequest = { roleId: number }
 
---- @interface GroupOwnerTypePages
---- .id number
---- .type number
---- .name string
---- @within groups
 export type GroupOwnerTypePages = { id: number, type: number, name: string }
 
---- @interface GroupBasicResponse
---- .id number
---- .hasVerifiedBadge boolean
---- .name string
---- .memberCount number
---- @within groups
 export type GroupBasicResponse = { id: number, hasVerifiedBadge: boolean, name: string, memberCount: number }
 
 --- A request model for paying out Robux.
---- @interface PayoutRecipientRequest
---- .amount number
---- .recipientType number
---- .recipientId number
---- @within groups
 export type PayoutRecipientRequest = { amount: number, recipientType: number, recipientId: number }
 
 --- ApiPageResponse for group audit log
---- @interface GroupAuditLogResponseItemPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { GroupAuditLogResponseItem }
---- @within groups
 export type GroupAuditLogResponseItemPages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { GroupAuditLogResponseItem },
 }
 
---- @interface SocialLinkResponsePages
---- .data { SocialLinkResponse }
---- @within groups
 export type SocialLinkResponsePages = { data: { SocialLinkResponse } }
 
---- @interface UpdateGroupNameResponse
---- .newName string
---- @within groups
 export type UpdateGroupNameResponse = { newName: string }
 
---- @interface GroupFeaturedContentResponse
---- .contentType string
---- .contentId string
---- .groupId number
---- @within groups
 export type GroupFeaturedContentResponse = { contentType: string, contentId: string, groupId: number }
 
 --- A users group membership response model
---- @interface UserGroupMembershipResponse
---- .groups { GroupMembershipDetailResponse }
---- .user UserModel
---- @within groups
 export type UserGroupMembershipResponse = { groups: { GroupMembershipDetailResponse }, user: UserModel }
 
---- @interface ApiEmptyResponseModel
---- @within groups
 export type ApiEmptyResponseModel = {}
 
 --- A request model for updating a group's roleset's permissions.
---- @interface UpdatePermissionsRequest
---- .permissions {InviteMembers: boolean,AddGroupPlaces: boolean,PostToWall: boolean,BanMembers: boolean,PostToStatus: boolean,ManageGroupGames: boolean,ChangeRank: boolean,RemoveMembers: boolean,ViewStatus: boolean,AdvertiseGroup: boolean,UseCloudAuthentication: boolean,SpendGroupFunds: boolean,AdministerCloudAuthentication: boolean,ViewAnalytics: boolean,ManageItems: boolean,CreateItems: boolean,ManageClan: boolean,ViewAuditLogs: boolean,DeleteFromWall: boolean,ManageRelationships: boolean,ViewWall: boolean,}
---- @within groups
 export type UpdatePermissionsRequest = {
 	permissions: {
 		InviteMembers: boolean,
@@ -699,54 +344,22 @@ export type UpdatePermissionsRequest = {
 }
 
 --- A request model for updating a group's notification preference.
---- @interface UpdateGroupNotificationPreferenceRequest
---- .notificationsEnabled boolean
---- @within groups
 export type UpdateGroupNotificationPreferenceRequest = { notificationsEnabled: boolean }
 
---- @interface StartIndexCursor
---- .discriminator string
---- .count number
---- .startIndex number
---- @within groups
 export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
 
 --- A request model for setting a description for the group
---- @interface UpdateGroupDescriptionRequest
---- .description string
---- @within groups
 export type UpdateGroupDescriptionRequest = { description: string }
 
---- @interface GroupPoliciesResponse
---- .groups { GroupPolicyResponse }
---- @within groups
 export type GroupPoliciesResponse = { groups: { GroupPolicyResponse } }
 
---- @interface GroupNameChangeConfigurationResponse
---- .ownershipCooldownInDays number
---- .cooldownInDays number
---- .cost number
---- @within groups
 export type GroupNameChangeConfigurationResponse =
 	{ ownershipCooldownInDays: number, cooldownInDays: number, cost: number }
 
 --- An update request for a social link
---- @interface SocialLinkRequest
---- .type number
---- .title string
---- .url string
---- @within groups
 export type SocialLinkRequest = { type: number, title: string, url: string }
 
 --- A response model for role configuration
---- @interface RoleConfigurationResponse
---- .limit number
---- .cost number
---- .maxRank number
---- .minRank number
---- .descriptionMaxLength number
---- .nameMaxLength number
---- @within groups
 export type RoleConfigurationResponse = {
 	limit: number,
 	cost: number,
@@ -756,11 +369,6 @@ export type RoleConfigurationResponse = {
 	nameMaxLength: number,
 }
 
---- @interface UserGroupRoleResponsePages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { UserGroupRoleResponse }
---- @within groups
 export type UserGroupRoleResponsePages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
@@ -768,25 +376,11 @@ export type UserGroupRoleResponsePages = {
 }
 
 --- A group name history response model
---- @interface GroupNameHistoryResponseItem
---- .name string
---- .created string
---- @within groups
 export type GroupNameHistoryResponseItem = { name: string, created: string }
 
---- @interface MembersRequest
---- .UserIds { number }
---- @within groups
 export type MembersRequest = { UserIds: { number } }
 
 --- A group relationships response model
---- @interface GroupRelationshipsResponse
---- .totalGroupCount number
---- .groupId number
---- .nextRowIndex number
---- .relationshipType number
---- .relatedGroups { GroupDetailResponse }
---- @within groups
 export type GroupRelationshipsResponse = {
 	totalGroupCount: number,
 	groupId: number,
@@ -796,18 +390,6 @@ export type GroupRelationshipsResponse = {
 }
 
 --- A group roles response model
---- @interface GroupsDisplayOptionsResponse
---- .isGroupWallNotificationsEnabled boolean
---- .groupPostMaxLength number
---- .currentGroupCount number
---- .groupStatusMaxLength number
---- .groupWallNotificationsSubscribeIntervalInMilliseconds number
---- .groupLimit number
---- .areGroupBansEnabled boolean
---- .areProfileGroupsHidden boolean
---- .isGroupDetailsPolicyEnabled boolean
---- .showPreviousGroupNames boolean
---- @within groups
 export type GroupsDisplayOptionsResponse = {
 	isGroupWallNotificationsEnabled: boolean,
 	groupPostMaxLength: number,
@@ -822,13 +404,6 @@ export type GroupsDisplayOptionsResponse = {
 }
 
 --- A model for group permissions.
---- @interface GroupPermissionsModel
---- .groupMembershipPermissions GroupMembershipPermissionsModel
---- .groupEconomyPermissions GroupEconomyPermissionsModel
---- .groupOpenCloudPermissions GroupOpenCloudPermissionsModel
---- .groupPostsPermissions GroupPostsPermissionsModel
---- .groupManagementPermissions GroupManagementPermissionsModel
---- @within groups
 export type GroupPermissionsModel = {
 	groupMembershipPermissions: GroupMembershipPermissionsModel,
 	groupEconomyPermissions: GroupEconomyPermissionsModel,
@@ -838,13 +413,6 @@ export type GroupPermissionsModel = {
 }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
---- @interface UserModel
---- .username string
---- .buildersClubMembershipType number
---- .userId number
---- .hasVerifiedBadge boolean
---- .displayName string
---- @within groups
 export type UserModel = {
 	username: string,
 	buildersClubMembershipType: number,
@@ -854,67 +422,31 @@ export type UserModel = {
 }
 
 --- Response Model For Group Search Metadata Endpoint
---- @interface GroupSearchMetadataResponse
---- .ShowFriendsGroupsSort boolean
---- .SuggestedGroupKeywords { string }
---- @within groups
 export type GroupSearchMetadataResponse = { ShowFriendsGroupsSort: boolean, SuggestedGroupKeywords: { string } }
 
 --- A group payout response
---- @interface GroupPayoutResponse
---- .percentage number
---- .user UserModel
---- @within groups
 export type GroupPayoutResponse = { percentage: number, user: UserModel }
 
---- @interface GroupMembershipResponsePages
---- .data { GroupMembershipResponse }
---- @within groups
 export type GroupMembershipResponsePages = { data: { GroupMembershipResponse } }
 
---- @interface GroupWallPostV2ModelPages
---- .nextPageCursor string
---- .previousPageCursor string
---- .data { GroupWallPostV2Model }
---- @within groups
 export type GroupWallPostV2ModelPages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { GroupWallPostV2Model },
 }
 
---- @interface GroupResponseV2Pages
---- .data { GroupResponseV2 }
---- @within groups
 export type GroupResponseV2Pages = { data: { GroupResponseV2 } }
 
 --- A basic group membership response model
---- @interface GroupMembershipResponse
---- .group GroupBasicResponse
---- .role GroupRoleBasicResponse
---- .isNotificationsEnabled boolean
---- @within groups
 export type GroupMembershipResponse = {
 	group: GroupBasicResponse,
 	role: GroupRoleBasicResponse,
 	isNotificationsEnabled: boolean,
 }
 
---- @interface GroupRoleBasicResponse
---- .id number
---- .name string
---- .rank number
---- @within groups
 export type GroupRoleBasicResponse = { id: number, name: string, rank: number }
 
 --- A response model for group wall post information
---- @interface GroupWallPostV2Model
---- .created string
---- .id number
---- .updated string
---- .body string
---- .poster UserGroupRoleResponse
---- @within groups
 export type GroupWallPostV2Model = {
 	created: string,
 	id: number,
@@ -924,7 +456,6 @@ export type GroupWallPostV2Model = {
 }
 
 --- Gets Group configuration contextual information
---- @within groups
 local function configurationMetadata(cookie: string?): GroupConfigurationDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -941,7 +472,6 @@ end
 --- Max number of groups a user can be part of.
 --- Current number of groups a user is a member of.
 --- Whether to show/hide certain features based on device type.
---- @within groups
 local function metadata(cookie: string?): GroupsDisplayOptionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -955,7 +485,6 @@ local function metadata(cookie: string?): GroupsDisplayOptionsResponse
 end
 
 --- Changes the group owner to another user.
---- @within groups
 local function giveOwnership(request: ChangeOwnerRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -970,7 +499,6 @@ local function giveOwnership(request: ChangeOwnerRequest & { groupId: number }, 
 end
 
 --- Batch accepts group join requests
---- @within groups
 local function acceptJoinRequests(request: MembersRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -985,7 +513,6 @@ local function acceptJoinRequests(request: MembersRequest & { groupId: number },
 end
 
 --- Batch declines group join requests
---- @within groups
 local function declineJoinRequests(request: MembersRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1000,7 +527,6 @@ local function declineJoinRequests(request: MembersRequest & { groupId: number }
 end
 
 --- Gets a page of Group Join Requests for a group.
---- @within groups
 local function joinRequests(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
@@ -1017,7 +543,6 @@ local function joinRequests(
 end
 
 --- Gets a list of users in a group for a specific roleset.
---- @within groups
 local function usersWithRole(
 	request: {
 		groupId: number,
@@ -1040,7 +565,6 @@ local function usersWithRole(
 end
 
 --- Updates a social link
---- @within groups
 local function updateSocialLink(
 	request: SocialLinkRequest & { groupId: number, socialLinkId: number },
 	cookie: string
@@ -1058,7 +582,6 @@ local function updateSocialLink(
 end
 
 --- Deletes a social link
---- @within groups
 local function deleteSocialLink(
 	request: { groupId: number, socialLinkId: number },
 	cookie: string
@@ -1075,7 +598,6 @@ local function deleteSocialLink(
 end
 
 --- Gets groups that the authenticated user has requested to join
---- @within groups
 local function pending(cookie: string): { GroupDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1089,7 +611,6 @@ local function pending(cookie: string): { GroupDetailResponse }
 end
 
 --- Gets the Group's audit log
---- @within groups
 local function auditLog(
 	request: {
 		groupId: number,
@@ -1159,7 +680,6 @@ local function auditLog(
 end
 
 --- Joins a group
---- @within groups
 local function join(request: JoinGroupRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1174,7 +694,6 @@ local function join(request: JoinGroupRequest & { groupId: number }, cookie: str
 end
 
 --- Gets a list of users in a group.
---- @within groups
 local function users(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string?
@@ -1191,7 +710,6 @@ local function users(
 end
 
 --- Sets group status
---- @within groups
 local function setStatus(request: PostGroupStatusRequest & { groupId: number }, cookie: string): ShoutResponse
 	local response = requestWithCsrfToken({
 		method = "PATCH",
@@ -1206,7 +724,6 @@ local function setStatus(request: PostGroupStatusRequest & { groupId: number }, 
 end
 
 --- Updates the group's name.
---- @within groups
 local function setName(request: UpdateGroupNameRequest & { groupId: number }, cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "PATCH",
@@ -1221,7 +738,6 @@ local function setName(request: UpdateGroupNameRequest & { groupId: number }, co
 end
 
 --- Gets a list of all groups the specified users' friends are in.
---- @within groups
 local function withFriendsOf(userId: number, cookie: string): { UserGroupMembershipResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1235,7 +751,6 @@ local function withFriendsOf(userId: number, cookie: string): { UserGroupMembers
 end
 
 --- Gets a value indicating whether the group can use payout feature
---- @within groups
 local function canPayout(groupId: number, cookie: string): GroupPayoutRestrictionResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1249,7 +764,6 @@ local function canPayout(groupId: number, cookie: string): GroupPayoutRestrictio
 end
 
 --- Gets a group's relationships
---- @within groups
 local function relationships(
 	request: { groupId: number, groupRelationshipType: string, startRowIndex: number, maxRows: number },
 	cookie: string?
@@ -1266,7 +780,6 @@ local function relationships(
 end
 
 --- Gets the Group's name change history.
---- @within groups
 local function nameHistory(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
@@ -1283,7 +796,6 @@ local function nameHistory(
 end
 
 --- Get suggested groups and other miscellaneous information needed for the group/join page like flags
---- @within groups
 local function searchMetadata(cookie: string?): GroupSearchMetadataResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1297,7 +809,6 @@ local function searchMetadata(cookie: string?): GroupSearchMetadataResponse
 end
 
 --- Updates the user's group notification preferences
---- @within groups
 local function toggleNotifications(
 	request: UpdateGroupNotificationPreferenceRequest & { groupId: number },
 	cookie: string
@@ -1315,7 +826,6 @@ local function toggleNotifications(
 end
 
 --- Accepts a group relationship request.
---- @within groups
 local function acceptRelationshipRequest(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
@@ -1332,7 +842,6 @@ local function acceptRelationshipRequest(
 end
 
 --- Declines a group relationship request.
---- @within groups
 local function declineRelationshipRequest(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
@@ -1349,7 +858,6 @@ local function declineRelationshipRequest(
 end
 
 --- Deletes a group wall post.
---- @within groups
 local function deleteMessage(request: { groupId: number, postId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1363,7 +871,6 @@ local function deleteMessage(request: { groupId: number, postId: number }, cooki
 end
 
 --- Updates the group icon.
---- @within groups
 local function setIcon(request: { groupId: number, files: buffer? }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "PATCH",
@@ -1377,7 +884,6 @@ local function setIcon(request: { groupId: number, files: buffer? }, cookie: str
 end
 
 --- Updates a users role in a group.
---- @within groups
 local function changeRole(
 	request: UpdateUserRoleRequest & { groupId: number, userId: number },
 	cookie: string
@@ -1395,7 +901,6 @@ local function changeRole(
 end
 
 --- Removes a user from a group
---- @within groups
 local function exileUser(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1409,7 +914,6 @@ local function exileUser(request: { groupId: number, userId: number }, cookie: s
 end
 
 --- Gets all permissions for each role
---- @within groups
 local function allPermissions(groupId: number, cookie: string): { GroupPermissionsResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1423,7 +927,6 @@ local function allPermissions(groupId: number, cookie: string): { GroupPermissio
 end
 
 --- Updates existing group roleset.
---- @within groups
 local function updateRole(
 	request: UpdateRoleSetRequest & { groupId: number, rolesetId: number },
 	cookie: string
@@ -1441,7 +944,6 @@ local function updateRole(
 end
 
 --- Deletes existing group roleset.
---- @within groups
 local function deleteRole(request: { groupId: number, rolesetId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1455,7 +957,6 @@ local function deleteRole(request: { groupId: number, rolesetId: number }, cooki
 end
 
 --- Creates new group roleset.
---- @within groups
 local function createRole(request: CreateRoleSetRequest & { groupId: number }, cookie: string): GroupRoleResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1470,7 +971,6 @@ local function createRole(request: CreateRoleSetRequest & { groupId: number }, c
 end
 
 --- Gets the permissions for a group's guest roleset. These can be viewed by all (members and guests) users.
---- @within groups
 local function guestPermissions(groupId: number, cookie: string?): GroupPermissionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1484,7 +984,6 @@ local function guestPermissions(groupId: number, cookie: string?): GroupPermissi
 end
 
 --- Deletes all group wall posts made by a specific user.
---- @within groups
 local function deleteMessagesOf(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1498,7 +997,6 @@ local function deleteMessagesOf(request: { groupId: number, userId: number }, co
 end
 
 --- Gets group membership information in the context of the authenticated user
---- @within groups
 local function membership(
 	request: { groupId: number, includeNotificationPreferences: boolean },
 	cookie: string?
@@ -1515,7 +1013,6 @@ local function membership(
 end
 
 --- Pays out a user in Robux.
---- @within groups
 local function payout(request: PayoutRequest & { groupId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1530,7 +1027,6 @@ local function payout(request: PayoutRequest & { groupId: number }, cookie: stri
 end
 
 --- Gets a list of the group payout percentages
---- @within groups
 local function recurringPayouts(groupId: number, cookie: string): { GroupPayoutResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1544,7 +1040,6 @@ local function recurringPayouts(groupId: number, cookie: string): { GroupPayoutR
 end
 
 --- Updates the group's settings
---- @within groups
 local function updateSettings(
 	request: UpdateGroupSettingsRequest & { groupId: number },
 	cookie: string
@@ -1562,7 +1057,6 @@ local function updateSettings(
 end
 
 --- Gets the Group's settings
---- @within groups
 local function settings(groupId: number, cookie: string): GroupSettingsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1576,7 +1070,6 @@ local function settings(groupId: number, cookie: string): GroupSettingsResponse
 end
 
 --- Updates the groups description
---- @within groups
 local function setDescription(request: UpdateGroupDescriptionRequest & { groupId: number }, cookie: string): string
 	local response = requestWithCsrfToken({
 		method = "PATCH",
@@ -1591,7 +1084,6 @@ local function setDescription(request: UpdateGroupDescriptionRequest & { groupId
 end
 
 --- Sets the authenticated user's primary group
---- @within groups
 local function setPrimaryGroup(groupId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1606,7 +1098,6 @@ local function setPrimaryGroup(groupId: number, cookie: string): ApiEmptyRespons
 end
 
 --- Removes the authenticated user's primary group
---- @within groups
 local function removePrimaryGroup(cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1620,7 +1111,6 @@ local function removePrimaryGroup(cookie: string): ApiEmptyResponseModel
 end
 
 --- Looks up groups by a name. Prioritizes an exact match as the first result.
---- @within groups
 local function lookup(groupName: string, cookie: string?): { GroupBasicResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1634,7 +1124,6 @@ local function lookup(groupName: string, cookie: string?): { GroupBasicResponse 
 end
 
 --- Gets group information
---- @within groups
 local function get(groupId: number, cookie: string?): GroupDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1648,7 +1137,6 @@ local function get(groupId: number, cookie: string?): GroupDetailResponse
 end
 
 --- Accepts a group join request.
---- @within groups
 local function acceptJoinRequest(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1662,7 +1150,6 @@ local function acceptJoinRequest(request: { groupId: number, userId: number }, c
 end
 
 --- Declines/cancels a group join request.
---- @within groups
 local function declineJoinRequest(request: { groupId: number, userId: number }, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "DELETE",
@@ -1676,7 +1163,6 @@ local function declineJoinRequest(request: { groupId: number, userId: number }, 
 end
 
 --- Gets a group join request by userId.
---- @within groups
 local function joinRequest(request: { groupId: number, userId: number }, cookie: string): GroupJoinRequestResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1690,7 +1176,6 @@ local function joinRequest(request: { groupId: number, userId: number }, cookie:
 end
 
 --- Gets group policy info used for compliance.
---- @within groups
 local function policies(groupIds: { number }, cookie: string): { GroupPolicyResponse }
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1705,7 +1190,6 @@ local function policies(groupIds: { number }, cookie: string): { GroupPolicyResp
 end
 
 --- Creates a new group.
---- @within groups
 local function create(
 	request: {
 		name: string?,
@@ -1728,7 +1212,6 @@ local function create(
 end
 
 --- Create a group relationship.
---- @within groups
 local function requestRelationship(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
@@ -1745,7 +1228,6 @@ local function requestRelationship(
 end
 
 --- Deletes a group relationship.
---- @within groups
 local function deleteRelationship(
 	request: { groupId: number, groupRelationshipType: string, relatedGroupId: number },
 	cookie: string
@@ -1762,7 +1244,6 @@ local function deleteRelationship(
 end
 
 --- Search for groups by keyword.
---- @within groups
 local function search(
 	request: { keyword: string, prioritizeExactMatch: boolean?, limit: number?, cursor: string? },
 	cookie: string?
@@ -1779,7 +1260,6 @@ local function search(
 end
 
 --- Batch accepts group affiliate requests
---- @within groups
 local function acceptRelationshipRequests(
 	request: RelationshipsRequest & { groupId: number, groupRelationshipType: string },
 	cookie: string
@@ -1797,7 +1277,6 @@ local function acceptRelationshipRequests(
 end
 
 --- Batch declines group affiliate requests
---- @within groups
 local function declineRelationshipRequests(
 	request: RelationshipsRequest & { groupId: number, groupRelationshipType: string },
 	cookie: string
@@ -1815,7 +1294,6 @@ local function declineRelationshipRequests(
 end
 
 --- Gets a group's relationship requests
---- @within groups
 local function relationshipRequests(
 	request: {
 		groupId: number,
@@ -1837,7 +1315,6 @@ local function relationshipRequests(
 end
 
 --- Updates recurring payouts.
---- @within groups
 local function updateRecurringPayouts(
 	request: PayoutRequest & { groupId: number },
 	cookie: string
@@ -1855,7 +1332,6 @@ local function updateRecurringPayouts(
 end
 
 --- Updates the permissions for a group's roleset. The authorized user must be the group owner.
---- @within groups
 local function updateRolePermissions(
 	request: UpdatePermissionsRequest & { groupId: number, roleSetId: number },
 	cookie: string
@@ -1873,7 +1349,6 @@ local function updateRolePermissions(
 end
 
 --- Gets the permissions for a group's roleset. The authorized user must either be the group owner or the roleset being requested, except for guest roles, which can be viewed by all (members and guests).
---- @within groups
 local function permissions(request: { groupId: number, roleSetId: number }, cookie: string): GroupPermissionsResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1887,7 +1362,6 @@ local function permissions(request: { groupId: number, roleSetId: number }, cook
 end
 
 --- Claims ownership of the group as the authenticated user
---- @within groups
 local function claimOwnership(groupId: number, cookie: string): ApiEmptyResponseModel
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1901,7 +1375,6 @@ local function claimOwnership(groupId: number, cookie: string): ApiEmptyResponse
 end
 
 --- Gets a user's primary group.
---- @within groups
 local function primary(userId: number, cookie: string?): GroupMembershipDetailResponse
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1915,7 +1388,6 @@ local function primary(userId: number, cookie: string?): GroupMembershipDetailRe
 end
 
 --- Gets the Roles by their ids.
---- @within groups
 local function roles(ids: { number }, cookie: string?): { GroupRoleDetailResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1929,7 +1401,6 @@ local function roles(ids: { number }, cookie: string?): { GroupRoleDetailRespons
 end
 
 --- Posts a social links
---- @within groups
 local function addSocialLink(request: SocialLinkRequest & { groupId: number }, cookie: string): SocialLinkResponse
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1944,7 +1415,6 @@ local function addSocialLink(request: SocialLinkRequest & { groupId: number }, c
 end
 
 --- Get social link data associated with a group
---- @within groups
 local function socialLinks(groupId: number, cookie: string): { SocialLinkResponse }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -1958,7 +1428,6 @@ local function socialLinks(groupId: number, cookie: string): { SocialLinkRespons
 end
 
 --- Creates a post on a group wall
---- @within groups
 local function sendMessage(request: CreateWallPostRequest & { groupId: number }, cookie: string): GroupWallPostV2Model
 	local response = requestWithCsrfToken({
 		method = "POST",
@@ -1973,7 +1442,6 @@ local function sendMessage(request: CreateWallPostRequest & { groupId: number },
 end
 
 --- Gets a list of group wall posts.
---- @within groups
 local function messages(
 	request: { groupId: number, limit: number?, cursor: string?, sortOrder: "Asc" | "Desc"? },
 	cookie: string
@@ -1990,7 +1458,6 @@ local function messages(
 end
 
 --- Multi-get groups information by Ids.
---- @within groups
 local function multiple(groupIds: { number }, cookie: string?): { GroupResponseV2 }
 	local response = requestWithCsrfToken({
 		method = "GET",
@@ -2004,7 +1471,6 @@ local function multiple(groupIds: { number }, cookie: string?): { GroupResponseV
 end
 
 --- Gets a list of all group roles for groups the specified user is in.
---- @within groups
 local function rolesOf(
 	request: { userId: number, includeLocked: boolean, includeNotificationPreferences: boolean },
 	cookie: string?

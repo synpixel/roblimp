@@ -35,6 +35,7 @@ type OpenApiDefinition = {
 }
 
 local FORMAT = true
+local MOONWAVE = false
 
 local mappings: { [string]: EndpointMappings } = {
 	accountsettings = {
@@ -499,8 +500,10 @@ for namespace, definitions in mappings do
 		table.insert(openapis, openapi)
 	end
 
-	file ..= `--- [{openapis[1].host}](https://{openapis[1].host})\n`
-	file ..= `--- @class {namespace}\n\n`
+	if MOONWAVE then
+		file ..= `--- [{openapis[1].host}](https://{openapis[1].host})\n`
+		file ..= `--- @class {namespace}\n\n`
+	end
 
 	for _, openapi in openapis do
 		if openapi.definitions == nil then
@@ -519,8 +522,11 @@ for namespace, definitions in mappings do
 				file ..= `{patch}\n`
 			end
 
-			file ..= documentOpenApiType(patchName, model) .. "\n"
-			file ..= `--- @within {namespace}\n`
+			if MOONWAVE then
+				file ..= documentOpenApiType(patchName, model) .. "\n"
+				file ..= `--- @within {namespace}\n`
+			end
+
 			file ..= `export type {patchName} = {translateOpenApiType(model)}\n\n`
 		end
 	end
@@ -595,7 +601,9 @@ for namespace, definitions in mappings do
 					file ..= `{patchSummary}\n`
 				end
 
-				file ..= `--- @within {namespace}\n`
+				if MOONWAVE then
+					file ..= `--- @within {namespace}\n`
+				end
 
 				local firstKey = next(parameters)
 
