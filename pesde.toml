@@ -11,7 +11,7 @@ environment = "lune"
 lib = "build/init.luau"
 
 [scripts]
-build = "scripts/build"
+build = "scripts/build.luau"
 
 [indices]
 default = "https://github.com/daimond113/pesde-index"
