@@ -5,7 +5,6 @@ authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
 license = "MIT"
 includes = ["pesde.toml", "README.md", "LICENSE", "build"]
-private = true
 
 [target]
 environment = "lune"
