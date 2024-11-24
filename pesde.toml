@@ -3,7 +3,7 @@ version = "0.1.0"
 authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
 license = "MIT"
-includes = ["pesde.toml", "LICENSE", "src"]
+includes = ["pesde.toml", "README.md", "LICENSE", "src"]
 private = true
 
 [target]
