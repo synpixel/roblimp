@@ -89,18 +89,18 @@
     "/v2/send-message": { "post": "sendMessage" },
     "/v2/start-one-to-one-conversation": { "post": "createConversation" },
     "/v2/start-group-conversation": { "post": "createGroupConversation" },
-    "/v2/update-user-typing-status": { "post": "setTypingStatus" }
+    "/v2/update-user-typing-status": { "post": "setTyping" }
   },
   "develop": {
     "/v1/gametemplates": { "get": "templates" },
-    "/v1/groups/{groupId}/universes": { "get": "ofGroup" },
+    "/v1/groups/{groupId}/universes": { "get": "universesOf" },
     "/v1/plugins": { "get": "plugins" },
     "/v1/universes/{universeId}/permissions": { "get": "permissions" },
     "/v1/universes/{universeId}/places": { "get": "places" },
-    "/v1/user/universes": { "get": "multiple" },
+    "/v1/user/universes": { "get": "universes" },
     "/v1/universes/{universeId}/activate": { "post": "activate" },
     "/v1/universes/{universeId}/deactivate": { "post": "deactivate" },
-    "/v1/plugins/{pluginId}": { "patch": "configurePlugin" },
+    "/v1/plugins/{pluginId}": { "patch": "updatePlugin" },
     "/v2/places/{placeId}": { "get": "place", "patch": "configurePlace" },
     "/v2/universes/{universeId}/configuration": { "patch": "configure" }
   },
@@ -152,7 +152,7 @@
   },
   "games": {
     "/v1/games": { "get": "multiple" },
-    "/v1/games/{placeId}/private-servers": { "get": "privatesIn" },
+    "/v1/games/{placeId}/private-servers": { "get": "allPrivates" },
     "/v1/games/{placeId}/servers/{serverType}": { "get": "servers" },
     "/v1/games/{universeId}/favorites": {
       "get": "favorited",
@@ -215,7 +215,7 @@
     },
     "/v1/groups/{groupId}/roles/{roleSetId}/permissions": {
       "get": "permissions",
-      "patch": "updateRolePermissions"
+      "patch": "updatePermissions"
     },
     "/v1/groups/{groupId}/roles/{roleSetId}/users": { "get": "usersWithRole" },
     "/v1/groups/{groupId}/roles/guest/permissions": {
@@ -345,7 +345,7 @@
     },
     "/v2/stream-notifications/clear-unread": { "post": "clearUnread" },
     "/v2/stream-notifications/game-update-notification-read": {
-      "post": "acknowledgeGameUpdate"
+      "post": "readGameUpdate"
     }
   },
   "presence": {
@@ -390,7 +390,7 @@
     "/v1/users/authenticated/roles": { "get": "publicRoles" },
     "/v1/users": { "post": "fromIds" },
     "/v1/usernames/users": { "post": "fromNames" },
-    "/v1/users/{userId}/username-history": { "get": "usernameHistory" },
+    "/v1/users/{userId}/username-history": { "get": "nameHistory" },
     "/v1/users/search": { "get": "search" }
   }
 }
