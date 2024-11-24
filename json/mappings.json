@@ -235,7 +235,7 @@
     "/v1/groups/search/lookup": { "get": "lookup" },
     "/v1/roles": { "get": "roles" },
     "/v1/user/groups/pending": { "get": "pending" },
-    "/v1/users/{userId}/friends/groups/roles": { "get": "withFriends" },
+    "/v1/users/{userId}/friends/groups/roles": { "get": "withFriendsOf" },
     "/v1/users/{userId}/groups/primary/role": { "get": "primary" },
     "/v1/groups/{groupId}/change-owner": { "post": "giveOwnership" },
     "/v1/groups/{groupId}/claim-ownership": { "post": "claimOwnership" },
@@ -285,7 +285,7 @@
       "get": "messages",
       "post": "sendMessage"
     },
-    "/v2/users/{userId}/groups/roles": { "get": "memberships" }
+    "/v2/users/{userId}/groups/roles": { "get": "of" }
   },
   "inventory": {
     "/v1/users/{userId}/assets/collectibles": { "get": "collectibles" },
