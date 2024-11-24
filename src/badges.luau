@@ -42,30 +42,8 @@ export type GetBadgesByUserResponse = {
 
 export type BadgeAwarderTypePages = { id: number, type: number, name: string }
 
-export type StringPages = {
-	discriminator: string,
-	sortOrder: number,
-	key: string,
-	count: number,
-	pagingDirection: number,
-	pageNumber: number,
-}
-
-export type Stream = {
-	CanRead: boolean,
-	CanWrite: boolean,
-	CanTimeout: boolean,
-	Position: number,
-	WriteTimeout: number,
-	Length: number,
-	ReadTimeout: number,
-	CanSeek: boolean,
-}
-
 --- Represents information about the badge creator. (Creator of the place that awarded the badge)
 export type BadgeCreatorResponse = { id: number, type: string, name: string }
-
-export type IUploadedFile = buffer
 
 --- A response containing badge information.
 export type BadgeResponse = {
@@ -82,8 +60,6 @@ export type BadgeResponse = {
 	created: string,
 	displayDescription: string,
 }
-
-export type BadgeAwardResponsePages = { data: { BadgeAwardResponse } }
 
 export type GetBadgesByUserResponsePages = {
 	nextPageCursor: string,

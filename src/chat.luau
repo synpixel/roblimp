@@ -46,8 +46,6 @@ export type MultigetConversationMessagesResponse = { chatMessages: { ChatMessage
 
 export type Link = { game: GameLink, type: "Game" }
 
-export type MarkAsReadResponse = { resultType: "Success" }
-
 export type CreateOneToOneConversationRequest = { participantUserId: number }
 
 export type ChatSettingsResponse = { chatEnabled: boolean, isActiveChatUser: boolean, isConnectTabEnabled: boolean }
@@ -99,10 +97,6 @@ export type AddUserToConversationResponse = {
 	conversationId: number,
 }
 
-export type CreateCloudEditConversationRequest = { placeId: number }
-
-export type UserVisibleStatusResponse = { statusMessage: string }
-
 export type RejectedChatParticipant = {
 	type: "User" | "System",
 	rejectedReason: string,
@@ -148,17 +142,11 @@ export type SendGameLinkChatMessageRequest = {
 	isExperienceInvite: boolean,
 }
 
-export type MarkAsSeenResponse = { resultType: "Success" }
-
-export type RolloutSettingsResponse = { rolloutFeatures: { RolloutSettingModel } }
-
 export type GameLink = { universeId: number }
 
 export type RemoveUserFromConversationRequest = { conversationId: number, participantUserId: number }
 
 export type CreateGroupConversationRequest = { participantUserIds: { number }, title: string }
-
-export type UnreadConversationCountResponse = { count: number }
 
 export type RolloutSettingModel = {
 	isRolloutEnabled: boolean,

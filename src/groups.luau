@@ -21,10 +21,6 @@ export type UpdateGroupSettingsRequest = {
 	areEnemiesAllowed: boolean,
 }
 
-export type UserGroupMembershipResponsePages = { data: { UserGroupMembershipResponse } }
-
-export type IUploadedFile = buffer
-
 --- A group roles response model
 export type GroupAllRolesResponse = { roles: { GroupRoleResponse }, groupId: number }
 
@@ -55,8 +51,6 @@ export type GroupAuditLogResponseItem = {
 	actionType: string,
 }
 
-export type GroupPayoutResponsePages = { data: { GroupPayoutResponse } }
-
 export type CreateRoleSetRequest = { description: string, usingGroupFunds: boolean, name: string, rank: number }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
@@ -70,8 +64,6 @@ export type GroupEconomyPermissionsModel = {
 	spendGroupFunds: boolean,
 	addGroupPlaces: boolean,
 }
-
-export type GroupDescriptionResponse = { newDescription: string }
 
 --- A model representing group posts permissions
 export type GroupPostsPermissionsModel = {
@@ -118,15 +110,6 @@ export type ChangeOwnerRequest = { userId: number }
 --- A group role response model
 export type GroupRoleResponse = { name: string, id: number, memberCount: number, description: string, rank: number }
 
-export type StringPages = {
-	discriminator: string,
-	sortOrder: number,
-	key: string,
-	count: number,
-	pagingDirection: number,
-	pageNumber: number,
-}
-
 --- A detailed group response model
 export type GroupDetailResponse = {
 	description: string,
@@ -159,8 +142,6 @@ export type JoinGroupRequest = {
 	captchaProvider: string,
 	captchaToken: string,
 }
-
-export type GroupDetailResponsePages = { data: { GroupDetailResponse } }
 
 export type GroupResponseV2 = {
 	created: string,
@@ -224,16 +205,8 @@ export type GroupNameHistoryResponseItemPages = {
 
 export type GroupPolicyRequest = { groupIds: { number } }
 
-export type GroupRoleDetailResponsePages = { data: { GroupRoleDetailResponse } }
-
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
-export type GroupMembershipDetailResponsePages = { data: { GroupMembershipDetailResponse } }
-
 --- A response model for recurring payout configuration
 export type RecurringPayoutsConfigurationResponse = { maxPayoutPartners: number }
-
-export type GroupBasicResponsePages = { data: { GroupBasicResponse } }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
 export type GroupMembershipPermissionsModel = {
@@ -251,17 +224,6 @@ export type GroupJoinRequestResponsePages = {
 
 export type RelationshipsRequest = { GroupIds: { number } }
 
-export type Stream = {
-	CanRead: boolean,
-	CanWrite: boolean,
-	CanTimeout: boolean,
-	Position: number,
-	WriteTimeout: number,
-	Length: number,
-	ReadTimeout: number,
-	CanSeek: boolean,
-}
-
 --- A request model for setting the authenticated user's primary group.
 export type PostGroupStatusRequest = { message: string }
 
@@ -273,8 +235,6 @@ export type GroupSearchPageResponse = {
 	previousPageCursor: string,
 }
 
-export type GroupWallPostModelPages = { nextPageCursor: string, previousPageCursor: string, data: { GroupWallPostModel } }
-
 --- A group role's permissions response model
 export type GroupPermissionsResponse = { permissions: GroupPermissionsModel, role: GroupRoleResponse, groupId: number }
 
@@ -282,12 +242,8 @@ export type UserModelPages = { nextPageCursor: string, previousPageCursor: strin
 
 export type GroupPolicyResponse = { canViewGroup: boolean, groupId: number }
 
-export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- A request model for setting the authenticated user's primary group.
 export type PrimaryGroupRequest = { groupId: number }
-
-export type GroupPermissionsResponsePages = { data: { GroupPermissionsResponse } }
 
 --- A social link response from a create request
 export type SocialLinkResponse = { id: number, type: number, title: string, url: string }
@@ -308,12 +264,6 @@ export type GroupAuditLogResponseItemPages = {
 	previousPageCursor: string,
 	data: { GroupAuditLogResponseItem },
 }
-
-export type SocialLinkResponsePages = { data: { SocialLinkResponse } }
-
-export type UpdateGroupNameResponse = { newName: string }
-
-export type GroupFeaturedContentResponse = { contentType: string, contentId: string, groupId: number }
 
 --- A users group membership response model
 export type UserGroupMembershipResponse = { groups: { GroupMembershipDetailResponse }, user: UserModel }
@@ -350,12 +300,8 @@ export type UpdatePermissionsRequest = {
 --- A request model for updating a group's notification preference.
 export type UpdateGroupNotificationPreferenceRequest = { notificationsEnabled: boolean }
 
-export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
-
 --- A request model for setting a description for the group
 export type UpdateGroupDescriptionRequest = { description: string }
-
-export type GroupPoliciesResponse = { groups: { GroupPolicyResponse } }
 
 export type GroupNameChangeConfigurationResponse =
 	{ ownershipCooldownInDays: number, cooldownInDays: number, cost: number }
@@ -431,15 +377,11 @@ export type GroupSearchMetadataResponse = { ShowFriendsGroupsSort: boolean, Sugg
 --- A group payout response
 export type GroupPayoutResponse = { percentage: number, user: UserModel }
 
-export type GroupMembershipResponsePages = { data: { GroupMembershipResponse } }
-
 export type GroupWallPostV2ModelPages = {
 	nextPageCursor: string,
 	previousPageCursor: string,
 	data: { GroupWallPostV2Model },
 }
-
-export type GroupResponseV2Pages = { data: { GroupResponseV2 } }
 
 --- A basic group membership response model
 export type GroupMembershipResponse = {

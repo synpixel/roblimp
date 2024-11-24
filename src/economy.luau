@@ -5,8 +5,6 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type CurrencyResponse = { robux: number }
-
 --- Gets currency for the authenticated user.
 local function robux(cookie: string): Response<number>
 	return requestWithCsrfToken({

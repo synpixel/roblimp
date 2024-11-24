@@ -5,23 +5,8 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type ImageParameters = {
-	IsCircular: boolean,
-	MimeType: string,
-	Height: number,
-	Format: FormatType,
-	FileExtension: string,
-	Width: number,
-}
-
 --- A response model for thumbnails which belong to a specific universe ID
 export type UniverseThumbnailsResponse = { universeId: number, error: ApiErrorModel, thumbnails: { ThumbnailResponse } }
-
-export type UniverseThumbnailsResponsePages = { data: { UniverseThumbnailsResponse } }
-
-export type ThumbnailBatchResponsePages = { data: { ThumbnailBatchResponse } }
-
-export type FormatType = { Name: string, Value: number }
 
 export type ThumbnailBatchRequest = {
 	isCircular: boolean,
@@ -58,17 +43,6 @@ export type ThumbnailBatchResponse = {
 	errorCode: number,
 	errorMessage: string,
 	requestId: string,
-}
-
-export type ApiErrorModel = { message: string, code: number, field: string, fieldData: nil, userFacingMessage: string }
-
-export type ThumbnailResponsePages = { data: { ThumbnailResponse } }
-
-export type ThumbnailResponse = {
-	state: "Error" | "Completed" | "InReview" | "Pending" | "Blocked" | "TemporarilyUnavailable",
-	imageUrl: string,
-	targetId: number,
-	version: string,
 }
 
 --- Returns a list of thumbnails with varying types and sizes

@@ -5,75 +5,11 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type ReceiverDestinationSettingModel = {
-	platform: "ChromeOnDesktop"
-		| "AndroidNative"
-		| "FirefoxOnDesktop"
-		| "IOSNative"
-		| "AndroidAmazon"
-		| "IOSTencent"
-		| "AndroidTencentService"
-		| "IOSPushKit",
-	name: string,
-	isEnabled: boolean,
-	destinationId: number,
-	isSetByReceiver: boolean,
-}
-
-export type ReceiverNotificationSettingGroupModel = {
-	notificationSourceType: "Test"
-		| "FriendRequestReceived"
-		| "FriendRequestAccepted"
-		| "PartyInviteReceived"
-		| "PartyMemberJoined"
-		| "ChatNewMessage"
-		| "PrivateMessageReceived"
-		| "UserAddedToPrivateServerWhiteList"
-		| "ConversationUniverseChanged"
-		| "TeamCreateInvite"
-		| "GameUpdate"
-		| "DeveloperMetricsAvailable"
-		| "GroupJoinRequestAccepted"
-		| "Sendr"
-		| "ExperienceInvitation",
-	receiverDestinationType: "DesktopPush" | "MobilePush" | "NotificationStream",
-	isEnabled: boolean,
-	isOverridable: boolean,
-	isSetByReceiver: boolean,
-	pushNotificationDestinationPreferences: { ReceiverDestinationSettingModel },
-}
-
 export type GetPushDestinationsResponseModel = { statusMessage: string, destinations: { UserPushDestination } }
 
 export type NotificationIdsResponseModel = { statusMessage: string, ids: { string } }
 
 export type RegisterChromeRequestModel = { notificationToken: string, initiatedByUser: boolean }
-
-export type UserNotificationSettingsModel = {
-	optedOutReceiverDestinationTypes: { "DesktopPush" | "MobilePush" | "NotificationStream" },
-	notificationBandSettings: { ReceiverNotificationSettingGroupModel },
-	optedOutNotificationSourceTypes: {
-		"Test"
-		| "FriendRequestReceived"
-		| "FriendRequestAccepted"
-		| "PartyInviteReceived"
-		| "PartyMemberJoined"
-		| "ChatNewMessage"
-		| "PrivateMessageReceived"
-		| "UserAddedToPrivateServerWhiteList"
-		| "ConversationUniverseChanged"
-		| "TeamCreateInvite"
-		| "GameUpdate"
-		| "DeveloperMetricsAvailable"
-		| "GroupJoinRequestAccepted"
-		| "Sendr"
-		| "ExperienceInvitation"
-	},
-}
-
-export type SuccessResponseModel = { statusMessage: string }
-
-export type RolloutSettingsModel = { isValidFeature: boolean, isRolloutEnabled: boolean, featureName: string }
 
 export type NotificationStreamEntriesModel = {
 	isInteracted: boolean,
@@ -164,18 +100,6 @@ export type ChromeManifestModel = { name: string, gcm_sender_id: string }
 
 export type NotificationUser = { name: string, userId: number }
 
-export type MarkAsReadRequestModel = {
-	platformType: "ChromeOnDesktop"
-		| "AndroidNative"
-		| "FirefoxOnDesktop"
-		| "IOSNative"
-		| "AndroidAmazon"
-		| "IOSTencent"
-		| "AndroidTencentService"
-		| "IOSPushKit",
-	notificationId: string,
-}
-
 export type RegisterIOSNativeRequestModel = {
 	oldNotificationToken: string,
 	deviceName: string,
@@ -183,8 +107,6 @@ export type RegisterIOSNativeRequestModel = {
 	destinationIdentifier: string,
 	notificationToken: string,
 }
-
-export type NotificationRolloutSettingsModel = { rollOutFeatureEnabledList: { RolloutSettingsModel } }
 
 export type GameUpdateNotificationReadRequestModel = { universeId: number, createdOn: string, currentUserId: number }
 
@@ -239,26 +161,6 @@ export type MarkInteractionRequestModel = {
 		| "AndroidTencentService"
 		| "IOSPushKit",
 	notificationId: string,
-}
-
-export type MarkCategoryAsReadRequestModel = {
-	latestNotificationId: string,
-	notificationType: "Test"
-		| "FriendRequestReceived"
-		| "FriendRequestAccepted"
-		| "PartyInviteReceived"
-		| "PartyMemberJoined"
-		| "ChatNewMessage"
-		| "PrivateMessageReceived"
-		| "UserAddedToPrivateServerWhiteList"
-		| "ConversationUniverseChanged"
-		| "TeamCreateInvite"
-		| "GameUpdate"
-		| "DeveloperMetricsAvailable"
-		| "GroupJoinRequestAccepted"
-		| "Sendr"
-		| "ExperienceInvitation",
-	category: string,
 }
 
 --- Gets the recent entries from the notification stream

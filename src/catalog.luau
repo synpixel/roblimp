@@ -5,8 +5,6 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
 --- A response containing favorited bundles and whether there are more.
 export type FavoriteBundlesResponse = {
 	moreFavorites: boolean,
@@ -70,17 +68,7 @@ export type OwnedBundleModelPages = { nextPageCursor: string, previousPageCursor
 --- A model to represent asset favorites.
 export type AssetFavoriteModel = { created: string, assetId: number, userId: number }
 
-export type ApiEmptyResponseModel = {}
-
 export type CatalogSearchDetailedResponseItemPages = { data: { CatalogSearchDetailedResponseItem } }
-
-export type TopicRequestModel = {
-	items: { AvatarItem },
-	inputQuery: string,
-	selectTopics: { string },
-	genderType: number,
-	maxResult: number,
-}
 
 --- SaleLocation information for a collectible item (asset or bundle).
 export type SaleLocation = {
@@ -90,14 +78,8 @@ export type SaleLocation = {
 	saleLocationTypeId: number,
 }
 
-export type IBundleInstancePages = { CursorRecipe: string, ExclusiveStartKeyInfo: IBundleInstancePages }
-
 --- Defines the Premium pricing for a catalog item
 export type PremiumPricingModel = { premiumDiscountPercentage: number, premiumPriceInRobux: number }
-
-export type BundleDetailsModelPages = { data: { BundleDetailsModel } }
-
-export type Error = { Message: string, Code: number }
 
 --- A model to represent bundle favorites.
 export type BundleFavoriteModel = { created: string, bundleId: number, userId: number }
@@ -126,8 +108,6 @@ export type CollectibleItemDetail = {
 	saleLocation: SaleLocation,
 }
 
-export type AvatarItem = { TargetId: number, ItemType: number }
-
 export type BundleProductModel = {
 	isPublicDomain: boolean,
 	type: string,
@@ -139,11 +119,7 @@ export type BundleProductModel = {
 	premiumPricing: PremiumPricingModel,
 }
 
-export type TopicResponse = { topics: { TopicModel }, error: Error }
-
 export type MultigetItemDetailsRequestItem = { itemType: number, id: number }
-
-export type Int32Pages = { SortOrder: number, PagingDirection: number, Count: number }
 
 export type ElasticsearchDebugInfo = {
 	isForceTerminationEnabledByRequest: boolean,

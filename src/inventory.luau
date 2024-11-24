@@ -5,8 +5,6 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 export type AssetsExplorerCategoryModel = {
 	items: { AssetsExplorerCategoryItemModel },
 	categoryType: string,
@@ -24,8 +22,6 @@ export type PlaceModelPages = { nextPageCursor: string, previousPageCursor: stri
 
 --- A model that contains a list of asset ids
 export type AssetIdListModel = { assetIds: { number } }
-
-export type CanViewInventoryResponse = { canView: boolean }
 
 --- A model containing information about a Roblox.Platform.AssetOwnership.UserAsset
 export type CollectibleUserAssetModel = {
@@ -57,13 +53,9 @@ export type PlaceModel = { universeId: number, name: string, priceInRobux: numbe
 --- Model class that contains the categories of the Inventory or Favorites page
 export type CategoriesModel = { categories: { AssetsExplorerCategoryModel } }
 
-export type IItemModelPages = { nextPageCursor: string, previousPageCursor: string, data: { IItemModel } }
-
 export type ApiEmptyResponseModel = {}
 
 export type CreatorModel = { id: number, type: number, name: string }
-
-export type InventoryPageResponse = { total: number, data: { nil }, includesAccessories: boolean }
 
 --- A model representing data about an Roblox.Platform.Membership.IUser
 export type UserModel = { username: string, buildersClubMembershipType: number, userId: number }
@@ -90,8 +82,6 @@ export type InventoryItemModel = {
 	created: string,
 	serialNumber: number,
 }
-
-export type InventoryItemModelPages = { nextPageCursor: string, previousPageCursor: string, data: { InventoryItemModel } }
 
 --- The user asset item model for V2 controllers.
 export type UserAssetItemModelV2 = { created: string, assetId: number, name: string, assetType: number }

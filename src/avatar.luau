@@ -70,8 +70,6 @@ export type AvatarMetadataModel = {
 
 export type AssetPosition = { Y: number, X: number, Z: number }
 
-export type UniverseAvatarAssetOverrideResponseModel = { assetID: number, assetTypeID: number, isPlayerChoice: boolean }
-
 export type AssetScale = { Y: number, X: number, Z: number }
 
 --- Exhaustive model denoting all possible metadata fields of an asset
@@ -354,8 +352,6 @@ export type OutfitUpdateModelV2 = {
 
 --- A model that contains a list of AssetWear models
 export type WearRequestModel = { assets: { AssetWearModel } }
-
-export type ApiEmptyResponseModel = {}
 
 --- A model which contains
 --- - an asset id

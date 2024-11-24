@@ -83,8 +83,6 @@ export type VipServerUpdateRequest = { newJoinCode: boolean, name: string, activ
 --- User Presences Response model
 export type PrivateServersResponse = { privateServerResponses: { GameServerResponse } }
 
-export type GameDetailResponsePages = { data: { GameDetailResponse } }
-
 --- An create request for a vip server
 export type CreateVipServersRequest = { expectedPrice: number, name: string, isPurchaseConfirmed: boolean }
 
@@ -129,8 +127,6 @@ export type GameServerResponsePages = { nextPageCursor: string, previousPageCurs
 
 export type GamePassResponsePages = { nextPageCursor: string, previousPageCursor: string, data: { GamePassResponse } }
 
-export type GameVoteResponsePages = { data: { GameVoteResponse } }
-
 --- Game recommendations response model.
 export type GameRecommendationsResponse = { games: { GameResponseModel }, nextPaginationKey: string }
 
@@ -145,10 +141,6 @@ export type GameProductResponse = {
 
 --- Response model for getting a universe's playability status for a user
 export type PlayabilityStatusResponse = { isPlayable: boolean, universeId: number, playabilityStatus: number }
-
-export type GameProductResponsePages = { data: { GameProductResponse } }
-
-export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
 
 --- Response model for getting the game detail
 export type GameDetailResponse = {
@@ -186,15 +178,6 @@ export type VipServerCanInviteResponse = {
 	doesOwnerPrivacyRestrictJoins: boolean,
 	inviteResponseType: number,
 	canInvite: boolean,
-}
-
-export type StringPages = {
-	discriminator: string,
-	sortOrder: number,
-	key: string,
-	count: number,
-	pagingDirection: number,
-	pageNumber: number,
 }
 
 export type SkinnyUserResponse = { id: number, name: string, displayName: string }
@@ -237,8 +220,6 @@ export type GameMediaItem = {
 	imageId: number,
 }
 
-export type GameMediaItemPages = { data: { GameMediaItem } }
-
 --- Response model for a place.
 export type PlaceDetails = {
 	reasonProhibited: string,
@@ -276,10 +257,6 @@ export type GameCreator = { type: string, name: string, id: number, isRNVAccount
 --- A response model representing a game server player.
 export type GameServerPlayerResponse = { playerToken: string, id: number, name: string, displayName: string }
 
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
-export type Int32Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int32Pages }
-
 --- A response model representing a game.
 export type GameResponseV2 = {
 	created: string,
@@ -302,8 +279,6 @@ export type GameMediaItemResponseV2 = {
 	assetType: string,
 	imageId: number,
 }
-
-export type GameMediaItemResponseV2Pages = { data: { GameMediaItemResponseV2 } }
 
 export type GameResponseV2Pages = { nextPageCursor: string, previousPageCursor: string, data: { GameResponseV2 } }
 

@@ -5,11 +5,7 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type Int64Pages = { SortOrder: number, PagingDirection: number, Count: number }
-
 export type TradeRequest = { offers: { TradeOfferRequest } }
-
-export type NewTradeResponse = { id: number }
 
 export type SkinnyUserResponse = { id: number, name: string, displayName: string }
 
@@ -58,8 +54,6 @@ export type TradeDetailResponse = {
 }
 
 export type ApiEmptyResponseModel = {}
-
-export type TradeCountResponse = { count: number }
 
 export type TradeOfferResponse = { robux: number, userAssets: { UserAssetResponse }, user: SkinnyUserResponse }
 

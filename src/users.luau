@@ -44,8 +44,6 @@ export type GenderResponse = { gender: number }
 --- Request model for getting users by usernames.
 export type MultiGetByUsernameRequest = { excludeBannedUsers: boolean, usernames: { string } }
 
-export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
-
 --- A user roles response model.
 export type UserRolesResponse = { roles: { string } }
 
@@ -66,19 +64,6 @@ export type MultiGetUserByNameResponse = {
 
 --- Request model for changing a display name.
 export type SetDisplayNameRequest = { newDisplayName: string }
-
-export type Int64Pages = {
-	discriminator: string,
-	sortOrder: number,
-	key: number,
-	count: number,
-	pagingDirection: number,
-	pageNumber: number,
-}
-
-export type MultiGetUserResponsePages = { data: { MultiGetUserResponse } }
-
-export type MultiGetUserByNameResponsePages = { data: { MultiGetUserByNameResponse } }
 
 --- The birthdate request
 export type BirthdateRequest = { birthYear: number, birthMonth: number, password: string, birthDay: number }

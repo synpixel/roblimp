@@ -512,6 +512,8 @@ for namespace, definitions in mappings do
 		file ..= `--- @class {namespace}\n\n`
 	end
 
+	local unusedModels: { [string]: true } = {}
+
 	for _, openapi in openapis do
 		if openapi.definitions == nil then
 			continue
@@ -519,10 +521,12 @@ for namespace, definitions in mappings do
 
 		for name, model in openapi.definitions do
 			local patchName = patchOpenApiModelName(name)
-			if file:match(`export type {patchName} =`) ~= nil then
+			if unusedModels[patchName] then
 				file ..= "\n"
 				continue
 			end
+
+			unusedModels[patchName] = true
 
 			if model.description ~= nil then
 				local patch = model.description:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
@@ -539,6 +543,35 @@ for namespace, definitions in mappings do
 	end
 
 	for _, openapi in openapis do
+		local function markUsed(model: { ["$ref"]: string?, [string]: any })
+			if model["$ref"] == nil then
+				if model.items ~= nil then
+					markUsed(model.items)
+				end
+
+				if model.properties ~= nil then
+					for _, member in model.properties do
+						markUsed(member)
+					end
+				end
+
+				return
+			end
+
+			local name = patchOpenApiModelName(model["$ref"])
+			unusedModels[name] = nil
+
+			local ref = model["$ref"]:gsub("#/definitions/", "")
+			for name, definition in openapi.definitions do
+				if name == ref then
+					model = definition
+					break
+				end
+			end
+
+			markUsed(model)
+		end
+
 		for endpoint, routes in definitions do
 			if openapi.paths[endpoint] == nil then
 				continue
@@ -575,8 +608,11 @@ for namespace, definitions in mappings do
 
 					local firstKey = if schema.properties ~= nil then next(schema.properties) else nil
 					if firstKey ~= nil and next(schema.properties, firstKey) == nil then
+						markUsed(schema.properties[firstKey])
 						patchModelName = translateOpenApiType(schema.properties[firstKey])
 						accessKey = firstKey
+					else
+						markUsed(okResponse.schema)
 					end
 				end
 
@@ -588,11 +624,14 @@ for namespace, definitions in mappings do
 				if route.parameters ~= nil then
 					for _, parameter in route.parameters do
 						if parameter["in"] == "body" then
+							markUsed(parameter.schema)
 							bodyParameter = parameter
 							continue
 						elseif parameter["in"] == "header" then
 							continue
 						end
+
+						markUsed(parameter)
 
 						local name = parameter.name:sub(1, 1):lower() .. parameter.name:sub(2)
 
@@ -767,6 +806,10 @@ for namespace, definitions in mappings do
 	end
 
 	file ..= "}\n\n"
+
+	for unusedModel in unusedModels do
+		file = file:gsub(`\n\n[^\n]*export type {unusedModel}%s*=%s*.-\n\n`, "\n\n")
+	end
 
 	fs.writeFile(`src/{namespace}.luau`, if FORMAT then stylua(file) else file)
 end

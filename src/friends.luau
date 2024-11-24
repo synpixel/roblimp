@@ -48,8 +48,6 @@ export type FollowCountResponse = { count: number }
 --- Response model for Pending Friend Request Count
 export type PendingFriendRequestCountModel = { count: number }
 
-export type FriendRequestsPlatformExclusiveStartKeyPages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- The friendship status response model.
 export type ClearNewFriendRequestResponse = { status: boolean }
 
@@ -67,12 +65,6 @@ export type FriendsCountResponse = { count: number }
 
 --- A response model representing friend information
 export type FriendResponse = { id: number, hasVerifiedBadge: boolean }
-
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
-export type StringPages = { Item2: StringPages, Item1: Int64Pages }
-
-export type UserPresenceResponsePages = { data: { UserPresenceResponse } }
 
 --- Request model for MultigetAreFriends endpoint
 export type MultigetAreFriendsRequestModel = { targetUserIds: { number } }
@@ -121,8 +113,6 @@ export type FriendRequestResponsePages = {
 	previousPageCursor: string,
 	data: { FriendRequestResponse },
 }
-
-export type FriendStatusResponsePages = { data: { FriendStatusResponse } }
 
 --- This is response model to notify when action succeeded, failed, or captcha is required
 export type CaptchaStatusResponseModel = { success: boolean, isCaptchaRequired: boolean }

@@ -15,8 +15,6 @@ export type AnnouncementsDetailsResponse = {
 	body: string,
 }
 
-export type UnreadMessagesCountResponse = { count: number }
-
 export type SendMessageResponse = { message: string, success: boolean, shortMessage: string }
 
 export type BatchMessagesRequest = { messageIds: { number } }
@@ -58,10 +56,6 @@ export type SendMessageRequest = {
 	userId: number,
 	body: string,
 }
-
-export type CanMessageResponse = { canMessage: boolean }
-
-export type BatchMessagesResponse = { failedMessages: { FailedMessageResponse } }
 
 export type GetAnnouncementsResponse = { collection: { AnnouncementsDetailsResponse }, totalCollectionSize: number }
 

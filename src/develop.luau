@@ -5,8 +5,6 @@ local Result = require("../lune_packages/result")
 type Error = requestWithCsrfToken.Error
 type Response<T> = Result.Result<T, Error>
 
-export type UniverseTeamCreateSettingsModelPages = { data: { UniverseTeamCreateSettingsModel } }
-
 --- Model for private server details responses from the UniverseSettings controller.
 export type PrivateServerDetailsResponse = {
 	isEnabled: boolean,
@@ -14,8 +12,6 @@ export type PrivateServerDetailsResponse = {
 	price: number,
 	activeSubscriptionsCount: number,
 }
-
-export type GameTemplateModelPages = { data: { GameTemplateModel } }
 
 --- Represents a game template in API endpoint responses.
 export type GameTemplateModel = { hasTutorials: boolean, universe: UniverseModel, gameTemplateType: string }
@@ -59,11 +55,7 @@ export type UniversePermissionsModel = { canManage: boolean, canCloudEdit: boole
 --- A model containing information about a place
 export type PlaceModel = { id: number, universeId: number, name: string, description: string }
 
-export type Int64Pages = { CursorRecipe: string, ExclusiveStartKeyInfo: Int64Pages }
-
 export type IPlaceModelPages = { nextPageCursor: string, previousPageCursor: string, data: { IPlaceModel } }
-
-export type PluginResponsePages = { data: { PluginResponse } }
 
 export type UniverseModelPages = { nextPageCursor: string, previousPageCursor: string, data: { UniverseModel } }
 
@@ -71,10 +63,6 @@ export type ApiEmptyResponseModel = {}
 
 --- A model containing information about a universe permissions
 export type UniverseIdPermissionsModel = { canManage: boolean, universeId: number, canCloudEdit: boolean }
-
-export type AssetVotingModelPages = { data: { AssetVotingModel } }
-
-export type StartIndexCursor = { discriminator: string, count: number, startIndex: number }
 
 --- Team create settings of a universe
 export type UniverseTeamCreateSettingsModel = { id: number, isEnabled: boolean }
@@ -109,8 +97,6 @@ export type UniverseSettingsRequest = {
 	universeAnimationType: number,
 }
 
-export type SkinnyUserResponse = { id: number, name: string, displayName: string }
-
 --- A model containing information about a group
 export type GroupModel = { id: number, name: string }
 
@@ -119,10 +105,6 @@ export type TeamCreateMembershipRequest = { userId: number }
 
 --- A model containing information about a place to be configured
 export type PlaceConfigurationModel = { name: string, description: string }
-
-export type UniverseIdPermissionsModelPages = { data: { UniverseIdPermissionsModel } }
-
-export type GroupModelPages = { data: { GroupModel } }
 
 --- A request model for updating a plugin.
 export type UpdatePluginRequest = { commentsEnabled: boolean, name: string, description: string }
@@ -153,8 +135,6 @@ export type UniverseSettingsResponse = {
 	universeJointPositioningType: number,
 	universeAnimationType: number,
 }
-
-export type SkinnyUserResponsePages = { data: { SkinnyUserResponse } }
 
 --- Model for UniverseSettings controller responses
 export type UniverseSettingsResponseV2 = {
@@ -200,8 +180,6 @@ export type PlaceModelV2 = {
 	allowedGearTypes: { number },
 }
 
-export type StringPages = { SortOrder: number, PagingDirection: number, Count: number }
-
 --- Represents a universe moderation policy status
 export type UniverseModerationPolicyStatus = { status: string, region: number }
 
@@ -216,8 +194,6 @@ export type PlaceConfigurationModelV2 = {
 	socialSlotType: string,
 	description: string,
 }
-
-export type AssetVersionPages = { nextPageCursor: string, previousPageCursor: string, data: { AssetVersion } }
 
 --- Model of an asset version.
 export type AssetVersion = {

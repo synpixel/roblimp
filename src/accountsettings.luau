@@ -18,8 +18,6 @@ export type UpdateAccountCountryResponse = {}
 --- Response model for getting the user's inventory privacy settings
 export type InventoryPrivacyResponse = { inventoryPrivacy: number }
 
-export type StringPages = { data: { string } }
-
 --- Response model for getting the user's email address and verified status
 export type EmailResponse = { verified: boolean, emailAddress: string, canBypassPasswordForEmailUpdate: boolean }
 
@@ -54,8 +52,6 @@ export type UserAccountCountry = {
 	subdivisionIso: string,
 }
 
-export type AccountCountrySettingsResponse = { value: UserAccountCountry }
-
 --- Request model for inventory privacy setting update
 export type InventoryPrivacyRequest = { inventoryPrivacy: number }
 
@@ -89,8 +85,6 @@ export type GetDetailedBlockedUsersResponse = { blockedUsers: { BlockedUser }, t
 
 --- Request model for sending a verify email request
 export type SendVerifyEmailRequest = { freeItem: boolean, isAdsAccount: boolean }
-
-export type GetBlockedUsersResponse = { blockedUserIds: { number } }
 
 --- Response model for getting the user's private message privacy settings
 export type PrivateMessagePrivacyResponse = { privateMessagePrivacy: string }
