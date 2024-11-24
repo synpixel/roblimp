@@ -337,6 +337,9 @@ local mappings: { [string]: EndpointMappings } = {
 		["/v1/messages/mark-unread"] = { post = "markAsUnread" },
 		["/v1/messages/send"] = { post = "send" },
 	},
+	thumbnails = {
+		["/v1/batch"] = { post = "batch" },
+	},
 	trades = {
 		["/v1/trades/metadata"] = { get = "metadata" },
 		["/v1/trades/{tradeId}"] = { get = "get" },
@@ -587,6 +590,8 @@ for namespace, definitions in mappings do
 						if parameter["in"] == "body" then
 							bodyParameter = parameter
 							continue
+						elseif parameter["in"] == "header" then
+							continue
 						end
 
 						local name = parameter.name:sub(1, 1):lower() .. parameter.name:sub(2)
@@ -633,7 +638,8 @@ for namespace, definitions in mappings do
 							onlyParameter.name = firstKey
 						end
 					else
-						onlyParameter = bodyParameter
+						onlyParameter = table.clone(bodyParameter.schema)
+						onlyParameter.name = bodyParameter.name
 					end
 				end
 

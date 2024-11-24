@@ -11,10 +11,11 @@ local economy = require("./economy")
 local privatemessages = require("./privatemessages")
 local develop = require("./develop")
 local friends = require("./friends")
+local users = require("./users")
 local badges = require("./badges")
 local notifications = require("./notifications")
-local users = require("./users")
 local games = require("./games")
+local thumbnails = require("./thumbnails")
 local followings = require("./followings")
 
 return {
@@ -31,9 +32,10 @@ return {
 	privatemessages = privatemessages,
 	develop = develop,
 	friends = friends,
+	users = users,
 	badges = badges,
 	notifications = notifications,
-	users = users,
 	games = games,
+	thumbnails = thumbnails,
 	followings = followings,
 }
