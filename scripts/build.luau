@@ -253,11 +253,6 @@ local function writeNamespace(
 					for index in removeParameters do
 						route.parameters[index] = nil
 					end
-
-					-- It just looks nicer
-					if body ~= nil and body.name == "requestModel" then
-						body.name = "request"
-					end
 				end
 
 				local okResponse = route.responses["200"]
@@ -311,7 +306,7 @@ local function writeNamespace(
 							construct = true
 						else
 							request = translate(model)
-							requestName = body.name
+							requestName = "request"
 							takes = `{requestName}.%s`
 						end
 					else
