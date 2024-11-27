@@ -45,7 +45,7 @@
     "/v2/avatar/users/{userId}/avatar": { "get": "of" },
     "/v2/avatar/users/{userId}/outfits": { "get": "outfits" },
     "/v2/avatar/set-body-colors": { "post": "setBodyColors" },
-    "/v2/avatar/set-wearing-assets": { "post": "wearAssets" },
+    "/v2/avatar/set-wearing-assets": { "post": "wear" },
     "/v3/outfits/{userOutfitId}/details": { "get": "outfit" },
     "/v3/outfits/create": { "post": "createOutfit" },
     "/v3/outfits/{userOutfitId}": { "patch": "updateOutfit" }
@@ -100,9 +100,9 @@
     "/v1/user/universes": { "get": "universes" },
     "/v1/universes/{universeId}/activate": { "post": "activate" },
     "/v1/universes/{universeId}/deactivate": { "post": "deactivate" },
-    "/v1/plugins/{pluginId}": { "patch": "updatePlugin" },
-    "/v2/places/{placeId}": { "get": "place", "patch": "configurePlace" },
-    "/v2/universes/{universeId}/configuration": { "patch": "configure" }
+    "/v1/plugins/{pluginId}": { "patch": "editPlugin" },
+    "/v2/places/{placeId}": { "get": "place", "patch": "editPlace" },
+    "/v2/universes/{universeId}/configuration": { "patch": "editUniverse" }
   },
   "economy": {
     "/v1/user/currency": { "get": "robux" }
@@ -172,14 +172,14 @@
     },
     "/v1/private-servers/my-private-servers": { "get": "ownedPrivates" },
     "/v1/vip-server/can-invite/{userId}": { "get": "canInviteToPrivate" },
-    "/v1/vip-servers/{id}": { "get": "private", "patch": "configurePrivate" },
+    "/v1/vip-servers/{id}": { "get": "private", "patch": "updatePrivate" },
     "/v1/games/vip-servers/{universeId}": { "post": "createPrivate" },
     "/v1/vip-servers/{id}/permissions": { "patch": "updatePermissions" },
     "/v1/vip-servers/{id}/subscription": { "patch": "updateSubscription" },
     "/v1/vip-servers/{id}/voicesettings": { "patch": "updateVoiceSettings" },
     "/v1/games/{universeId}/user-votes": { "patch": "setVote" },
     "/v2/games/{universeId}/media": { "get": "media" },
-    "/v2/groups/{groupId}/gamesV2": { "get": "ofGroup" },
+    "/v2/groups/{groupId}/games": { "get": "ofGroup" },
     "/v2/users/{userId}/games": { "get": "of" }
   },
   "groups": {
@@ -224,7 +224,7 @@
     "/v1/groups/{groupId}/roles/permissions": { "get": "allPermissions" },
     "/v1/groups/{groupId}/settings": {
       "get": "settings",
-      "patch": "updateSettings"
+      "patch": "configure"
     },
     "/v1/groups/{groupId}/social-links": {
       "get": "socialLinks",
@@ -388,7 +388,7 @@
     "/v1/users/authenticated/age-bracket": { "get": "ageBracket" },
     "/v1/users/authenticated/country-code": { "get": "countryCode" },
     "/v1/users/authenticated/roles": { "get": "publicRoles" },
-    "/v1/users": { "post": "fromIds" },
+    "/v1/users": { "post": "multiple" },
     "/v1/usernames/users": { "post": "fromNames" },
     "/v1/users/{userId}/username-history": { "get": "usernameHistory" },
     "/v1/users/search": { "get": "search" }
