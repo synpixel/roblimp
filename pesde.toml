@@ -1,5 +1,5 @@
 name = "synpixel/roblimp"
-version = "0.1.0"
+version = "0.1.1"
 description = "An auto-generated wrapper around Roblox's API"
 authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
