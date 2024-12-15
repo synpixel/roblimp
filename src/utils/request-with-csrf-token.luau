@@ -31,23 +31,17 @@ local function decodeJson(encoded: string): Result.Result<any, unknown>
 	return Result.try(serde.decode, "json" :: serde.EncodeDecodeFormat, encoded)
 end
 
-local function readRobloxError(response: net.FetchResponse): Result.Result<RobloxError?, nil>
-	return decodeJson(response.body)
-		:map(function(body)
-			if body.errors == nil then
-				return nil
-			end
-			return body.errors[1]
-		end)
-		:mapErr(function()
-			return nil
-		end)
+local function readRobloxError(response: net.FetchResponse): Result.Result<RobloxError, unknown>
+	return Result.try(function()
+		local body = decodeJson(response.body):unwrap()
+		return body.errors[1]
+	end)
 end
 
 local function requestWithCsrfToken(params: net.FetchParams): Result.Result<net.FetchResponse, Error>
 	local headers = if params.headers == nil then {} :: net.HttpHeaderMap else table.clone(params.headers)
 
-	local cookie = if headers.Cookie == nil then nil else headers.Cookie:match("%.ROBLOSECURITY=(.+);?")
+	local cookie = if typeof(headers.Cookie) ~= "string" then nil else headers.Cookie:match("%.ROBLOSECURITY=(.+);?")
 	if cookie ~= nil then
 		headers["X-Csrf-Token"] = csrfTokenCache[cookie]
 	end
@@ -69,7 +63,7 @@ local function requestWithCsrfToken(params: net.FetchParams): Result.Result<net.
 		local error = {
 			statusCode = response.statusCode,
 			statusMessage = response.statusMessage,
-			roblox = readRobloxError(response):unwrapOr(nil),
+			roblox = readRobloxError(response):unwrapOr(nil :: any),
 		}
 		return Result.Err(setmetatable(error, ERROR_METATABLE))
 	end

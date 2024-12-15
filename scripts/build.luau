@@ -14,7 +14,7 @@ type OpenApiDefinition = {
 	paths: { [string]: { [string]: { [string]: any } } },
 }
 
-local DEPLOYMENT = "203AYidpISfppRfYMTY9D"
+local DEPLOYMENT = "_IV0CPbbCnNkl6nwNPEPm"
 local MAPPINGS = serde.decode("json", fs.readFile("json/mappings.json")) :: Mappings
 local OUT_DIR = "build"
 local FORMAT = true
