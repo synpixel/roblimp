@@ -2,6 +2,17 @@ local net = require("@lune/net")
 local serde = require("@lune/serde")
 local Result = require("../../lune_packages/result")
 
+export type HttpHeaderMap = { [string]: string }
+
+export type FetchParams = {
+	url: string,
+	method: net.HttpMethod?,
+	body: (string | buffer)?,
+	query: net.HttpQueryMap?,
+	headers: HttpHeaderMap?,
+	options: net.FetchParamsOptions?,
+}
+
 type RobloxError = { code: number, message: string }
 
 export type Error = typeof(setmetatable(
@@ -38,10 +49,10 @@ local function readRobloxError(response: net.FetchResponse): Result.Result<Roblo
 	end)
 end
 
-local function requestWithCsrfToken(params: net.FetchParams): Result.Result<net.FetchResponse, Error>
-	local headers = if params.headers == nil then {} :: net.HttpHeaderMap else table.clone(params.headers)
+local function requestWithCsrfToken(params: FetchParams): Result.Result<net.FetchResponse, Error>
+	local headers: HttpHeaderMap = if params.headers ~= nil then table.clone(params.headers) else {}
 
-	local cookie = if typeof(headers.Cookie) ~= "string" then nil else headers.Cookie:match("%.ROBLOSECURITY=(.+);?")
+	local cookie = if headers.Cookie == nil then nil else headers.Cookie:match("%.ROBLOSECURITY=(.+);?")
 	if cookie ~= nil then
 		headers["X-Csrf-Token"] = csrfTokenCache[cookie]
 	end
