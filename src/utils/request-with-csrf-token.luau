@@ -17,8 +17,8 @@ type RobloxError = { code: number, message: string }
 
 export type Error = typeof(setmetatable(
 	{} :: {
-		statusCode: number,
-		statusMessage: string,
+		status_code: number,
+		status_message: string,
 		roblox: RobloxError?,
 	},
 	{} :: {
@@ -29,32 +29,32 @@ export type Error = typeof(setmetatable(
 local ERROR_METATABLE = {
 	__tostring = function(self: Error)
 		if self.roblox == nil then
-			return `{self.statusCode} {self.statusMessage}`
+			return `{self.status_code} {self.status_message}`
 		else
-			return `{self.statusCode} {self.statusMessage} ({self.roblox.code}: {self.roblox.message})`
+			return `{self.status_code} {self.status_message} ({self.roblox.code}: {self.roblox.message})`
 		end
 	end,
 }
 
-local csrfTokenCache = {}
+local csrf_token_cache = {}
 
-local function decodeJson(encoded: string): Result.Result<any, unknown>
+local function decode_json(encoded: string): Result.Result<any, unknown>
 	return Result.try(serde.decode, "json" :: serde.EncodeDecodeFormat, encoded)
 end
 
-local function readRobloxError(response: net.FetchResponse): Result.Result<RobloxError, unknown>
+local function read_roblox_error(response: net.FetchResponse): Result.Result<RobloxError, unknown>
 	return Result.try(function()
-		local body = decodeJson(response.body):unwrap()
+		local body = decode_json(response.body):unwrap()
 		return body.errors[1]
 	end)
 end
 
-local function requestWithCsrfToken(params: FetchParams): Result.Result<net.FetchResponse, Error>
+local function request_with_csrf_token(params: FetchParams): Result.Result<net.FetchResponse, Error>
 	local headers: HttpHeaderMap = if params.headers ~= nil then table.clone(params.headers) else {}
 
 	local cookie = if headers.Cookie == nil then nil else headers.Cookie:match("%.ROBLOSECURITY=(.+);?")
 	if cookie ~= nil then
-		headers["X-Csrf-Token"] = csrfTokenCache[cookie]
+		headers["X-Csrf-Token"] = csrf_token_cache[cookie]
 	end
 
 	local response = net.request({
@@ -66,15 +66,15 @@ local function requestWithCsrfToken(params: FetchParams): Result.Result<net.Fetc
 	})
 
 	if response.headers["x-csrf-token"] ~= nil then
-		csrfTokenCache[cookie] = response.headers["x-csrf-token"]
-		return requestWithCsrfToken(params)
+		csrf_token_cache[cookie] = response.headers["x-csrf-token"]
+		return request_with_csrf_token(params)
 	end
 
 	if response.ok == false then
 		local error = {
-			statusCode = response.statusCode,
-			statusMessage = response.statusMessage,
-			roblox = readRobloxError(response):unwrapOr(nil :: any),
+			status_code = response.statusCode,
+			status_message = response.statusMessage,
+			roblox = read_roblox_error(response):unwrapOr(nil :: any),
 		}
 		return Result.Err(setmetatable(error, ERROR_METATABLE))
 	end
@@ -82,4 +82,4 @@ local function requestWithCsrfToken(params: FetchParams): Result.Result<net.Fetc
 	return Result.Ok(response)
 end
 
-return requestWithCsrfToken
+return request_with_csrf_token

@@ -14,10 +14,62 @@ type OpenApiDefinition = {
 	paths: { [string]: { [string]: { [string]: any } } },
 }
 
-local DEPLOYMENT = "_IV0CPbbCnNkl6nwNPEPm"
+type TransformCasingFn = ((x: string) -> string) & (<K, V>(x: { [K]: V }) -> { [K]: V })
+
 local MAPPINGS = serde.decode("json", fs.readFile("json/mappings.json")) :: Mappings
-local OUT_DIR = "build"
+local OUT_DIR = "dist"
 local FORMAT = true
+
+local snake_to_camel: TransformCasingFn
+local camel_to_snake: TransformCasingFn
+local pascal_to_kebab: TransformCasingFn
+
+do
+	local function transform(x: any, processor: (string) -> string): any
+		if typeof(x) == "string" then
+			return processor(x)
+		elseif typeof(x) == "table" then
+			local clone = {}
+
+			for key, value in x do
+				if typeof(value) == "table" then
+					value = transform(value, processor)
+				end
+				clone[transform(key, processor)] = value
+			end
+
+			return clone
+		else
+			return x
+		end
+	end
+
+	function snake_to_camel(x: any): any
+		return transform(x, function(str)
+			return str:gsub("_(%l)", function(char)
+				return char:upper()
+			end)
+		end)
+	end
+
+	function camel_to_snake(x: any): any
+		return transform(x, function(str)
+			return str:gsub("(%u+)(%u%l)", "%1_%2"):gsub("([a-z%d])(%u)", "%1_%2"):lower()
+		end)
+	end
+
+	function pascal_to_kebab(x: any): any
+		return transform(x, function(str)
+			return str:gsub("(%u+)(%u%l)", "%1-%2")
+				:gsub("(%l)(%u)", "%1-%2")
+				:gsub("%-", "%%")
+				:gsub("([A-Z]+)", function(word)
+					return word:lower()
+				end)
+				:gsub("%%", "-")
+		end)
+	end
+end
 
 local function reference(ref: string): string
 	local isPages = ref:match("%[(.+)%]") ~= nil
@@ -86,7 +138,7 @@ local function translate(raw: { [string]: any }?): string
 		local object = "{"
 
 		for name, type in raw.properties do
-			object ..= `{name}: {translate(type)},`
+			object ..= `{camel_to_snake(name)}: {translate(type)},`
 		end
 
 		return object .. "}"
@@ -117,17 +169,13 @@ end
 
 local function requestDocumentation(namespace: string, version: number): OpenApiDefinition?
 	local response =
-		net.request(`https://create.roblox.com/docs/_next/data/{DEPLOYMENT}/cloud/legacy/{namespace}/v{version}.json`)
-	if response.statusCode == 404 then
+		net.request(`https://prod.docsiteassets.roblox.com/assets/en-us/cloud/legacy/{namespace}/v{version}.json`)
+	if response.statusCode == 403 then
 		return nil
 	end
-
 	assert(response.ok, `{response.statusCode} {response.statusMessage}`)
 
-	local body = serde.decode("json", response.body) :: { pageProps: { data: { content: OpenApiDefinition } } }
-	local documentation = body.pageProps.data.content
-
-	return documentation
+	return serde.decode("json", response.body) :: OpenApiDefinition
 end
 
 local function stylua(file: string): string
@@ -172,10 +220,11 @@ local function writeNamespace(
 	local file = ""
 
 	file ..= 'local serde = require("@lune/serde")\n'
-	file ..= 'local requestWithCsrfToken = require("./utils/request-with-csrf-token")\n'
+	file ..= 'local request_with_csrf_token = require("./utils/request-with-csrf-token")\n'
+	file ..= 'local casing = require("./utils/casing")'
 	file ..= 'local Result = require("../lune_packages/result")\n\n'
 
-	file ..= "type Response<T> = Result.Result<T, requestWithCsrfToken.Error>\n\n"
+	file ..= "type Response<T> = Result.Result<T, request_with_csrf_token.Error>\n\n"
 
 	for _, documentation in documentations do
 		if documentation.definitions == nil then
@@ -284,7 +333,7 @@ local function writeNamespace(
 
 						for _, parameter in route.parameters do
 							local optional = if not parameter.required then "?" else ""
-							request ..= `{parameter.name}: {translate(parameter)}{optional},`
+							request ..= `{camel_to_snake(parameter.name)}: {translate(parameter)}{optional},`
 						end
 
 						request ..= "}"
@@ -301,7 +350,7 @@ local function writeNamespace(
 						local key, property = singleKey(model.properties or {})
 						if key ~= nil then
 							request = translate(property)
-							requestName = key
+							requestName = camel_to_snake(key)
 							takes = "%s"
 							construct = true
 						else
@@ -318,7 +367,7 @@ local function writeNamespace(
 					local key, parameter = singleKey(route.parameters)
 					if key ~= nil then
 						request = translate(parameter)
-						requestName = parameter.name
+						requestName = camel_to_snake(parameter.name)
 						takes = "%s"
 					else
 						defaultRequest()
@@ -355,11 +404,13 @@ local function writeNamespace(
 					file ..= `local function {alias}(cookie: {cookie}): Response<{response}>\n`
 				end
 
-				file ..= `return requestWithCsrfToken(\{\n`
+				file ..= `return request_with_csrf_token(\{\n`
 
 				file ..= `method = "{method:upper()}",\n`
 
-				local takesEndpoint = endpoint:gsub("{(.-)}", `\{{takes:format("%1")}\}`)
+				local takesEndpoint = endpoint:gsub("{(.-)}", function(parameter)
+					return `\{{takes:format(camel_to_snake(parameter))}\}`
+				end)
 				local pathSeparator = "?"
 
 				for _, parameter in route.parameters do
@@ -367,7 +418,7 @@ local function writeNamespace(
 						continue
 					end
 
-					local name = parameter.name
+					local name = camel_to_snake(parameter.name)
 					local value = if parameter.type == "array"
 						then `table.concat({takes:format(name)} {if parameter.required then "" else "or {}"}, "&{name}=")`
 						else `{takes:format(name)} {if parameter.required then "" else 'or ""'}`
@@ -390,16 +441,20 @@ local function writeNamespace(
 
 				if route.consumes[1] == "application/json" then
 					if construct then
-						file ..= `body = serde.encode("json", \{ {requestName} = {requestName} \}),\n`
+						file ..= `body = serde.encode("json", casing.snake_to_camel(\{ {requestName} = {requestName} \})),\n`
 					else
-						file ..= `body = serde.encode("json", {requestName}),\n`
+						file ..= `body = serde.encode("json", casing.snake_to_camel({requestName})),\n`
 					end
 				end
 
 				file ..= "})"
 
 				file ..= ":map(function(response)\n"
-				file ..= `return {returns:format("response.body")}\n`
+				if route.produces[1] == "application/json" then
+					file ..= `return casing.camel_to_snake({returns:format("response.body")})\n`
+				else
+					file ..= `return {returns:format("response.body")}\n`
+				end
 				file ..= "end)\n"
 
 				file ..= "end\n\n"
@@ -424,7 +479,7 @@ local function writeRoot(mappings: Mappings): string
 	local file = ""
 
 	for namespace in mappings do
-		file ..= `local {namespace} = require("./{namespace}")\n`
+		file ..= `local {namespace} = require("./{namespace:gsub("_", "-")}")\n`
 	end
 
 	file ..= "\nreturn {"
@@ -442,14 +497,13 @@ local function buildPackage(mappings: Mappings, outDir: string)
 	if fs.isDir(outDir) then
 		fs.removeDir(outDir)
 	end
-
 	fs.writeDir(outDir)
 
 	fs.copy("src/utils", `{outDir}/utils`)
 
 	for namespace, endpoints in mappings do
-		local file = writeNamespace(namespace, endpoints)
-		fs.writeFile(`{outDir}/{namespace}.luau`, file)
+		local file = writeNamespace(namespace:gsub("_", ""), endpoints)
+		fs.writeFile(`{outDir}/{namespace:gsub("_", "-")}.luau`, file)
 	end
 
 	local rootFile = writeRoot(mappings)

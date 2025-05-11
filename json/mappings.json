@@ -1,115 +1,108 @@
 {
-  "accountsettings": {
+  "account_settings": {
     "/v1/account/settings/metadata": { "get": "metadata" },
     "/v1/account/settings/account-country": {
-      "get": "country",
-      "post": "setCountry"
+      "get": "get_country",
+      "post": "set_country"
     },
-    "/v1/email": { "get": "email", "post": "setEmail" },
-    "/v1/email/verify": { "post": "verifyEmail" },
-    "/v1/app-chat-privacy": {
-      "get": "appChatPrivacy",
-      "post": "setAppChatPrivacy"
+    "/v1/email": { "get": "get_email", "post": "set_email" },
+    "/v1/email/verify": { "post": "verify_email" },
+    "/v1/trade-privacy": {
+      "get": "get_trade_privacy",
+      "post": "set_trade_privacy"
     },
-    "/v1/game-chat-privacy": {
-      "get": "gameChatPrivacy",
-      "post": "setGameChatPrivacy"
-    },
-    "/v1/inventory-privacy": {
-      "get": "inventoryPrivacy",
-      "post": "setInventoryPrivacy"
-    },
-    "/v1/private-message-privacy": {
-      "get": "messagePrivacy",
-      "post": "setMessagePrivacy"
-    },
-    "/v1/trade-privacy": { "get": "tradePrivacy", "post": "setTradePrivacy" },
     "/v1/trade-value": {
-      "get": "tradeQualityFilter",
-      "post": "setTradeQualityFilter"
+      "get": "get_trade_quality_filter",
+      "post": "set_trade_quality_filter"
     },
-    "/v1/users/get-detailed-blocked-users": { "get": "blockedUsers" },
+    "/v1/users/get-detailed-blocked-users": { "get": "get_blocked_users" },
     "/v1/users/{userId}/block": { "post": "block" },
     "/v1/users/{userId}/unblock": { "post": "unblock" }
   },
   "avatar": {
     "/v1/avatar/metadata": { "get": "metadata" },
-    "/v1/avatar-rules": { "get": "rules" },
-    "/v1/recent-items/{recentItemListType}/list": { "get": "recentItems" },
-    "/v1/users/{userId}/currently-wearing": { "get": "wearing" },
-    "/v1/avatar/redraw-thumbnail": { "post": "redrawThumbnail" },
-    "/v1/avatar/set-player-avatar-type": { "post": "setRigType" },
-    "/v1/avatar/set-scales": { "post": "setScales" },
-    "/v1/outfits/{userOutfitId}/delete": { "post": "deleteOutfit" },
+    "/v1/avatar-rules": { "get": "get_rules" },
+    "/v1/recent-items/{recentItemListType}/list": { "get": "get_recent_items" },
+    "/v1/users/{userId}/currently-wearing": { "get": "get_currently_wearing" },
+    "/v1/avatar/redraw-thumbnail": { "post": "redraw_thumbnail" },
+    "/v1/avatar/set-player-avatar-type": { "post": "set_rig_type" },
+    "/v1/avatar/set-scales": { "post": "set_scales" },
+    "/v1/outfits/{userOutfitId}/delete": { "post": "delete_outfit" },
     "/v2/avatar/avatar": { "get": "get" },
     "/v2/avatar/users/{userId}/avatar": { "get": "of" },
-    "/v2/avatar/users/{userId}/outfits": { "get": "outfits" },
-    "/v2/avatar/set-body-colors": { "post": "setBodyColors" },
+    "/v2/avatar/users/{userId}/outfits": { "get": "get_outfits" },
+    "/v2/avatar/set-body-colors": { "post": "set_body_colors" },
     "/v2/avatar/set-wearing-assets": { "post": "wear" },
-    "/v3/outfits/{userOutfitId}/details": { "get": "outfit" },
-    "/v3/outfits/create": { "post": "createOutfit" },
-    "/v3/outfits/{userOutfitId}": { "patch": "updateOutfit" }
+    "/v3/outfits/{userOutfitId}/details": { "get": "get_outfit" },
+    "/v3/outfits/create": { "post": "create_outfit" },
+    "/v3/outfits/{userOutfitId}": { "patch": "update_outfit" }
   },
   "badges": {
     "/v1/badges/metadata": { "get": "metadata" },
     "/v1/badges/{badgeId}": { "get": "get", "patch": "update" },
     "/v1/universes/{universeId}/badges": {
-      "get": "universe",
+      "get": "get_badges_from_universe",
       "post": "create"
     },
-    "/v1/universes/{universeId}/free-badges-quota": { "get": "freeQuota" },
+    "/v1/universes/{universeId}/free-badges-quota": { "get": "get_free_quota" },
     "/v1/users/{userId}/badges": { "get": "of" },
-    "/v1/users/{userId}/badges/awarded-dates": { "get": "awardedTimestamps" },
+    "/v1/users/{userId}/badges/awarded-dates": {
+      "get": "get_awarded_timestamps"
+    },
     "/v1/user/badges/{badgeId}": { "delete": "remove" },
-    "/v1/user/{userId}/badges/{badgeId}": { "delete": "removeFrom" }
+    "/v1/user/{userId}/badges/{badgeId}": { "delete": "remove_from" }
   },
   "catalog": {
-    "/v1/bundles/{bundleId}/details": { "get": "bundle" },
-    "/v1/bundles/details": { "get": "bundles" },
-    "/v1/users/{userId}/bundles": { "get": "bundlesOf" },
-    "/v1/catalog/items/details": { "post": "items" },
+    "/v1/bundles/{bundleId}/details": { "get": "get_bundle" },
+    "/v1/bundles/details": { "get": "get_bundles" },
+    "/v1/users/{userId}/bundles": { "get": "get_bundles_of" },
+    "/v1/catalog/items/details": { "post": "get_item" },
     "/v2/search/items/details": { "get": "search" }
   },
   "chat": {
     "/v2/metadata": { "get": "metadata" },
-    "/v2/chat-settings": { "get": "settings" },
-    "/v2/get-conversations": { "get": "conversations" },
-    "/v2/get-messages": { "get": "messages" },
-    "/v2/get-rollout-settings": { "get": "rolloutSettings" },
-    "/v2/get-unread-conversation-count": { "get": "countUnreadConversations" },
-    "/v2/get-unread-messages": { "get": "unreadMessages" },
-    "/v2/get-user-conversations": { "get": "allConversations" },
-    "/v2/multi-get-latest-messages": { "get": "latestMessages" },
-    "/v2/add-to-conversation": { "post": "addToConversation" },
-    "/v2/remove-from-conversation": { "post": "removeFromConversation" },
-    "/v2/mark-as-read": { "post": "markAsRead" },
-    "/v2/mark-as-seen": { "post": "markAsSeen" },
-    "/v2/rename-group-conversation": { "post": "renameConversation" },
-    "/v2/send-game-link-message": { "post": "sendGameLink" },
-    "/v2/send-message": { "post": "sendMessage" },
-    "/v2/start-one-to-one-conversation": { "post": "createConversation" },
-    "/v2/start-group-conversation": { "post": "createGroupConversation" },
-    "/v2/update-user-typing-status": { "post": "setTyping" }
+    "/v2/chat-settings": { "get": "get_settings" },
+    "/v2/get-conversations": { "get": "get_conversations" },
+    "/v2/get-messages": { "get": "get_messages" },
+    "/v2/get-rollout-settings": { "get": "get_rollout_settings" },
+    "/v2/get-unread-conversation-count": {
+      "get": "count_unread_conversations"
+    },
+    "/v2/get-unread-messages": { "get": "get_unread_messages" },
+    "/v2/get-user-conversations": { "get": "get_all_conversations" },
+    "/v2/multi-get-latest-messages": { "get": "get_latest_messages" },
+    "/v2/add-to-conversation": { "post": "add_to_conversation" },
+    "/v2/remove-from-conversation": { "post": "remove_from_conversation" },
+    "/v2/mark-as-read": { "post": "mark_as_read" },
+    "/v2/mark-as-seen": { "post": "mark_as_seen" },
+    "/v2/rename-group-conversation": { "post": "rename_conversation" },
+    "/v2/send-game-link-message": { "post": "send_game_link" },
+    "/v2/send-message": { "post": "send_message" },
+    "/v2/start-one-to-one-conversation": { "post": "create_conversation" },
+    "/v2/start-group-conversation": { "post": "create_group_conversation" },
+    "/v2/update-user-typing-status": { "post": "set_typing" }
   },
   "develop": {
-    "/v1/gametemplates": { "get": "templates" },
-    "/v1/groups/{groupId}/universes": { "get": "universesOf" },
-    "/v1/plugins": { "get": "plugins" },
-    "/v1/universes/{universeId}/permissions": { "get": "permissions" },
-    "/v1/universes/{universeId}/places": { "get": "places" },
-    "/v1/user/universes": { "get": "universes" },
-    "/v1/universes/{universeId}/activate": { "post": "activate" },
-    "/v1/universes/{universeId}/deactivate": { "post": "deactivate" },
-    "/v1/plugins/{pluginId}": { "patch": "editPlugin" },
-    "/v2/places/{placeId}": { "get": "place", "patch": "editPlace" },
-    "/v2/universes/{universeId}/configuration": { "patch": "editUniverse" }
+    "/v1/gametemplates": { "get": "get_templates" },
+    "/v1/groups/{groupId}/universes": { "get": "get_universes_of" },
+    "/v1/plugins": { "get": "get_plugins" },
+    "/v1/universes/{universeId}/permissions": {
+      "get": "get_permissions_in_universe"
+    },
+    "/v1/universes/{universeId}/places": { "get": "get_places_of_universe" },
+    "/v1/user/universes": { "get": "get_universes" },
+    "/v1/universes/{universeId}/activate": { "post": "activate_universe" },
+    "/v1/universes/{universeId}/deactivate": { "post": "deactivate_universe" },
+    "/v1/plugins/{pluginId}": { "patch": "edit_plugin" },
+    "/v2/places/{placeId}": { "get": "get_place", "patch": "edit_place" },
+    "/v2/universes/{universeId}/configuration": { "patch": "edit_universe" }
   },
   "economy": {
-    "/v1/user/currency": { "get": "robux" }
+    "/v1/user/currency": { "get": "balance" }
   },
   "followings": {
     "/v1/users/{userId}/universes/{universeId}/status": {
-      "get": "status"
+      "get": "get_status"
     },
     "/v1/users/{userId}/universes/{universeId}": {
       "post": "follow",
@@ -119,278 +112,299 @@
   },
   "friends": {
     "/v1/metadata": { "get": "metadata" },
-    "/v1/my/friends/count": { "get": "count" },
-    "/v1/my/friends/requests": { "get": "requests" },
-    "/v1/user/friend-requests/count": { "get": "countRequests" },
-    "/v1/users/{targetUserId}/followers": { "get": "followers" },
-    "/v1/users/{targetUserId}/followers/count": { "get": "countFollowers" },
-    "/v1/users/{targetUserId}/followings": { "get": "followings" },
-    "/v1/users/{targetUserId}/followings/count": { "get": "countFollowings" },
+    "/v1/my/friends/count": { "get": "count_friends" },
+    "/v1/my/friends/requests": { "get": "get_friend_requests" },
+    "/v1/user/friend-requests/count": { "get": "count_friend_requests" },
+    "/v1/users/{targetUserId}/followers": { "get": "get_followers" },
+    "/v1/users/{targetUserId}/followers/count": { "get": "count_followers" },
+    "/v1/users/{targetUserId}/followings": { "get": "get_followings" },
+    "/v1/users/{targetUserId}/followings/count": { "get": "count_followings" },
     "/v1/users/{userId}/friends": { "get": "of" },
-    "/v1/users/{userId}/friends/count": { "get": "countOf" },
-    "/v1/users/{userId}/friends/find": { "get": "friendships" },
-    "/v1/users/{userId}/friends/inactive": { "get": "inactive" },
-    "/v1/users/{userId}/friends/online": { "get": "online" },
-    "/v1/users/{userId}/friends/search": { "get": "search" },
-    "/v1/user/{userId}/multiget-are-friends": { "post": "are" },
-    "/v1/user/following-exists": { "post": "following" },
+    "/v1/users/{userId}/friends/count": { "get": "count_friends_of" },
+    "/v1/users/{userId}/friends/find": { "get": "get_friendships" },
+    "/v1/users/{userId}/friends/inactive": { "get": "get_inactive_friends" },
+    "/v1/users/{userId}/friends/online": { "get": "get_online_friends" },
+    "/v1/users/{userId}/friends/search": { "get": "search_friends_of" },
+    "/v1/user/{userId}/multiget-are-friends": { "post": "are_friends" },
+    "/v1/user/following-exists": { "post": "is_following" },
     "/v1/user/friend-requests/decline-all": {
-      "post": "declineAllRequests"
+      "post": "decline_all_requests"
     },
     "/v1/users/{requesterUserId}/accept-friend-request": {
-      "post": "acceptRequest"
+      "post": "accept_request"
     },
     "/v1/users/{requesterUserId}/decline-friend-request": {
-      "post": "declineRequest"
+      "post": "decline_request"
     },
     "/v1/users/{targetUserId}/follow": { "post": "follow" },
     "/v1/users/{targetUserId}/unfollow": { "post": "unfollow" },
     "/v1/users/{targetUserId}/request-friendship": {
-      "post": "sendRequest"
+      "post": "send_request"
     },
     "/v1/users/{targetUserId}/unfriend": { "post": "unfriend" }
   },
   "games": {
     "/v1/games": { "get": "multiple" },
-    "/v1/games/{placeId}/private-servers": { "get": "allPrivates" },
-    "/v1/games/{placeId}/servers/{serverType}": { "get": "servers" },
+    "/v1/games/{placeId}/private-servers": {
+      "get": "get_private_servers_for_place"
+    },
+    "/v1/games/{placeId}/servers/{serverType}": { "get": "get_servers" },
     "/v1/games/{universeId}/favorites": {
-      "get": "favorited",
+      "get": "is_favorite",
       "post": "favorite"
     },
-    "/v1/games/{universeId}/favorites/count": { "get": "favorites" },
-    "/v1/games/{universeId}/game-passes": { "get": "gamepasses" },
-    "/v1/games/{universeId}/votes/user": { "get": "vote" },
-    "/v1/games/games-product-info": { "get": "products" },
-    "/v1/games/multiget-place-details": { "get": "places" },
-    "/v1/games/multiget-playability-status": { "get": "playability" },
-    "/v1/games/recommendations/game/{universeId}": { "get": "recommendations" },
-    "/v1/games/votes": { "get": "votes" },
-    "/v1/private-servers": { "get": "privates" },
-    "/v1/private-servers/enabled-in-universe/{universeId}": {
-      "get": "arePrivatesEnabled"
+    "/v1/games/{universeId}/favorites/count": { "get": "count_favorites" },
+    "/v1/games/{universeId}/game-passes": { "get": "get_gamepasses" },
+    "/v1/games/{universeId}/votes/user": { "get": "get_vote" },
+    "/v1/games/games-product-info": { "get": "get_products" },
+    "/v1/games/multiget-place-details": { "get": "get_places" },
+    "/v1/games/multiget-playability-status": { "get": "get_playability" },
+    "/v1/games/recommendations/game/{universeId}": {
+      "get": "get_recommendations"
     },
-    "/v1/private-servers/my-private-servers": { "get": "ownedPrivates" },
-    "/v1/vip-server/can-invite/{userId}": { "get": "canInviteToPrivate" },
-    "/v1/vip-servers/{id}": { "get": "private", "patch": "updatePrivate" },
-    "/v1/games/vip-servers/{universeId}": { "post": "createPrivate" },
-    "/v1/vip-servers/{id}/permissions": { "patch": "updatePermissions" },
-    "/v1/vip-servers/{id}/subscription": { "patch": "updateSubscription" },
-    "/v1/vip-servers/{id}/voicesettings": { "patch": "updateVoiceSettings" },
-    "/v1/games/{universeId}/user-votes": { "patch": "setVote" },
-    "/v2/games/{universeId}/media": { "get": "media" },
-    "/v2/groups/{groupId}/games": { "get": "ofGroup" },
-    "/v2/users/{userId}/games": { "get": "of" }
+    "/v1/games/votes": { "get": "get_votes" },
+    "/v1/private-servers": { "get": "get_private_servers" },
+    "/v1/private-servers/enabled-in-universe/{universeId}": {
+      "get": "are_private_servers_enabled"
+    },
+    "/v1/private-servers/my-private-servers": {
+      "get": "get_owned_private_servers"
+    },
+    "/v1/vip-server/can-invite/{userId}": {
+      "get": "can_invite_to_private_server"
+    },
+    "/v1/vip-servers/{id}": {
+      "get": "get_private_server",
+      "patch": "edit_private_server"
+    },
+    "/v1/games/vip-servers/{universeId}": { "post": "create_private_server" },
+    "/v1/vip-servers/{id}/permissions": {
+      "patch": "update_private_server_permissions"
+    },
+    "/v1/vip-servers/{id}/subscription": {
+      "patch": "edit_private_server_subscription"
+    },
+    "/v1/vip-servers/{id}/voicesettings": {
+      "patch": "edit_private_server_voice_settings"
+    },
+    "/v1/games/{universeId}/user-votes": { "patch": "vote" },
+    "/v2/games/{universeId}/media": { "get": "get_media" },
+    "/v2/groups/{groupId}/games": { "get": "of_group" },
+    "/v2/users/{userId}/games": { "get": "of_user" }
   },
   "groups": {
     "/v1/groups/metadata": { "get": "metadata" },
-    "/v1/groups/configuration/metadata": { "get": "configurationMetadata" },
-    "/v1/groups/search/metadata": { "get": "searchMetadata" },
+    "/v1/groups/configuration/metadata": {
+      "get": "get_configuration_metadata"
+    },
+    "/v1/groups/search/metadata": { "get": "get_search_metadata" },
     "/v1/groups/{groupId}": { "get": "get" },
-    "/v1/groups/{groupId}/audit-log": { "get": "auditLog" },
+    "/v1/groups/{groupId}/audit-log": { "get": "get_audit_log" },
     "/v1/groups/{groupId}/join-requests": {
-      "get": "joinRequests",
-      "post": "acceptJoinRequests",
-      "delete": "declineJoinRequests"
+      "get": "get_join_requests",
+      "post": "accept_join_requests",
+      "delete": "decline_join_requests"
     },
     "/v1/groups/{groupId}/join-requests/users/{userId}": {
-      "get": "joinRequest",
-      "post": "acceptJoinRequest",
-      "delete": "declineJoinRequest"
+      "get": "get_join_request",
+      "post": "accept_join_request",
+      "delete": "decline_join_request"
     },
-    "/v1/groups/{groupId}/membership": { "get": "membership" },
-    "/v1/groups/{groupId}/name-history": { "get": "nameHistory" },
-    "/v1/groups/{groupId}/payout-restriction": { "get": "canPayout" },
+    "/v1/groups/{groupId}/membership": { "get": "get_membership" },
+    "/v1/groups/{groupId}/name-history": { "get": "get_name_history" },
+    "/v1/groups/{groupId}/payout-restriction": { "get": "can_payout" },
     "/v1/groups/{groupId}/payouts": {
-      "get": "recurringPayouts",
+      "get": "get_recurring_payouts",
       "post": "payout"
     },
     "/v1/groups/{groupId}/relationships/{groupRelationshipType}": {
-      "get": "relationships"
+      "get": "get_relationships"
     },
     "/v1/groups/{groupId}/relationships/{groupRelationshipType}/requests": {
-      "get": "relationshipRequests",
-      "post": "acceptRelationshipRequests",
-      "delete": "declineRelationshipRequests"
+      "get": "get_relationship_requests",
+      "post": "accept_relationship_requests",
+      "delete": "decline_relationship_requests"
     },
     "/v1/groups/{groupId}/roles/{roleSetId}/permissions": {
-      "get": "permissions",
-      "patch": "updatePermissions"
+      "get": "get_role_permissions",
+      "patch": "edit_role_permissions"
     },
-    "/v1/groups/{groupId}/roles/{roleSetId}/users": { "get": "usersWithRole" },
+    "/v1/groups/{groupId}/roles/{roleSetId}/users": {
+      "get": "get_users_with_role"
+    },
     "/v1/groups/{groupId}/roles/guest/permissions": {
-      "get": "guestPermissions"
+      "get": "get_guest_permissions"
     },
-    "/v1/groups/{groupId}/roles/permissions": { "get": "allPermissions" },
+    "/v1/groups/{groupId}/roles/permissions": { "get": "get_permissions" },
     "/v1/groups/{groupId}/settings": {
-      "get": "settings",
-      "patch": "configure"
+      "get": "get_settings",
+      "patch": "edit"
     },
     "/v1/groups/{groupId}/social-links": {
-      "get": "socialLinks",
-      "post": "addSocialLink"
+      "get": "get_social_links",
+      "post": "add_social_link"
     },
-    "/v1/groups/{groupId}/users": { "get": "users", "post": "join" },
+    "/v1/groups/{groupId}/users": { "get": "get_users", "post": "join" },
     "/v1/groups/search": { "get": "search" },
     "/v1/groups/search/lookup": { "get": "lookup" },
-    "/v1/roles": { "get": "roles" },
-    "/v1/user/groups/pending": { "get": "pending" },
-    "/v1/users/{userId}/friends/groups/roles": { "get": "withFriends" },
-    "/v1/users/{userId}/groups/primary/role": { "get": "primary" },
-    "/v1/groups/{groupId}/change-owner": { "post": "giveOwnership" },
-    "/v1/groups/{groupId}/claim-ownership": { "post": "claimOwnership" },
+    "/v1/roles": { "get": "get_roles" },
+    "/v1/user/groups/pending": { "get": "get_pending_groups" },
+    "/v1/users/{userId}/friends/groups/roles": {
+      "get": "get_groups_with_friends"
+    },
+    "/v1/users/{userId}/groups/primary/role": { "get": "get_primary_group" },
+    "/v1/groups/{groupId}/change-owner": { "post": "change_owner" },
+    "/v1/groups/{groupId}/claim-ownership": { "post": "claim_ownership" },
     "/v1/groups/{groupId}/payouts/recurring": {
-      "post": "updateRecurringPayouts"
+      "post": "update_recurring_payouts"
     },
     "/v1/groups/{groupId}/relationships/{groupRelationshipType}/{relatedGroupId}": {
-      "post": "requestRelationship",
-      "delete": "deleteRelationship"
+      "post": "request_relationship",
+      "delete": "delete_relationship"
     },
     "/v1/groups/{groupId}/relationships/{groupRelationshipType}/requests/{relatedGroupId}": {
-      "post": "acceptRelationshipRequest",
-      "delete": "declineRelationshipRequest"
+      "post": "accept_relationship_request",
+      "delete": "decline_relationship_request"
     },
-    "/v1/groups/{groupId}/rolesets/create": { "post": "createRole" },
+    "/v1/groups/{groupId}/rolesets/create": { "post": "create_role" },
     "/v1/groups/create": { "post": "create" },
-    "/v1/groups/policies": { "post": "policies" },
+    "/v1/groups/policies": { "post": "get_policies" },
     "/v1/user/groups/primary": {
-      "post": "setPrimary",
-      "delete": "removePrimary"
+      "post": "set_as_primary",
+      "delete": "remove_as_primary"
     },
-    "/v1/groups/{groupId}/description": { "patch": "setDescription" },
+    "/v1/groups/{groupId}/description": { "patch": "set_description" },
     "/v1/groups/{groupId}/name": { "patch": "rename" },
     "/v1/groups/{groupId}/notification-preference": {
-      "patch": "toggleNotifications"
+      "patch": "toggle_notifications"
     },
     "/v1/groups/{groupId}/rolesets/{rolesetId}": {
-      "patch": "updateRole",
-      "delete": "deleteRole"
+      "patch": "edit_role",
+      "delete": "delete_role"
     },
     "/v1/groups/{groupId}/social-links/{socialLinkId}": {
-      "patch": "updateSocialLink",
-      "delete": "deleteSocialLink"
+      "patch": "update_social_link",
+      "delete": "delete_social_link"
     },
-    "/v1/groups/{groupId}/status": { "patch": "setStatus" },
+    "/v1/groups/{groupId}/status": { "patch": "set_status" },
     "/v1/groups/{groupId}/users/{userId}": {
-      "patch": "changeRole",
-      "delete": "exileUser"
+      "patch": "set_role",
+      "delete": "exile_user"
     },
-    "/v1/groups/icon": { "patch": "setIcon" },
-    "/v1/groups/{groupId}/wall/posts/{postId}": { "delete": "deleteMessage" },
+    "/v1/groups/icon": { "patch": "set_icon" },
+    "/v1/groups/{groupId}/wall/posts/{postId}": { "delete": "delete_message" },
     "/v1/groups/{groupId}/wall/users/{userId}/posts": {
-      "delete": "deleteMessagesOf"
+      "delete": "delete_messages_from"
     },
-    "/v2/groups": { "get": "multiple" },
+    "/v2/groups": { "get": "get_multiple" },
     "/v2/groups/{groupId}/wall/posts": {
-      "get": "messages",
-      "post": "sendMessage"
+      "get": "get_messages",
+      "post": "send_message"
     },
     "/v2/users/{userId}/groups/roles": { "get": "of" }
   },
   "inventory": {
-    "/v1/users/{userId}/assets/collectibles": { "get": "collectibles" },
-    "/v1/users/{userId}/can-view-inventory": { "get": "canView" },
-    "/v1/users/{userId}/categories": { "get": "categories" },
-    "/v1/users/{userId}/categories/favorites": { "get": "favorites" },
+    "/v1/users/{userId}/assets/collectibles": { "get": "get_collectibles" },
+    "/v1/users/{userId}/can-view-inventory": { "get": "can_view" },
+    "/v1/users/{userId}/categories": { "get": "get_categories" },
+    "/v1/users/{userId}/categories/favorites": { "get": "get_favorites" },
     "/v1/users/{userId}/items/{itemType}/{itemTargetId}/is-owned": {
-      "get": "owns"
+      "get": "user_owns_item"
     },
-    "/v1/users/{userId}/places/inventory": { "get": "games" },
-    "/v2/assets/{assetId}/owners": { "get": "owners" },
+    "/v1/users/{userId}/places/inventory": { "get": "get_games" },
+    "/v2/assets/{assetId}/owners": { "get": "get_owners" },
     "/v2/users/{userId}/inventory": { "get": "of" },
-    "/v2/inventory/asset/{assetId}": { "delete": "remove" }
+    "/v2/inventory/asset/{assetId}": { "delete": "delete_item" }
   },
   "notifications": {
-    "/v2/push-notifications/metadata": { "get": "metadata" },
-    "/v2/stream-notifications/metadata": { "get": "streamMetadata" },
-    "/v2/notifications/settings/realtime": { "get": "realtimeSettings" },
-    "/v2/push-notifications/chrome-manifest": { "get": "chromeManifest" },
+    "/v2/push-notifications/metadata": { "get": "get_metadata" },
+    "/v2/stream-notifications/metadata": { "get": "get_stream_metadata" },
+    "/v2/notifications/settings/realtime": { "get": "get_realtime_settings" },
+    "/v2/push-notifications/chrome-manifest": { "get": "get_chrome_manifest" },
     "/v2/push-notifications/get-current-device-destination": {
-      "get": "destination"
+      "get": "get_current_destination"
     },
-    "/v2/push-notifications/get-destinations": { "get": "destinations" },
-    "/v2/push-notifications/notification-ids": { "get": "ids" },
+    "/v2/push-notifications/get-destinations": { "get": "get_destinations" },
+    "/v2/push-notifications/notification-ids": { "get": "get_ids" },
     "/v2/stream-notifications/get-latest-game-updates": {
-      "get": "latestGameUpdates"
+      "get": "get_latest_game_updates"
     },
-    "/v2/stream-notifications/get-recent": { "get": "recent" },
-    "/v2/stream-notifications/unread-count": { "get": "countUnread" },
+    "/v2/stream-notifications/get-recent": { "get": "get_recent" },
+    "/v2/stream-notifications/unread-count": { "get": "count_unread" },
     "/v2/push-notifications/deregister-all-devices": {
-      "post": "deregisterAllDevices"
+      "post": "deregister_all_devices"
     },
     "/v2/push-notifications/deregister-current-device": {
-      "post": "deregisterDevice"
+      "post": "deregister_device"
     },
     "/v2/push-notifications/deregister-current-device-ios-pushkit": {
-      "post": "deregisterIOSPushkit"
+      "post": "deregister_ios_pushkit"
     },
-    "/v2/push-notifications/mark-interaction": { "post": "markInteraction" },
-    "/v2/stream-notifications/mark-interacted": { "post": "markInteracted" },
+    "/v2/push-notifications/mark-interaction": { "post": "mark_interaction" },
+    "/v2/stream-notifications/mark-interacted": { "post": "mark_interacted" },
     "/v2/push-notifications/register-android-amazon": {
-      "post": "registerAmazonAndroid"
+      "post": "register_amazon_android"
     },
     "/v2/push-notifications/register-android-native": {
-      "post": "registerAndroidNative"
+      "post": "register_android_native"
     },
     "/v2/push-notifications/register-android-tencent-service": {
-      "post": "registerAndroidTencentService"
+      "post": "register_android_tencent_service"
     },
-    "/v2/push-notifications/register-chrome": { "post": "registerChrome" },
-    "/v2/push-notifications/register-firefox": { "post": "registerFirefox" },
+    "/v2/push-notifications/register-chrome": { "post": "register_chrome" },
+    "/v2/push-notifications/register-firefox": { "post": "register_firefox" },
     "/v2/push-notifications/register-ios-native": {
-      "post": "registerIOSNative"
+      "post": "register_ios_native"
     },
     "/v2/push-notifications/register-ios-pushkit": {
-      "post": "registerIOSPushkit"
+      "post": "register_ios_pushkit"
     },
-    "/v2/stream-notifications/clear-unread": { "post": "clearUnread" },
+    "/v2/stream-notifications/clear-unread": { "post": "clear_unreader" },
     "/v2/stream-notifications/game-update-notification-read": {
-      "post": "readGameUpdate"
+      "post": "read_game_update"
     }
   },
   "presence": {
-    "/v1/presence/users": { "post": "get" }
+    "/v1/presence/users": { "post": "of" }
   },
-  "privatemessages": {
-    "/v1/announcements": { "get": "announcements" },
-    "/v1/announcements/metadata": { "get": "countAnnouncements" },
-    "/v1/messages": { "get": "all" },
+  "private_messages": {
+    "/v1/announcements": { "get": "get_announcements" },
+    "/v1/announcements/metadata": { "get": "count_announcements" },
+    "/v1/messages": { "get": "get_all" },
     "/v1/messages/{messageId}": { "get": "get" },
-    "/v1/messages/{userId}/can-message": { "get": "canSend" },
-    "/v1/messages/unread/count": { "get": "countUnread" },
+    "/v1/messages/unread/count": { "get": "count_unread" },
     "/v1/messages/archive": { "post": "archive" },
     "/v1/messages/unarchive": { "post": "unarchive" },
-    "/v1/messages/mark-read": { "post": "markAsRead" },
-    "/v1/messages/mark-unread": { "post": "markAsUnread" },
-    "/v1/messages/send": { "post": "send" }
+    "/v1/messages/mark-read": { "post": "mark_as_read" },
+    "/v1/messages/mark-unread": { "post": "mark_as_unread" }
   },
   "thumbnails": {
     "/v1/batch": { "post": "batch" }
   },
   "trades": {
-    "/v1/trades/metadata": { "get": "metadata" },
+    "/v1/trades/metadata": { "get": "get_metadata" },
     "/v1/trades/{tradeId}": { "get": "get" },
-    "/v1/trades/{tradeStatusType}": { "get": "all" },
+    "/v1/trades/{tradeStatusType}": { "get": "get_all" },
     "/v1/trades/{tradeStatusType}/count": { "get": "count" },
-    "/v1/users/{userId}/can-trade-with": { "get": "canSend" },
+    "/v1/users/{userId}/can-trade-with": { "get": "can_send_to" },
     "/v1/trades/{tradeId}/accept": { "post": "accept" },
     "/v1/trades/{tradeId}/counter": { "post": "counter" },
     "/v1/trades/{tradeId}/decline": { "post": "decline" },
     "/v1/trades/send": { "post": "send" }
   },
   "users": {
-    "/v1/birthdate": { "get": "birthdate", "post": "setBirthdate" },
-    "/v1/description": { "get": "description", "post": "setDescription" },
-    "/v1/gender": { "get": "gender", "post": "setGender" },
-    "/v1/users/{userId}/display-names": { "patch": "setDisplayName" },
+    "/v1/birthdate": { "get": "get_birthdate", "post": "set_birthdate" },
+    "/v1/description": { "get": "get_description", "post": "set_description" },
+    "/v1/gender": { "get": "get_gender", "post": "set_gender" },
+    "/v1/users/{userId}/display-names": { "patch": "set_display_name" },
     "/v1/users/{userId}": { "get": "get" },
     "/v1/users/authenticated": { "get": "authenticated" },
-    "/v1/users/authenticated/age-bracket": { "get": "ageBracket" },
-    "/v1/users/authenticated/country-code": { "get": "countryCode" },
-    "/v1/users/authenticated/roles": { "get": "publicRoles" },
-    "/v1/users": { "post": "multiple" },
-    "/v1/usernames/users": { "post": "fromNames" },
-    "/v1/users/{userId}/username-history": { "get": "usernameHistory" },
+    "/v1/users/authenticated/age-bracket": { "get": "get_age_bracket" },
+    "/v1/users/authenticated/country-code": { "get": "get_country_code" },
+    "/v1/users/authenticated/roles": { "get": "get_public_roles" },
+    "/v1/users": { "post": "get_multiple" },
+    "/v1/usernames/users": { "post": "get_from_names" },
+    "/v1/users/{userId}/username-history": { "get": "get_username_history" },
     "/v1/users/search": { "get": "search" }
   }
 }
