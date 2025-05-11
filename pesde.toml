@@ -4,11 +4,11 @@ description = "An auto-generated wrapper around Roblox's API"
 authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
 license = "MIT"
-includes = ["pesde.toml", "README.md", "LICENSE", "build"]
+includes = ["pesde.toml", "README.md", "LICENSE", "dist/**/*"]
 
 [target]
 environment = "lune"
-lib = "build/init.luau"
+lib = "dist/init.luau"
 
 [engines]
 lune = "^0.8.9"
