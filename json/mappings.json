@@ -59,29 +59,6 @@
     "/v1/catalog/items/details": { "post": "get_item" },
     "/v2/search/items/details": { "get": "search" }
   },
-  "chat": {
-    "/v2/metadata": { "get": "metadata" },
-    "/v2/chat-settings": { "get": "get_settings" },
-    "/v2/get-conversations": { "get": "get_conversations" },
-    "/v2/get-messages": { "get": "get_messages" },
-    "/v2/get-rollout-settings": { "get": "get_rollout_settings" },
-    "/v2/get-unread-conversation-count": {
-      "get": "count_unread_conversations"
-    },
-    "/v2/get-unread-messages": { "get": "get_unread_messages" },
-    "/v2/get-user-conversations": { "get": "get_all_conversations" },
-    "/v2/multi-get-latest-messages": { "get": "get_latest_messages" },
-    "/v2/add-to-conversation": { "post": "add_to_conversation" },
-    "/v2/remove-from-conversation": { "post": "remove_from_conversation" },
-    "/v2/mark-as-read": { "post": "mark_as_read" },
-    "/v2/mark-as-seen": { "post": "mark_as_seen" },
-    "/v2/rename-group-conversation": { "post": "rename_conversation" },
-    "/v2/send-game-link-message": { "post": "send_game_link" },
-    "/v2/send-message": { "post": "send_message" },
-    "/v2/start-one-to-one-conversation": { "post": "create_conversation" },
-    "/v2/start-group-conversation": { "post": "create_group_conversation" },
-    "/v2/update-user-typing-status": { "post": "set_typing" }
-  },
   "develop": {
     "/v1/gametemplates": { "get": "get_templates" },
     "/v1/groups/{groupId}/universes": { "get": "get_universes_of" },
