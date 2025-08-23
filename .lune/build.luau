@@ -151,7 +151,7 @@ local function translate(raw: { [string]: any }?): string
 	return tostring(raw.type)
 end
 
-local function traverseRef(raw: { [string]: any }, documentation: OpenApiDefinition)
+local function traverse_ref(raw: { [string]: any }, documentation: OpenApiDefinition)
 	if raw["$ref"] == nil then
 		return raw
 	end
@@ -167,7 +167,7 @@ local function traverseRef(raw: { [string]: any }, documentation: OpenApiDefinit
 	return current
 end
 
-local function requestDocumentation(namespace: string, version: number): OpenApiDefinition?
+local function request_documentation(namespace: string, version: number): OpenApiDefinition?
 	local response =
 		net.request(`https://prod.docsiteassets.roblox.com/assets/en-us/cloud/legacy/{namespace}/v{version}.json`)
 	if response.statusCode == 403 then
@@ -188,7 +188,7 @@ local function comment(text: string): string
 	return text:gsub("([^\n]+)", "--- %1"):gsub("</?p>", "")
 end
 
-local function singleKey<K, V>(t: { [K]: V }): (K?, V?)
+local function single_key<K, V>(t: { [K]: V }): (K?, V?)
 	local first, value = next(t)
 	if first == nil then
 		return nil
@@ -201,14 +201,14 @@ local function singleKey<K, V>(t: { [K]: V }): (K?, V?)
 	return nil
 end
 
-local function writeNamespace(
+local function write_namespace(
 	namespace: string,
 	endpoints: { [string]: { get: string?, post: string?, patch: string?, delete: string? } }
 ): string
 	local documentations = {}
 
 	for version = 1, 3 do
-		local documentation = requestDocumentation(namespace, version)
+		local documentation = request_documentation(namespace, version)
 
 		if documentation == nil then
 			continue
@@ -231,8 +231,8 @@ local function writeNamespace(
 			continue
 		end
 
-		for rawName, model in documentation.definitions do
-			local name = reference(rawName)
+		for raw_name, model in documentation.definitions do
+			local name = reference(raw_name)
 			if file:match(`export type {name} =`) ~= nil then
 				continue
 			end
@@ -286,48 +286,46 @@ local function writeNamespace(
 				local body = nil
 
 				do
-					local removeParameters: { [number]: true } = {}
+					local remove_parameters: { [number]: true } = {}
 
 					for index, parameter in route.parameters do
-						parameter.name = parameter.name:sub(1, 1):lower() .. parameter.name:sub(2)
-
 						if parameter["in"] == "body" then
 							body = parameter
-							removeParameters[index] = true
+							remove_parameters[index] = true
 						elseif parameter["in"] == "header" then
-							removeParameters[index] = true
+							remove_parameters[index] = true
 						end
 					end
 
-					for index in removeParameters do
+					for index in remove_parameters do
 						route.parameters[index] = nil
 					end
 				end
 
-				local okResponse = route.responses["200"]
-				local cookieRequired = route.responses["401"] ~= nil or route.responses["403"] ~= nil
+				local ok_response = route.responses["200"]
+				local cookie_required = route.responses["401"] ~= nil or route.responses["403"] ~= nil
 
 				local takes = "nil"
 				local returns = "%s"
 				local request = nil
-				local requestName = "request"
-				local response = translate(okResponse.schema)
+				local request_name = "request"
+				local response = translate(ok_response.schema)
 				local construct = false
 
-				local function defaultRequest()
-					local hasBody = body ~= nil
-					local hasParameters = next(route.parameters) ~= nil
+				local function default_request()
+					local has_body = body ~= nil
+					local has_parameters = next(route.parameters) ~= nil
 
-					if hasBody then
+					if has_body then
 						request = request or ""
 						request ..= `{translate(body.schema)}`
 
-						if hasParameters then
+						if has_parameters then
 							request ..= "&"
 						end
 					end
 
-					if hasParameters then
+					if has_parameters then
 						request = request or ""
 						request ..= "{"
 
@@ -339,51 +337,51 @@ local function writeNamespace(
 						request ..= "}"
 					end
 
-					requestName = "request"
+					request_name = "request"
 					takes = "request.%s"
 				end
 
 				if next(route.parameters) == nil and body ~= nil then
-					local model = traverseRef(body.schema, documentation)
+					local model = traverse_ref(body.schema, documentation)
 
 					if model.type == "object" then
-						local key, property = singleKey(model.properties or {})
+						local key, property = single_key(model.properties or {})
 						if key ~= nil then
 							request = translate(property)
-							requestName = camel_to_snake(key)
+							request_name = camel_to_snake(key)
 							takes = "%s"
 							construct = true
 						else
 							request = translate(model)
-							requestName = "request"
-							takes = `{requestName}.%s`
+							request_name = "request"
+							takes = `{request_name}.%s`
 						end
 					else
 						request = translate(model)
-						requestName = body.name
+						request_name = body.name
 						takes = "%s"
 					end
 				elseif next(route.parameters) ~= nil and body == nil then
-					local key, parameter = singleKey(route.parameters)
+					local key, parameter = single_key(route.parameters)
 					if key ~= nil then
 						request = translate(parameter)
-						requestName = camel_to_snake(parameter.name)
+						request_name = camel_to_snake(parameter.name)
 						takes = "%s"
 					else
-						defaultRequest()
+						default_request()
 					end
 				else
-					defaultRequest()
+					default_request()
 				end
 
 				if route.produces[1] == "application/json" then
 					returns = 'serde.decode("json", %s)'
 				end
 
-				if okResponse.schema ~= nil then
-					local okModel = traverseRef(okResponse.schema, documentation)
+				if ok_response.schema ~= nil then
+					local okModel = traverse_ref(ok_response.schema, documentation)
 					if okModel.type == "object" and okModel.properties ~= nil then
-						local key, property = singleKey(okModel.properties)
+						local key, property = single_key(okModel.properties)
 						if key ~= nil then
 							returns ..= `.{key}`
 							response = translate(property)
@@ -397,9 +395,9 @@ local function writeNamespace(
 					file ..= comment(route.summary) .. "\n"
 				end
 
-				local cookie = if cookieRequired then "string" else "string?"
+				local cookie = if cookie_required then "string" else "string?"
 				if request ~= nil then
-					file ..= `local function {alias}({requestName}: {request}, cookie: {cookie}): Response<{response}>\n`
+					file ..= `local function {alias}({request_name}: {request}, cookie: {cookie}): Response<{response}>\n`
 				else
 					file ..= `local function {alias}(cookie: {cookie}): Response<{response}>\n`
 				end
@@ -408,10 +406,10 @@ local function writeNamespace(
 
 				file ..= `method = "{method:upper()}",\n`
 
-				local takesEndpoint = endpoint:gsub("{(.-)}", function(parameter)
+				local takes_endpoint = endpoint:gsub("{(.-)}", function(parameter)
 					return `\{{takes:format(camel_to_snake(parameter))}\}`
 				end)
-				local pathSeparator = "?"
+				local path_separator = "?"
 
 				for _, parameter in route.parameters do
 					if parameter["in"] ~= "query" and parameter["in"] ~= "formData" then
@@ -423,11 +421,11 @@ local function writeNamespace(
 						then `table.concat({takes:format(name)} {if parameter.required then "" else "or {}"}, "&{name}=")`
 						else `{takes:format(name)} {if parameter.required then "" else 'or ""'}`
 
-					takesEndpoint ..= `{pathSeparator}{name}=\{{value}\}`
-					pathSeparator = "&"
+					takes_endpoint ..= `{path_separator}{name}=\{{value}\}`
+					path_separator = "&"
 				end
 
-				file ..= `url = \`https://{documentation.host}{takesEndpoint}\`,\n`
+				file ..= `url = \`https://{documentation.host}{takes_endpoint}\`,\n`
 
 				file ..= "headers = {"
 
@@ -435,15 +433,15 @@ local function writeNamespace(
 					file ..= '["Content-Type"] = "application/json",'
 				end
 
-				file ..= `Cookie = \`.ROBLOSECURITY=\{cookie {if cookieRequired then "" else 'or ""'}\}\`,`
+				file ..= `Cookie = \`.ROBLOSECURITY=\{cookie {if cookie_required then "" else 'or ""'}\}\`,`
 
 				file ..= "},\n"
 
 				if route.consumes[1] == "application/json" then
 					if construct then
-						file ..= `body = serde.encode("json", casing.snake_to_camel(\{ {requestName} = {requestName} \})),\n`
+						file ..= `body = serde.encode("json", casing.snake_to_camel(\{ {request_name} = {request_name} \})),\n`
 					else
-						file ..= `body = serde.encode("json", casing.snake_to_camel({requestName})),\n`
+						file ..= `body = serde.encode("json", casing.snake_to_camel({request_name})),\n`
 					end
 				end
 
@@ -475,7 +473,7 @@ local function writeNamespace(
 	return if FORMAT then stylua(file) else file
 end
 
-local function writeRoot(mappings: Mappings): string
+local function write_root(mappings: Mappings): string
 	local file = ""
 
 	for namespace in mappings do
@@ -493,21 +491,21 @@ local function writeRoot(mappings: Mappings): string
 	return if FORMAT then stylua(file) else file
 end
 
-local function buildPackage(mappings: Mappings, outDir: string)
-	if fs.isDir(outDir) then
-		fs.removeDir(outDir)
+local function build_package(mappings: Mappings, out_dir: string)
+	if fs.isDir(out_dir) then
+		fs.removeDir(out_dir)
 	end
-	fs.writeDir(outDir)
+	fs.writeDir(out_dir)
 
-	fs.copy("src/utils", `{outDir}/utils`)
+	fs.copy("src/utils", `{out_dir}/utils`)
 
 	for namespace, endpoints in mappings do
-		local file = writeNamespace(namespace:gsub("_", ""), endpoints)
-		fs.writeFile(`{outDir}/{namespace:gsub("_", "-")}.luau`, file)
+		local file = write_namespace(namespace:gsub("_", ""), endpoints)
+		fs.writeFile(`{out_dir}/{namespace:gsub("_", "-")}.luau`, file)
 	end
 
-	local rootFile = writeRoot(mappings)
-	fs.writeFile(`{outDir}/init.luau`, rootFile)
+	local root_file = write_root(mappings)
+	fs.writeFile(`{out_dir}/init.luau`, root_file)
 end
 
-buildPackage(MAPPINGS, OUT_DIR)
+build_package(MAPPINGS, OUT_DIR)
