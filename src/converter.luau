@@ -1,12 +1,9 @@
-local net = require("@lune/net")
 local serde = require("@lune/serde")
 local fs = require("@lune/fs")
 local process = require("@lune/process")
 
 local openapi = require("./openapi")
 local mappings = require("./mappings")
-local array = require("./util/array")
-local dictionary = require("./util/dictionary")
 local casing = require("./util/casing")
 
 local NO_FORMAT_FLAG = "--no-format"
