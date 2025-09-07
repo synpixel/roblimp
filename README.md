@@ -1,6 +1,6 @@
 # Roblimp
 
-An auto-generated wrapper around Roblox's API.
+An auto-generated wrapper around Roblox's legacy and cloud APIs
 
 ## Installation
 
@@ -10,19 +10,31 @@ An auto-generated wrapper around Roblox's API.
 pesde add synpixel/roblimp
 ```
 
-## Quick Start
+## Usage
+
+### Legacy
 
 ```luau
-local roblox = require("@lune/roblox")
-local roblimp = require("@pkg/roblimp")
+local client = roblimp.legacy(COOKIE)
 
-local COOKIE = assert(roblox.getAuthCookie(true))
+local self = client:self():unwrap()
+print(`my name's {self.name}`)
 
-local you = roblimp.users.authenticated(COOKIE):unwrap()
-print(`name: {you.name}`)
+local builderman = client:user_from_id(156):unwrap()
+print(`{builderman.name} joined on {builderman.created}`)
+```
 
-local details = roblimp.users.get(you.id):unwrap()
-print(`bio: "{details.description}"`)
-print(`join date: {details.created}`)
-print(`verified: {details.hasVerifiedBadge}`)
+### Cloud
+
+```luau
+local client = roblimp.cloud(API_KEY)
+local universe_id = "..."
+
+client
+	:publish_message {
+		universe_id = universe_id,
+		topic = "announcement",
+		message = "hello, world!",
+	}
+	:unwrap()
 ```

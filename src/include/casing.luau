@@ -19,16 +19,16 @@ local function transform(x: any, processor: (string) -> string): any
 	end
 end
 
-local function snake_to_camel(x: any): any
-	return transform(x, function(str)
+local function snake_to_camel<T>(value: T): T
+	return transform(value, function(str)
 		return str:gsub("_(%l)", function(char)
 			return char:upper()
 		end)
 	end)
 end
 
-local function camel_to_snake(x: any): any
-	return transform(x, function(str)
+local function camel_to_snake<T>(value: T): T
+	return transform(value, function(str)
 		return str:gsub("(%u+)(%u%l)", "%1_%2"):gsub("([a-z%d])(%u)", "%1_%2"):lower()
 	end)
 end

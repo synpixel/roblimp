@@ -1,20 +1,20 @@
 name = "synpixel/roblimp"
 version = "0.1.1"
-description = "An auto-generated wrapper around Roblox's API"
+description = "An auto-generated wrapper around Roblox's legacy and cloud APIs"
 authors = ["synpixel"]
 repository = "https://github.com/synpixel/roblimp"
 license = "MIT"
 includes = ["pesde.toml", "README.md", "LICENSE", "dist/**/*"]
 
+[engines]
+lune = "^0.10.2"
+
 [target]
 environment = "lune"
 lib = "dist/init.luau"
-
-[engines]
-lune = "^0.8.9"
 
 [indices]
 default = "https://github.com/daimond113/pesde-index"
 
 [dependencies]
-result = { name = "lukadev_0/result", version = "^1.2.0" }
+result = { name = "lukadev_0/result", version = "^1.2.1" }
