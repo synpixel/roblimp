@@ -113,6 +113,10 @@ local function build_namespace(namespace: "legacy" | "cloud"): string
 			local properties = {}
 
 			for key, sub_schema in schema.properties do
+				if string.find(key, "@") then
+					key = `["{key}"]`
+				end
+
 				local ty = convert_schema_ty(sub_schema, ignore_refs)
 				table.insert(properties, `{casing.camel_to_snake(key)}: {ty}`)
 			end
@@ -150,10 +154,14 @@ local function build_namespace(namespace: "legacy" | "cloud"): string
 					continue
 				end
 
+				-- We need to account for query parameters
+				-- like idempotencyKey.key or idempotencyKey.firstSent
+				local fixed_name = string.gsub(parameter.name, "%.(.)", string.upper)
+
 				table.insert(parameter_access, {
 					source = source,
 					name = parameter.name,
-					use = `request.{casing.camel_to_snake(parameter.name)}`,
+					use = `request.{casing.camel_to_snake(fixed_name)}`,
 					schema = parameter.schema,
 					required = parameter.required,
 				})
@@ -215,10 +223,12 @@ local function build_namespace(namespace: "legacy" | "cloud"): string
 		if parameters then
 			local members = {}
 			for _, parameter in parameters do
+				local fixed_name = string.gsub(parameter.name, "%.(.)", string.upper)
+
 				local ty = convert_schema_ty(parameter.schema)
 				table.insert(
 					members,
-					`{casing.camel_to_snake(parameter.name)}: {if parameter.required then ty else `{ty}?`}`
+					`{casing.camel_to_snake(fixed_name)}: {if parameter.required then ty else `{ty}?`}`
 				)
 			end
 
@@ -297,7 +307,7 @@ local function build_namespace(namespace: "legacy" | "cloud"): string
 	for _, mapping in mappings do
 		local endpoint = openapi.get_endpoint(definition, mapping.path)
 		if not endpoint then
-			error(`Failed to resolve endpoint "{mapping.path}"`)
+			error(`Failed to resolve endpoint from "{mapping.path}"`)
 		end
 
 		for method, alias in mapping.methods do
