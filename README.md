@@ -18,7 +18,7 @@ pesde add synpixel/roblimp
 local client = roblimp.legacy(COOKIE)
 
 local me = client:me():unwrap()
-print(`my name's {self.me}`)
+print(`my name's {me.name}`)
 
 local builderman = client:user_from_id(156):unwrap()
 print(`{builderman.name} joined on {builderman.created}`)
