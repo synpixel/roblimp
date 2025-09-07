@@ -2,9 +2,9 @@
 
 Auto-generated wrapper around Roblox's legacy and cloud APIs
 
-## Motivation
+## Why
 
-Roblox API wrappers are often abstracted and while that may be what some people are looking for, it wasn't what I wanted. I wanted a simple wrapper with minimal abstraction while keeping type safety and error handling. Roblimp generates Luau code from Roblox's OpenAPI definition to achieve that goal, and I think it does it pretty well. Mappings are written manually and contributions are more than welcome.
+Roblimp is an API wrapper with very minimal abstraction that keeps simplicity, type safety and error handling. The tool generates Luau code from Roblox's OpenAPI definition, mappings are written manually and contributions are more than welcome.
 
 ## Installation
 
@@ -15,8 +15,6 @@ pesde add synpixel/roblimp
 ```
 
 ## Usage
-
-### roblimp
 
 ### Legacy
 
