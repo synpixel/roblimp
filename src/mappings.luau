@@ -193,6 +193,20 @@ return table.freeze {
 	-- Inventories (Cloud)
 	endpoint "/cloud/v2/users/{user_id}/inventory-items" { get = "inventory_of_user" },
 
+	-- Luau Execution (Cloud)
+	endpoint "/cloud/v2/universes/{universe_id}/places/{place_id}/luau-execution-session-tasks" {
+		post = "create_luau_execution_task",
+	},
+	endpoint "/cloud/v2/universes/{universe_id}/places/{place_id}/versions/{version_id}/luau-execution-session-tasks" {
+		post = "create_luau_execution_task_for_version",
+	},
+	endpoint "/cloud/v2/universes/{universe_id}/places/{place_id}/versions/{version_id}/luau-execution-sessions/{luau_execution_session_id}/tasks/{task_id}" {
+		get = "luau_execution_task",
+	},
+	endpoint "/cloud/v2/universes/{universe_id}/places/{place_id}/versions/{version_id}/luau-execution-sessions/{luau_execution_session_id}/tasks/{task_id}/logs" {
+		get = "luau_execution_task_logs",
+	},
+
 	-- Memory Stores (Cloud)
 	endpoint "/cloud/v2/universes/{universe_id}/memory-store/queues/{queue_id}/items" {
 		post = "create_memory_store_queue_item",
