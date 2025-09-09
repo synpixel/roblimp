@@ -1,5 +1,3 @@
-export type TransformCasingFn = ((x: string) -> string) & (<K, V>(x: { [K]: V }) -> { [K]: V })
-
 local function transform(x: any, processor: (string) -> string): any
 	if typeof(x) == "string" then
 		return processor(x)
@@ -21,15 +19,16 @@ end
 
 local function snake_to_camel<T>(value: T): T
 	return transform(value, function(str)
-		return str:gsub("_(%l)", function(char)
-			return char:upper()
-		end)
+		return string.gsub(str, "_(%l)", string.upper)
 	end)
 end
 
 local function camel_to_snake<T>(value: T): T
 	return transform(value, function(str)
-		return str:gsub("(%u+)(%u%l)", "%1_%2"):gsub("([a-z%d])(%u)", "%1_%2"):lower()
+		local result = string.gsub(str, "(%u+)(%u%l)", "%1_%2")
+		result = string.gsub(result, "([a-z%d])(%u)", "%1_%2")
+		result = string.lower(result)
+		return result
 	end)
 end
 
